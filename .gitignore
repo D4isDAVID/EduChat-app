@@ -1,0 +1,13 @@
+# Gradle-related
+/.gradle/
+/local.properties
+
+# JetBrains-related
+/.idea/*
+!/.idea/runConfigurations/
+!/.idea/scopes/
+/captures/
+*.iml
+
+# OS-related
+.DS_Store
