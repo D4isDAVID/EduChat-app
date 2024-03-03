@@ -18,8 +18,8 @@ pluginManagement {
     }
 
     plugins {
-        id("com.android.application") version androidPluginVersion apply false
         kotlin("android") version kotlinVersion apply false
+        id("com.android.application") version androidPluginVersion apply false
     }
 }
 

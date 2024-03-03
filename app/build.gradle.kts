@@ -5,6 +5,7 @@ plugins {
 
 val androidxCoreVersion: String by project
 val androidxActivityVersion: String by project
+val androidxNavigationVersion: String by project
 val composeBomVersion: String by project
 val composeCompilerVersion: String by project
 
@@ -53,12 +54,14 @@ repositories {
 dependencies {
     implementation("androidx.core:core-ktx:$androidxCoreVersion")
     implementation("androidx.activity:activity-compose:$androidxActivityVersion")
+    implementation("androidx.navigation:navigation-compose:$androidxNavigationVersion")
 
     implementation(platform("androidx.compose:compose-bom:$composeBomVersion"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
+    implementation("androidx.compose.material:material-icons-extended")
 
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")

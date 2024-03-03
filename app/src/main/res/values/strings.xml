@@ -1,3 +1,25 @@
 <resources>
     <string name="app_name">EduChat</string>
+
+    <string name="welcome_to_app">Welcome to EduChat</string>
+    <string name="login">Login</string>
+    <string name="register">Register</string>
+    <string name="continue_as_guest">Continue as Guest</string>
+
+    <string name="back">Back</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="student">Student</string>
+    <string name="teacher">Teacher</string>
+    <string name="admin">Admin</string>
+    <string name="show_password">Show password</string>
+    <string name="hide_password">Hide password</string>
+
+    <string name="forum">Forum</string>
+    <string name="notifications">Notification</string>
+    <string name="search">Search</string>
+    <string name="profile">Profile</string>
+    <string name="chat">Chat</string>
+
+    <string name="category">Category</string>
 </resources>
