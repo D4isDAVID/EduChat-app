@@ -20,4 +20,4 @@ fun createPostObject(obj: JSONObject) = PostObject(
     obj.getInt("categoryId"),
 )
 
-fun createPostsArray(arr: JSONArray) = arr.getJSONObjects().map { createPostObject(it) }
+fun createPostsList(arr: JSONArray) = arr.getJSONObjects().map { createPostObject(it) }

@@ -18,7 +18,7 @@ class RestClient(
     private fun <T> request(
         method: String,
         route: String,
-        queryParams: Map<String, String>? = null,
+        queryParams: Map<String, String?>? = null,
         customHeaders: Map<String, String> = mapOf(),
         callback: ((T) -> Unit)? = null,
         hook: HttpURLConnection.() -> T,
@@ -43,7 +43,7 @@ class RestClient(
 
     fun <T> get(
         route: String,
-        queryParams: Map<String, String>? = null,
+        queryParams: Map<String, String?>? = null,
         headers: Map<String, String> = mapOf(),
         callback: ((T) -> Unit)?,
         hook: HttpURLConnection.() -> T,
@@ -51,7 +51,7 @@ class RestClient(
 
     fun <T> post(
         route: String,
-        queryParams: Map<String, String>? = null,
+        queryParams: Map<String, String?>? = null,
         headers: Map<String, String> = mapOf(),
         callback: ((T) -> Unit)?,
         hook: HttpURLConnection.() -> T,
@@ -59,7 +59,7 @@ class RestClient(
 
     fun <T> put(
         route: String,
-        queryParams: Map<String, String>? = null,
+        queryParams: Map<String, String?>? = null,
         headers: Map<String, String> = mapOf(),
         callback: ((T) -> Unit)?,
         hook: HttpURLConnection.() -> T,
@@ -67,7 +67,7 @@ class RestClient(
 
     fun <T> patch(
         route: String,
-        queryParams: Map<String, String>? = null,
+        queryParams: Map<String, String?>? = null,
         headers: Map<String, String> = mapOf(),
         callback: ((T) -> Unit)?,
         hook: HttpURLConnection.() -> T,
@@ -75,7 +75,7 @@ class RestClient(
 
     fun <T> delete(
         route: String,
-        queryParams: Map<String, String>? = null,
+        queryParams: Map<String, String?>? = null,
         headers: Map<String, String> = mapOf(),
         callback: ((T) -> Unit)?,
         hook: HttpURLConnection.() -> T,
