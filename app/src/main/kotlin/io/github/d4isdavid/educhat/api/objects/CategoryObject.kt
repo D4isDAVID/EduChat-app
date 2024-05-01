@@ -1,28 +1,34 @@
 package io.github.d4isdavid.educhat.api.objects
 
-import io.github.d4isdavid.educhat.api.cache.APIObjectWithId
-import io.github.d4isdavid.educhat.api.utils.getJSONObjects
 import io.github.d4isdavid.educhat.api.utils.nullableInt
 import io.github.d4isdavid.educhat.api.utils.nullableString
-import org.json.JSONArray
 import org.json.JSONObject
+import kotlin.properties.Delegates
 
-data class CategoryObject(
-    override val id: Int,
-    val name: String,
-    val description: String?,
-    val pinned: Boolean,
-    val locked: Boolean,
-    val parentId: Int?,
-) : APIObjectWithId
+class CategoryObject : APIObject() {
 
-fun createCategoryObject(obj: JSONObject) = CategoryObject(
-    obj.getInt("id"),
-    obj.getString("name"),
-    obj.nullableString("description"),
-    obj.getBoolean("pinned"),
-    obj.getBoolean("locked"),
-    obj.nullableInt("parentId"),
-)
+    var id by Delegates.notNull<Int>()
+        private set
+    lateinit var name: String
+        private set
+    var description: String? = null
+        private set
+    var pinned by Delegates.notNull<Boolean>()
+        private set
+    var locked by Delegates.notNull<Boolean>()
+        private set
+    var parentId: Int? = null
+        private set
 
-fun createCategoriesList(arr: JSONArray) = arr.getJSONObjects().map { createCategoryObject(it) }
+    override fun getKey() = id
+
+    override fun update(obj: JSONObject) {
+        id = obj.getInt("id")
+        name = obj.getString("name")
+        description = obj.nullableString("description")
+        pinned = obj.getBoolean("pinned")
+        locked = obj.getBoolean("locked")
+        parentId = obj.nullableInt("parentId")
+    }
+
+}

@@ -1,28 +1,34 @@
 package io.github.d4isdavid.educhat.api.objects
 
-import io.github.d4isdavid.educhat.api.cache.APIObjectWithId
 import io.github.d4isdavid.educhat.api.utils.getInstant
-import io.github.d4isdavid.educhat.api.utils.getJSONObjects
-import org.json.JSONArray
 import org.json.JSONObject
 import java.time.Instant
+import kotlin.properties.Delegates
 
-data class UserObject(
-    override val id: Int,
-    val name: String,
-    val createdAt: Instant,
-    val admin: Boolean,
-    val student: Boolean,
-    val teacher: Boolean,
-) : APIObjectWithId
+class UserObject : APIObject() {
 
-fun createUserObject(obj: JSONObject) = UserObject(
-    obj.getInt("id"),
-    obj.getString("name"),
-    obj.getInstant("createdAt"),
-    obj.getBoolean("admin"),
-    obj.getBoolean("student"),
-    obj.getBoolean("teacher"),
-)
+    var id by Delegates.notNull<Int>()
+        private set
+    lateinit var name: String
+        private set
+    lateinit var createdAt: Instant
+        private set
+    var admin by Delegates.notNull<Boolean>()
+        private set
+    var student by Delegates.notNull<Boolean>()
+        private set
+    var teacher by Delegates.notNull<Boolean>()
+        private set
 
-fun createUsersList(arr: JSONArray) = arr.getJSONObjects().map { createUserObject(it) }
+    override fun getKey() = id
+
+    override fun update(obj: JSONObject) {
+        id = obj.getInt("id")
+        name = obj.getString("name")
+        createdAt = obj.getInstant("createdAt")
+        admin = obj.getBoolean("admin")
+        student = obj.getBoolean("student")
+        teacher = obj.getBoolean("teacher")
+    }
+
+}

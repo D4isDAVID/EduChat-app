@@ -10,8 +10,8 @@ import java.net.HttpURLConnection
 import java.net.URL
 
 class RestClient(
-    private val scope: CoroutineScope,
     private val baseUrl: String,
+    private val scope: CoroutineScope,
     val headers: MutableMap<String, String> = mutableMapOf()
 ) {
 

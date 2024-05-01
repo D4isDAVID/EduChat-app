@@ -5,6 +5,7 @@ import io.github.d4isdavid.educhat.http.rest.RestClient
 class APIClient(val rest: RestClient) {
 
     val categories = CategoriesAPI(this)
+    val messages = MessagesAPI()
     val posts = PostsAPI(this)
     val users = UsersAPI(this)
 
