@@ -3,6 +3,8 @@ plugins {
     kotlin("android")
 }
 
+val localProperty: (String) -> String by rootProject.extra
+
 val androidxCoreVersion: String by project
 val androidxActivityVersion: String by project
 val androidxNavigationVersion: String by project
@@ -22,7 +24,13 @@ android {
     }
 
     buildTypes {
+        debug {
+            buildConfigField("String", "API_BASE_URL", "\"${localProperty("api.baseUrl")}\"")
+        }
+
         release {
+            buildConfigField("String", "API_BASE_URL", "\"${localProperty("api.baseUrl")}\"")
+
             isMinifyEnabled = true
             isShrinkResources = true
         }
@@ -30,6 +38,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 
     composeOptions {
