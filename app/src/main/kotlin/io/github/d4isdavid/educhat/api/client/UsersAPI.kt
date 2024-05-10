@@ -25,7 +25,12 @@ class UsersAPI(client: APIClient) {
             writeJsonObject(input.toJSON())
         },
     ) {
-        cache.put(handleJsonObject()!!)
+        rest.headers["Authorization"] = Base64.encodeToString(
+            "${input.name}:${input.password}".toByteArray(),
+            Base64.NO_WRAP or Base64.NO_PADDING
+        )
+        me = cache.put(handleJsonObject()!!)
+        me!!
     }
 
     fun get(id: Int) = rest.get(Routes.users(id.toString())) {
