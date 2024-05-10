@@ -1,6 +1,5 @@
 package io.github.d4isdavid.educhat.ui.pages.login
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -44,7 +43,6 @@ import io.github.d4isdavid.educhat.ui.components.textfields.OutlinedPasswordFiel
 import io.github.d4isdavid.educhat.ui.navigation.FORUM_SECTION_ROUTE
 import io.github.d4isdavid.educhat.ui.navigation.LOGIN_SECTION_ROUTE
 import io.github.d4isdavid.educhat.ui.theme.EduChatTheme
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -163,11 +161,9 @@ fun RegisterPage(navController: NavController, api: APIClient, modifier: Modifie
 
                     api.users.create(UserCreateObject(username, email, password, student, teacher))
                         .onSuccess {
-                            scope.launch(Dispatchers.Main) {
-                                navController.navigate(FORUM_SECTION_ROUTE) {
-                                    popUpTo(LOGIN_SECTION_ROUTE) {
-                                        inclusive = true
-                                    }
+                            navController.navigate(FORUM_SECTION_ROUTE) {
+                                popUpTo(LOGIN_SECTION_ROUTE) {
+                                    inclusive = true
                                 }
                             }
                         }

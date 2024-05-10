@@ -43,20 +43,26 @@ class RestClient(
 
                 if (responseCode >= 400 && listener.error != null) {
                     val obj = handleJsonObject()
-                    listener.error!!(
-                        Pair(
-                            HttpStatusCode.from(responseCode),
-                            if (obj != null && obj.has("code"))
-                                APIError.from(obj.getInt("code"))
-                            else
-                                APIError.GENERIC,
+                    scope.launch(Dispatchers.Main) {
+                        listener.error!!(
+                            Pair(
+                                HttpStatusCode.from(responseCode),
+                                if (obj != null && obj.has("code"))
+                                    APIError.from(obj.getInt("code"))
+                                else
+                                    APIError.GENERIC,
+                            )
                         )
-                    )
+                    }
                     return@makeHttpRequest
                 }
 
                 val result = consume()
-                listener.success?.let { it(result) }
+                listener.success?.let {
+                    scope.launch(Dispatchers.Main) {
+                        it(result)
+                    }
+                }
             }
         }
 
