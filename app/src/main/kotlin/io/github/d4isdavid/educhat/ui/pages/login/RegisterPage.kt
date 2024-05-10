@@ -48,8 +48,22 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterPage(navController: NavController, api: APIClient, modifier: Modifier = Modifier) {
+    val context = LocalContext.current
+
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
+
+    var username by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var passwordVisible by remember { mutableStateOf(false) }
+    var student by remember { mutableStateOf(false) }
+    var teacher by remember { mutableStateOf(false) }
+
+    var usernameError by remember { mutableStateOf("") }
+    var emailError by remember { mutableStateOf("") }
+    var passwordError by remember { mutableStateOf("") }
+    var fetching by remember { mutableStateOf(false) }
 
     Scaffold(
         modifier = modifier,
@@ -76,20 +90,6 @@ fun RegisterPage(navController: NavController, api: APIClient, modifier: Modifie
                 .padding(24.dp)
                 .padding(paddingValues),
         ) {
-            val context = LocalContext.current
-
-            var username by remember { mutableStateOf("") }
-            var email by remember { mutableStateOf("") }
-            var password by remember { mutableStateOf("") }
-            var passwordVisible by remember { mutableStateOf(false) }
-            var student by remember { mutableStateOf(false) }
-            var teacher by remember { mutableStateOf(false) }
-
-            var usernameError by remember { mutableStateOf("") }
-            var emailError by remember { mutableStateOf("") }
-            var passwordError by remember { mutableStateOf("") }
-            var fetching by remember { mutableStateOf(false) }
-
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -168,25 +168,24 @@ fun RegisterPage(navController: NavController, api: APIClient, modifier: Modifie
                             }
                         }
                         .onError { (_, error) ->
+                            val message = error.getMessage(context)
+
                             when (error) {
                                 APIError.USERNAME_UNAVAILABLE,
                                 APIError.BAD_USERNAME_LENGTH,
-                                APIError.BAD_USERNAME_FORMAT ->
-                                    usernameError = error.getMessage(context)
+                                APIError.BAD_USERNAME_FORMAT -> usernameError = message
 
                                 APIError.EMAIL_TAKEN,
-                                APIError.BAD_EMAIL_FORMAT ->
-                                    emailError = error.getMessage(context)
+                                APIError.BAD_EMAIL_FORMAT -> emailError = message
 
                                 APIError.BAD_PASSWORD_LENGTH,
-                                APIError.BAD_PASSWORD_FORMAT ->
-                                    passwordError = error.getMessage(context)
+                                APIError.BAD_PASSWORD_FORMAT -> passwordError = message
 
                                 else -> scope.launch {
                                     snackbarHostState.currentSnackbarData?.dismiss()
                                     snackbarHostState.showSnackbar(
-                                        error.getMessage(context),
-                                        withDismissAction = true,
+                                        message,
+                                        withDismissAction = true
                                     )
                                 }
                             }
