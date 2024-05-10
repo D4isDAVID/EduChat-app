@@ -32,7 +32,7 @@ class MainActivity : ComponentActivity() {
                 ) {
                     NavHost(navController = navController, startDestination = LOGIN_SECTION_ROUTE) {
                         loginSection(navController = navController, api = api)
-                        forumSection(navController = navController)
+                        forumSection(navController = navController, api = api)
                     }
                 }
             }
