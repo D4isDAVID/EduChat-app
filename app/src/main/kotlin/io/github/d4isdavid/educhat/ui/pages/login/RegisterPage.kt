@@ -167,8 +167,8 @@ fun RegisterPage(navController: NavController, api: APIClient, modifier: Modifie
                                 }
                             }
                         }
-                        .onError { (_, error) ->
-                            val message = error.getMessage(context)
+                        .onError { (status, error) ->
+                            val message = error.getMessage(context, status)
 
                             when (error) {
                                 APIError.USERNAME_UNAVAILABLE,

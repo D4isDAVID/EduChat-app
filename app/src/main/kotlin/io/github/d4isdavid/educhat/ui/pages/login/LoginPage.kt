@@ -128,8 +128,8 @@ fun LoginPage(navController: NavController, api: APIClient, modifier: Modifier =
                                 }
                             }
                         }
-                        .onError { (_, error) ->
-                            val message = error.getMessage(context)
+                        .onError { (status, error) ->
+                            val message = error.getMessage(context, status)
 
                             when (error) {
                                 APIError.INVALID_USERNAME -> usernameError = message

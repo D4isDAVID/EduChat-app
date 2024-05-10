@@ -24,20 +24,20 @@
 
     <string name="category">Category</string>
 
-    <string name="http_status_200">200 OK</string>
-    <string name="http_status_201">201 Created</string>
-    <string name="http_status_204">204 No Content</string>
-    <string name="http_status_304">304 Not Modified</string>
-    <string name="http_status_400">400 Bad Request</string>
-    <string name="http_status_401">401 Unauthorized</string>
-    <string name="http_status_403">403 Forbidden</string>
-    <string name="http_status_404">404 Not Found</string>
-    <string name="http_status_405">405 Method Not Allowed</string>
-    <string name="http_status_409">409 Conflict</string>
-    <string name="http_status_410">410 Gone</string>
-    <string name="http_status_429">429 Too Many Requests</string>
-    <string name="http_status_500">500 Internal Server Error</string>
-    <string name="http_status_501">501 Not Implemented</string>
+    <string name="http_status_ok">200 OK</string>
+    <string name="http_status_created">201 Created</string>
+    <string name="http_status_no_content">204 No Content</string>
+    <string name="http_status_not_modified">304 Not Modified</string>
+    <string name="http_status_bad_request">400 Bad Request</string>
+    <string name="http_status_unauthorized">401 Unauthorized</string>
+    <string name="http_status_forbidden">403 Forbidden</string>
+    <string name="http_status_not_found">404 Not Found</string>
+    <string name="http_status_method_not_allowed">405 Method Not Allowed</string>
+    <string name="http_status_conflict">409 Conflict</string>
+    <string name="http_status_gone">410 Gone</string>
+    <string name="http_status_too_many_requests">429 Too Many Requests</string>
+    <string name="http_status_internal_server_error">500 Internal Server Error</string>
+    <string name="http_status_not_implemented">501 Not Implemented</string>
 
     <string name="api_error_generic">Unknown error</string>
 

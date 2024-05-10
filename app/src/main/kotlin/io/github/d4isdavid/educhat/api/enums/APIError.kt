@@ -2,6 +2,7 @@ package io.github.d4isdavid.educhat.api.enums
 
 import android.content.Context
 import io.github.d4isdavid.educhat.R
+import io.github.d4isdavid.educhat.http.request.HttpStatusCode
 
 enum class APIError(val code: Int) {
     GENERIC(0),
@@ -36,8 +37,8 @@ enum class APIError(val code: Int) {
     CATEGORY_LOCKED(4002),
     POST_LOCKED(4003);
 
-    fun getMessage(context: Context) = when (this) {
-        GENERIC -> context.resources.getString(R.string.api_error_generic)
+    fun getMessage(context: Context, status: HttpStatusCode) = when (this) {
+        GENERIC -> status.getMessage(context)
         UNKNOWN_USER -> context.resources.getString(R.string.api_error_unknown_user)
         UNKNOWN_CATEGORY -> context.resources.getString(R.string.api_error_unknown_category)
         UNKNOWN_POST -> context.resources.getString(R.string.api_error_unknown_post)
