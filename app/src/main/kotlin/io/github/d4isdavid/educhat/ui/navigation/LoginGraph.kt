@@ -15,6 +15,6 @@ fun NavGraphBuilder.loginSection(navController: NavController, api: APIClient) {
     navigation(startDestination = ENTRANCE_PAGE_ROUTE, route = LOGIN_SECTION_ROUTE) {
         entrancePage(navController = navController)
         registerPage(navController = navController, api = api)
-        loginPage(navController = navController)
+        loginPage(navController = navController, api = api)
     }
 }
