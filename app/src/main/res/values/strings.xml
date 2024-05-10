@@ -8,6 +8,7 @@
 
     <string name="back">Back</string>
     <string name="username">Username</string>
+    <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="student">Student</string>
     <string name="teacher">Teacher</string>
@@ -22,4 +23,57 @@
     <string name="chat">Chat</string>
 
     <string name="category">Category</string>
+
+    <string name="http_status_200">200 OK</string>
+    <string name="http_status_201">201 Created</string>
+    <string name="http_status_204">204 No Content</string>
+    <string name="http_status_304">304 Not Modified</string>
+    <string name="http_status_400">400 Bad Request</string>
+    <string name="http_status_401">401 Unauthorized</string>
+    <string name="http_status_403">403 Forbidden</string>
+    <string name="http_status_404">404 Not Found</string>
+    <string name="http_status_405">405 Method Not Allowed</string>
+    <string name="http_status_409">409 Conflict</string>
+    <string name="http_status_410">410 Gone</string>
+    <string name="http_status_429">429 Too Many Requests</string>
+    <string name="http_status_500">500 Internal Server Error</string>
+    <string name="http_status_501">501 Not Implemented</string>
+
+    <string name="api_error_generic">Unknown error</string>
+
+    <!-- Unknown -->
+    <string name="api_error_unknown_user">Unknown user</string>
+    <string name="api_error_unknown_category">Unknown category</string>
+    <string name="api_error_unknown_post">Unknown post</string>
+    <string name="api_error_unknown_post_reply">Unknown post reply</string>
+    <string name="api_error_unknown_message">Unknown message</string>
+
+    <!-- Validations -->
+    <string name="api_error_invalid_object">Invalid object</string>
+    <string name="api_error_bad_username_format">Username must only contain alphanumeric characters, underscores or dashes</string>
+    <string name="api_error_bad_email_format">Invalid email format</string>
+    <string name="api_error_bad_password_format">Password must contain a mix of numbers, letters and symbols</string>
+    <string name="api_error_invalid_authorization">Invalid authorization</string>
+    <string name="api_error_invalid_username">Invalid username</string>
+    <string name="api_error_invalid_password">Invalid password</string>
+    <string name="api_error_invalid_category_name">Category names cannot contain newlines</string>
+    <string name="api_error_invalid_post_title">Post titles cannot contain newlines</string>
+    <string name="api_error_invalid_emoji">Invalid emoji</string>
+
+    <!-- Limitations -->
+    <string name="api_error_not_student_or_teacher">User must be a student or teacher</string>
+    <string name="api_error_username_unavailable">Username unavailable</string>
+    <string name="api_error_email_taken">This email is taken</string>
+    <string name="api_error_bad_username_length">Username must be between 2–32 characters</string>
+    <string name="api_error_bad_password_length">Password must be between 6–128 characters</string>
+    <string name="api_error_new_password_is_current">New password cannot be current password</string>
+    <string name="api_error_bad_category_name_length">Category names must be between 1–72 characters</string>
+    <string name="api_error_bad_category_description_length">Category descriptions be between 1–128 characters</string>
+    <string name="api_error_bad_post_title_length">Post titles must be between 1–72 characters</string>
+    <string name="api_error_bad_message_content_length">Message content must be between 1–2000 characters</string>
+
+    <!-- Permissions -->
+    <string name="api_error_no_permission">No permission</string>
+    <string name="api_error_category_locked">Category locked</string>
+    <string name="api_error_post_locked">Post locked</string>
 </resources>

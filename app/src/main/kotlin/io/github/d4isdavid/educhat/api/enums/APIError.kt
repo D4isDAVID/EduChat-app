@@ -1,5 +1,8 @@
 package io.github.d4isdavid.educhat.api.enums
 
+import android.content.Context
+import io.github.d4isdavid.educhat.R
+
 enum class APIError(val code: Int) {
     GENERIC(0),
 
@@ -32,6 +35,36 @@ enum class APIError(val code: Int) {
     NO_PERMISSION(4001),
     CATEGORY_LOCKED(4002),
     POST_LOCKED(4003);
+
+    fun getMessage(context: Context) = when (this) {
+        GENERIC -> context.resources.getString(R.string.api_error_generic)
+        UNKNOWN_USER -> context.resources.getString(R.string.api_error_unknown_user)
+        UNKNOWN_CATEGORY -> context.resources.getString(R.string.api_error_unknown_category)
+        UNKNOWN_POST -> context.resources.getString(R.string.api_error_unknown_post)
+        UNKNOWN_POST_REPLY -> context.resources.getString(R.string.api_error_unknown_post_reply)
+        INVALID_OBJECT -> context.resources.getString(R.string.api_error_invalid_object)
+        BAD_USERNAME_FORMAT -> context.resources.getString(R.string.api_error_bad_username_format)
+        BAD_EMAIL_FORMAT -> context.resources.getString(R.string.api_error_bad_email_format)
+        BAD_PASSWORD_FORMAT -> context.resources.getString(R.string.api_error_bad_password_format)
+        INVALID_AUTHORIZATION -> context.resources.getString(R.string.api_error_invalid_authorization)
+        INVALID_USERNAME -> context.resources.getString(R.string.api_error_invalid_username)
+        INVALID_PASSWORD -> context.resources.getString(R.string.api_error_invalid_password)
+        INVALID_CATEGORY_NAME -> context.resources.getString(R.string.api_error_invalid_category_name)
+        INVALID_POST_TITLE -> context.resources.getString(R.string.api_error_invalid_post_title)
+        NOT_STUDENT_OR_TEACHER -> context.resources.getString(R.string.api_error_not_student_or_teacher)
+        USERNAME_UNAVAILABLE -> context.resources.getString(R.string.api_error_username_unavailable)
+        EMAIL_TAKEN -> context.resources.getString(R.string.api_error_email_taken)
+        BAD_USERNAME_LENGTH -> context.resources.getString(R.string.api_error_bad_username_length)
+        BAD_PASSWORD_LENGTH -> context.resources.getString(R.string.api_error_bad_password_length)
+        NEW_PASSWORD_IS_CURRENT -> context.resources.getString(R.string.api_error_new_password_is_current)
+        BAD_CATEGORY_NAME_LENGTH -> context.resources.getString(R.string.api_error_bad_category_name_length)
+        BAD_CATEGORY_DESCRIPTION_LENGTH -> context.resources.getString(R.string.api_error_bad_category_description_length)
+        BAD_POST_TITLE_LENGTH -> context.resources.getString(R.string.api_error_bad_post_title_length)
+        BAD_MESSAGE_CONTENT_LENGTH -> context.resources.getString(R.string.api_error_bad_message_content_length)
+        NO_PERMISSION -> context.resources.getString(R.string.api_error_no_permission)
+        CATEGORY_LOCKED -> context.resources.getString(R.string.api_error_category_locked)
+        POST_LOCKED -> context.resources.getString(R.string.api_error_post_locked)
+    }
 
     companion object {
         fun from(code: Int) = entries.first { it.code == code }
