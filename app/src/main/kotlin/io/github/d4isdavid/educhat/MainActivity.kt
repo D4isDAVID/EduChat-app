@@ -14,6 +14,7 @@ import io.github.d4isdavid.educhat.ui.navigation.loginSection
 import io.github.d4isdavid.educhat.ui.theme.EduChatTheme
 
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
