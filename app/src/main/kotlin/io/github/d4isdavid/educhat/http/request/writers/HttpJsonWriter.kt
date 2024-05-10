@@ -6,10 +6,10 @@ import java.net.HttpURLConnection
 
 fun HttpURLConnection.writeJsonObject(data: JSONObject) {
     setRequestProperty("Content-Type", "application/json")
-    writeData(data.toString().toByteArray())
+    writeData(data.toString())
 }
 
 fun HttpURLConnection.writeJsonArray(data: JSONArray) {
     setRequestProperty("Content-Type", "application/json")
-    writeData(data.toString().toByteArray())
+    writeData(data.toString())
 }

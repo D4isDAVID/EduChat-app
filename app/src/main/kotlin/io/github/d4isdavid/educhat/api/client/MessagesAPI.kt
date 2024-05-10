@@ -5,17 +5,15 @@ import org.json.JSONObject
 
 class MessagesAPI(client: APIClient) {
 
-    val rest = client.rest
-
     val cache = Cache(client)
 
-    class Cache(private var client: APIClient) : APICache<MessageObject>(MessageObject::class.java) {
+    class Cache(private var client: APIClient) : APICache<MessageObject>(MessageObject::class) {
 
-        override fun put(key: Int, value: JSONObject) {
-            super.put(key, value)
-
+        override fun put(value: JSONObject): MessageObject {
             val user = value.getJSONObject("author")
-            client.users.cache.put(user.getInt("id"), user)
+            client.users.cache.put(user)
+
+            return super.put(value)
         }
 
     }

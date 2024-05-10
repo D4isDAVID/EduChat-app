@@ -1,4 +1,4 @@
-package io.github.d4isdavid.educhat.http.rest
+package io.github.d4isdavid.educhat.api.utils
 
 object Routes {
 
@@ -10,6 +10,9 @@ object Routes {
 
     fun postReplies(postId: String, id: String? = null) =
         appendOptional("/posts/$postId/replies", id)
+
+    fun reactions(messageId: String, emoji: String? = null, userId: String? = null) =
+        appendOptional(appendOptional("/reactions/$messageId", emoji), userId)
 
     fun users(id: String? = null) = appendOptional("/users", id)
 

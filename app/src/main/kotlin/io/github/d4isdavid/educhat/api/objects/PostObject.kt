@@ -6,7 +6,12 @@ import kotlin.properties.Delegates
 
 class PostObject : APIObject() {
 
-     var messageId by Delegates.notNull<Int>()
+    companion object {
+        @Suppress("unused")
+        fun getKey(obj: JSONObject) = MessageObject.getKey(obj.getJSONObject("message"))
+    }
+
+    var messageId by Delegates.notNull<Int>()
         private set
     lateinit var title: String
         private set
@@ -18,8 +23,6 @@ class PostObject : APIObject() {
         private set
     var categoryId by Delegates.notNull<Int>()
         private set
-
-    override fun getKey() = messageId
 
     override fun update(obj: JSONObject) {
         messageId = obj.getJSONObject("message").getInt("id")

@@ -52,6 +52,8 @@ repositories {
 }
 
 dependencies {
+    implementation(kotlin("reflect"))
+
     implementation("androidx.core:core-ktx:$androidxCoreVersion")
     implementation("androidx.activity:activity-compose:$androidxActivityVersion")
     implementation("androidx.navigation:navigation-compose:$androidxNavigationVersion")

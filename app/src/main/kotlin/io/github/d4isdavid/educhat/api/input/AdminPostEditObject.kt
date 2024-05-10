@@ -3,7 +3,7 @@ package io.github.d4isdavid.educhat.api.input
 import org.json.JSONObject
 
 data class AdminPostEditObject(
-    val message: MessageCreateObject?,
+    val message: MessageEditObject?,
     val title: String?,
     val pinned: Boolean?,
     val locked: Boolean?,

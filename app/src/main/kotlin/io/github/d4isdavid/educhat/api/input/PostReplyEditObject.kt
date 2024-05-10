@@ -7,4 +7,4 @@ data class PostReplyEditObject(
 )
 
 fun PostReplyEditObject.toJSON(): JSONObject = JSONObject()
-    .put("content", content)
+    .put("content", content ?: JSONObject.NULL)

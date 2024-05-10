@@ -9,6 +9,11 @@ import kotlin.properties.Delegates
 
 class MessageObject : APIObject() {
 
+    companion object {
+        @Suppress("unused")
+        fun getKey(obj: JSONObject) = obj.getInt("id")
+    }
+
     var id by Delegates.notNull<Int>()
         private set
     lateinit var content: String
@@ -24,8 +29,7 @@ class MessageObject : APIObject() {
     var authorId by Delegates.notNull<Int>()
         private set
     var reactions = mutableMapOf<String, ReactionCountObject>()
-
-    override fun getKey() = id
+        private set
 
     override fun update(obj: JSONObject) {
         id = obj.getInt("id")
@@ -43,6 +47,30 @@ class MessageObject : APIObject() {
         }
     }
 
+    fun putReaction(emoji: String) {
+        if (reactions.contains(emoji)) {
+            reactions[emoji]!!.addMe()
+            return
+        }
+
+        reactions[emoji] = ReactionCountObject(
+            JSONObject()
+                .put("emoji", emoji)
+                .put("count", 1)
+                .put("me", true)
+        )
+    }
+
+    fun removeReaction(emoji: String) {
+        if (!reactions.contains(emoji)) {
+            return
+        }
+
+        reactions[emoji]!!.removeMe()
+        if (reactions[emoji]!!.count < 1)
+            reactions.remove(emoji)
+    }
+
     class ReactionCountObject(obj: JSONObject) {
 
         var emoji = obj.getString("emoji")
@@ -51,6 +79,24 @@ class MessageObject : APIObject() {
             private set
         var me = obj.getBoolean("me")
             private set
+
+        fun addMe() {
+            if (me) {
+                return
+            }
+
+            count++
+            me = true
+        }
+
+        fun removeMe() {
+            if (!me) {
+                return
+            }
+
+            count--
+            me = false
+        }
 
     }
 

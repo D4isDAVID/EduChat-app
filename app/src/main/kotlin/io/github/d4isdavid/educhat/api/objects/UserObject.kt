@@ -7,6 +7,11 @@ import kotlin.properties.Delegates
 
 class UserObject : APIObject() {
 
+    companion object {
+        @Suppress("unused")
+        fun getKey(obj: JSONObject) = obj.getInt("id")
+    }
+
     var id by Delegates.notNull<Int>()
         private set
     lateinit var name: String
@@ -19,8 +24,6 @@ class UserObject : APIObject() {
         private set
     var teacher by Delegates.notNull<Boolean>()
         private set
-
-    override fun getKey() = id
 
     override fun update(obj: JSONObject) {
         id = obj.getInt("id")

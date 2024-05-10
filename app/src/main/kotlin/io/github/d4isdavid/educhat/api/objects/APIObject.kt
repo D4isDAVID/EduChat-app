@@ -4,8 +4,6 @@ import org.json.JSONObject
 
 abstract class APIObject {
 
-    abstract fun getKey(): Int
-
     abstract fun update(obj: JSONObject)
 
 }
