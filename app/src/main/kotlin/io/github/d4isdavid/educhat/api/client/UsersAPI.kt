@@ -25,10 +25,12 @@ class UsersAPI(client: APIClient) {
             writeJsonObject(input.toJSON())
         },
     ) {
-        rest.headers["Authorization"] = Base64.encodeToString(
+        val credentials = Base64.encodeToString(
             "${input.name}:${input.password}".toByteArray(),
             Base64.NO_WRAP or Base64.NO_PADDING
         )
+        rest.headers["Authorization"] = "Basic $credentials"
+
         me = cache.put(handleJsonObject()!!)
         me!!
     }
@@ -69,10 +71,12 @@ class UsersAPI(client: APIClient) {
     }
 
     fun logIn(name: String, password: String): RestResultListener<UserObject> {
-        val auth = Base64.encodeToString(
+        val credentials = Base64.encodeToString(
             "$name:$password".toByteArray(),
             Base64.NO_WRAP or Base64.NO_PADDING
         )
+
+        val auth = "Basic $credentials"
 
         return rest.get(
             Routes.users("@me"),
