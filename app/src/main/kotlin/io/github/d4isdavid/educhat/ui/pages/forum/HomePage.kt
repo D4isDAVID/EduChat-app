@@ -1,32 +1,39 @@
 package io.github.d4isdavid.educhat.ui.pages.forum
 
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Login
 import androidx.compose.material.icons.automirrored.outlined.Login
 import androidx.compose.material.icons.filled.Explore
 import androidx.compose.material.icons.filled.Forum
-import androidx.compose.material.icons.filled.Login
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.outlined.Explore
 import androidx.compose.material.icons.outlined.Forum
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
@@ -36,10 +43,14 @@ import androidx.navigation.compose.rememberNavController
 import io.github.d4isdavid.educhat.BuildConfig
 import io.github.d4isdavid.educhat.R
 import io.github.d4isdavid.educhat.api.client.APIClient
+import io.github.d4isdavid.educhat.api.objects.CategoryObject
+import io.github.d4isdavid.educhat.api.params.CategoriesFetchParams
 import io.github.d4isdavid.educhat.http.rest.RestClient
 import io.github.d4isdavid.educhat.ui.navigation.FORUM_SECTION_ROUTE
 import io.github.d4isdavid.educhat.ui.navigation.LOGIN_SECTION_ROUTE
+import io.github.d4isdavid.educhat.ui.pages.forum.home.ForumHomeSection
 import io.github.d4isdavid.educhat.ui.theme.EduChatTheme
+import kotlinx.coroutines.launch
 
 private const val FORUM_ROUTE = "forum"
 private const val NOTIFICATIONS_ROUTE = "notifications"
@@ -48,8 +59,13 @@ private const val PROFILE_ROUTE = "profile"
 
 @Composable
 fun HomePage(navController: NavController, api: APIClient, modifier: Modifier = Modifier) {
+    val context = LocalContext.current
+    val inspectionMode = LocalInspectionMode.current
+
+    val scope = rememberCoroutineScope()
     val bottomNavController = rememberNavController()
     var currentRoute by remember { mutableStateOf(FORUM_ROUTE) }
+    val snackbarHostState = remember { SnackbarHostState() }
 
     @Composable
     fun RowScope.HomeNavBarItem(
@@ -128,9 +144,36 @@ fun HomePage(navController: NavController, api: APIClient, modifier: Modifier = 
                 }
             }
         },
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        }
     ) { paddingValues ->
         NavHost(navController = bottomNavController, startDestination = FORUM_ROUTE, modifier = Modifier.padding(paddingValues)) {
-            composable(route = FORUM_ROUTE) {}
+            composable(route = FORUM_ROUTE) {
+                val categories = remember { mutableStateListOf<CategoryObject>() }
+
+                if (!inspectionMode) {
+                    api.categories.get(CategoriesFetchParams(parentId = null))
+                        .onSuccess {
+                            it.forEach { c -> categories.add(c) }
+                        }
+                        .onError { (status, error) ->
+                            scope.launch {
+                                snackbarHostState.showSnackbar(error.getMessage(context, status))
+                            }
+                        }
+                } else {
+                    categories.add(CategoryObject("One"))
+                    categories.add(CategoryObject("Two"))
+                    categories.add(CategoryObject("Three"))
+                }
+
+                ForumHomeSection(
+                    categories = categories,
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                )
+            }
 
             composable(route = NOTIFICATIONS_ROUTE) {}
 

@@ -23,6 +23,9 @@
     <string name="chat">Chat</string>
 
     <string name="category">Category</string>
+    <string name="forward">Forward</string>
+    <string name="pinned">Pinned</string>
+    <string name="locked">Locked</string>
 
     <string name="http_status_ok">200 OK</string>
     <string name="http_status_created">201 Created</string>
@@ -38,8 +41,6 @@
     <string name="http_status_too_many_requests">429 Too Many Requests</string>
     <string name="http_status_internal_server_error">500 Internal Server Error</string>
     <string name="http_status_not_implemented">501 Not Implemented</string>
-
-    <string name="api_error_generic">Unknown error</string>
 
     <!-- Unknown -->
     <string name="api_error_unknown_user">Unknown user</string>

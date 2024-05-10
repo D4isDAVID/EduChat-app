@@ -5,7 +5,7 @@ import org.json.JSONObject
 import java.time.Instant
 import kotlin.properties.Delegates
 
-class UserObject : APIObject() {
+class UserObject() : APIObject() {
 
     companion object {
         @Suppress("unused")
@@ -24,6 +24,20 @@ class UserObject : APIObject() {
         private set
     var teacher by Delegates.notNull<Boolean>()
         private set
+
+    constructor(
+        name: String,
+        createdAt: Instant = Instant.now(),
+        admin: Boolean = false,
+        student: Boolean = true,
+        teacher: Boolean = false,
+    ) : this() {
+        this.name = name
+        this.createdAt = createdAt
+        this.admin = admin
+        this.student = student
+        this.teacher = teacher
+    }
 
     override fun update(obj: JSONObject) {
         id = obj.getInt("id")

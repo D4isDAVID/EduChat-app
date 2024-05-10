@@ -5,7 +5,7 @@ import io.github.d4isdavid.educhat.api.utils.nullableString
 import org.json.JSONObject
 import kotlin.properties.Delegates
 
-class CategoryObject : APIObject() {
+class CategoryObject() : APIObject() {
 
     companion object {
         @Suppress("unused")
@@ -24,6 +24,20 @@ class CategoryObject : APIObject() {
         private set
     var parentId: Int? = null
         private set
+
+    constructor(
+        name: String,
+        description: String? = null,
+        pinned: Boolean = false,
+        locked: Boolean = false,
+        parentId: Int? = null
+    ) : this() {
+        this.name = name
+        this.description = description
+        this.pinned = pinned
+        this.locked = locked
+        this.parentId = parentId
+    }
 
     override fun update(obj: JSONObject) {
         id = obj.getInt("id")
