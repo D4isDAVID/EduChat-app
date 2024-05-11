@@ -74,14 +74,16 @@ fun CategoryPage(
                     }
                 },
                 actions = {
-                    IconButton(onClick = {
-                        managing = true
-                        scope.launch { sheetState.show() }
-                    }) {
-                        Icon(
-                            imageVector = Icons.Filled.Edit,
-                            contentDescription = stringResource(id = R.string.edit),
-                        )
+                    if (api.users.me != null && api.users.me!!.admin) {
+                        IconButton(onClick = {
+                            managing = true
+                            scope.launch { sheetState.show() }
+                        }) {
+                            Icon(
+                                imageVector = Icons.Filled.Edit,
+                                contentDescription = stringResource(id = R.string.edit),
+                            )
+                        }
                     }
                 },
             )
