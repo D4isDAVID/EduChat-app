@@ -13,7 +13,6 @@ import androidx.compose.material.icons.outlined.Explore
 import androidx.compose.material.icons.outlined.Forum
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Person
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -21,8 +20,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
-import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -40,12 +37,12 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import io.github.d4isdavid.educhat.BuildConfig
 import io.github.d4isdavid.educhat.R
 import io.github.d4isdavid.educhat.api.client.APIClient
 import io.github.d4isdavid.educhat.api.objects.CategoryObject
 import io.github.d4isdavid.educhat.api.params.CategoriesFetchParams
-import io.github.d4isdavid.educhat.http.rest.RestClient
+import io.github.d4isdavid.educhat.api.utils.createMockClient
+import io.github.d4isdavid.educhat.api.utils.mockCategory
 import io.github.d4isdavid.educhat.ui.navigation.FORUM_SECTION_ROUTE
 import io.github.d4isdavid.educhat.ui.navigation.LOGIN_SECTION_ROUTE
 import io.github.d4isdavid.educhat.ui.pages.forum.home.ForumHomeSection
@@ -163,9 +160,9 @@ fun HomePage(navController: NavController, api: APIClient, modifier: Modifier = 
                             }
                         }
                 } else {
-                    categories.add(CategoryObject("One"))
-                    categories.add(CategoryObject("Two"))
-                    categories.add(CategoryObject("Three"))
+                    categories.add(api.categories.cache.get(1)!!)
+                    categories.add(api.categories.cache.get(2)!!)
+                    categories.add(api.categories.cache.get(3)!!)
                 }
 
                 ForumHomeSection(
@@ -188,9 +185,11 @@ fun HomePage(navController: NavController, api: APIClient, modifier: Modifier = 
 @Preview(showBackground = true)
 private fun HomePagePreview() {
     EduChatTheme(dynamicColor = false) {
-        HomePage(
-            navController = rememberNavController(),
-            api = APIClient(RestClient(BuildConfig.API_BASE_URL, rememberCoroutineScope()))
-        )
+        val api = createMockClient(rememberCoroutineScope()) {
+            mockCategory(id = 1, name = "One")
+            mockCategory(id = 2, name = "Two")
+            mockCategory(id = 3, name = "Three")
+        }
+        HomePage(navController = rememberNavController(), api = api)
     }
 }

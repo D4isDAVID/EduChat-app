@@ -7,7 +7,7 @@ import org.json.JSONObject
 import java.time.Instant
 import kotlin.properties.Delegates
 
-class MessageObject() : APIObject() {
+class MessageObject : APIObject() {
 
     companion object {
         @Suppress("unused")
@@ -30,24 +30,6 @@ class MessageObject() : APIObject() {
         private set
     var reactions = mutableMapOf<String, ReactionCountObject>()
         private set
-
-    constructor(
-        content: String,
-        createdAt: Instant = Instant.now(),
-        editedAt: Instant? = null,
-        pinned: Boolean = false,
-        hidden: Boolean = false,
-        authorId: Int,
-        reactions: MutableMap<String, ReactionCountObject> = mutableMapOf(),
-    ) : this() {
-        this.content = content
-        this.createdAt = createdAt
-        this.editedAt = editedAt
-        this.pinned = pinned
-        this.hidden = hidden
-        this.authorId = authorId
-        this.reactions = reactions
-    }
 
     override fun update(obj: JSONObject) {
         id = obj.getInt("id")

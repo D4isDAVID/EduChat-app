@@ -10,14 +10,18 @@ import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.PushPin
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.github.d4isdavid.educhat.R
 import io.github.d4isdavid.educhat.api.objects.CategoryObject
+import io.github.d4isdavid.educhat.api.utils.createMockClient
+import io.github.d4isdavid.educhat.api.utils.mockCategory
 import io.github.d4isdavid.educhat.ui.theme.EduChatTheme
 
 @Composable
@@ -35,17 +39,19 @@ fun CategoryListItem(
         headlineContent = {
             Row {
                 Text(text = category.name)
-                Spacer(modifier = Modifier.padding(start = 4.dp))
+                Spacer(modifier = Modifier.padding(start = 8.dp))
                 if (category.locked) {
                     Icon(
                         imageVector = Icons.Filled.Lock,
                         contentDescription = stringResource(id = R.string.locked),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
                 if (category.pinned) {
                     Icon(
                         imageVector = Icons.Filled.PushPin,
                         contentDescription = stringResource(id = R.string.pinned),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
             }
@@ -69,7 +75,7 @@ fun CategoryListItem(
 @Preview(showBackground = true)
 private fun CategoryListItemPreview() {
     EduChatTheme(dynamicColor = false) {
-        val category = CategoryObject("Test", "Hi", pinned = true, locked = true)
-        CategoryListItem(category)
+        val api = createMockClient(rememberCoroutineScope()) { mockCategory() }
+        CategoryListItem(api.categories.cache.get(1)!!)
     }
 }

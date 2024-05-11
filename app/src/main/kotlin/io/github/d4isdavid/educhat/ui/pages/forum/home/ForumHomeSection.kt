@@ -7,11 +7,14 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import io.github.d4isdavid.educhat.R
 import io.github.d4isdavid.educhat.api.objects.CategoryObject
+import io.github.d4isdavid.educhat.api.utils.createMockClient
+import io.github.d4isdavid.educhat.api.utils.mockCategory
 import io.github.d4isdavid.educhat.ui.components.lists.CategoryList
 import io.github.d4isdavid.educhat.ui.theme.EduChatTheme
 
@@ -39,11 +42,16 @@ fun ForumHomeSection(categories: List<CategoryObject>, modifier: Modifier = Modi
 @Preview(showBackground = true)
 fun ForumHomeSectionPreview() {
     EduChatTheme(dynamicColor = false) {
+        val api = createMockClient(rememberCoroutineScope()) {
+            mockCategory(id = 1, name = "One")
+            mockCategory(id = 2, name = "Two")
+            mockCategory(id = 3, name = "Three")
+        }
         ForumHomeSection(
             listOf(
-                CategoryObject("One"),
-                CategoryObject("Two"),
-                CategoryObject("Three"),
+                api.categories.cache.get(1)!!,
+                api.categories.cache.get(2)!!,
+                api.categories.cache.get(3)!!,
             )
         )
     }

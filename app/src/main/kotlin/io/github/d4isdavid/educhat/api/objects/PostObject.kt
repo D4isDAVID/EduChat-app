@@ -4,7 +4,7 @@ import io.github.d4isdavid.educhat.api.utils.nullableInt
 import org.json.JSONObject
 import kotlin.properties.Delegates
 
-class PostObject() : APIObject() {
+class PostObject : APIObject() {
 
     companion object {
         @Suppress("unused")
@@ -23,20 +23,6 @@ class PostObject() : APIObject() {
         private set
     var categoryId by Delegates.notNull<Int>()
         private set
-
-    constructor(
-        title: String,
-        locked: Boolean = false,
-        question: Boolean = true,
-        answerId: Int? = null,
-        categoryId: Int,
-    ) : this() {
-        this.title = title
-        this.locked = locked
-        this.question = question
-        this.answerId = answerId
-        this.categoryId = categoryId
-    }
 
     override fun update(obj: JSONObject) {
         messageId = obj.getJSONObject("message").getInt("id")
