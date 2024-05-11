@@ -43,9 +43,9 @@ fun OutlinedPasswordField(
     placeholder: @Composable (() -> Unit)? = null,
     leadingIcon: @Composable (() -> Unit)? = null,
     trailingIcon: @Composable (() -> Unit)? = null,
-    prefix: @Composable() (() -> Unit)? = null,
-    suffix: @Composable() (() -> Unit)? = null,
-    supportingText: @Composable() (() -> Unit)? = null,
+    prefix: @Composable (() -> Unit)? = null,
+    suffix: @Composable (() -> Unit)? = null,
+    supportingText: @Composable (() -> Unit)? = null,
     isError: Boolean = false,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     shape: Shape = OutlinedTextFieldDefaults.shape,
@@ -94,9 +94,9 @@ fun OutlinedPasswordField(
     placeholder: @Composable (() -> Unit)? = null,
     leadingIcon: @Composable (() -> Unit)? = null,
     trailingIcon: @Composable (() -> Unit)? = null,
-    prefix: @Composable() (() -> Unit)? = null,
-    suffix: @Composable() (() -> Unit)? = null,
-    supportingText: @Composable() (() -> Unit)? = null,
+    prefix: @Composable (() -> Unit)? = null,
+    suffix: @Composable (() -> Unit)? = null,
+    supportingText: @Composable (() -> Unit)? = null,
     isError: Boolean = false,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     shape: Shape = OutlinedTextFieldDefaults.shape,
@@ -122,7 +122,7 @@ fun OutlinedPasswordField(
                 val descriptionId = if (valueVisible)
                     R.string.hide_password
                 else
-                    R.string.hide_password
+                    R.string.show_password
 
                 Icon(imageVector = image, contentDescription = stringResource(id = descriptionId))
             }

@@ -73,7 +73,7 @@ class MessageObject : APIObject() {
 
     class ReactionCountObject(obj: JSONObject) {
 
-        var emoji = obj.getString("emoji")
+        var emoji: String = obj.getString("emoji")
             private set
         var count = obj.getInt("count")
             private set
