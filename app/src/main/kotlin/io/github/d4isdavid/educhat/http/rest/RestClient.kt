@@ -41,18 +41,20 @@ class RestClient(
                 customHeaders.forEach { (k, v) -> setRequestProperty(k, v) }
                 hook?.let { it() }
 
-                if (responseCode >= 400 && listener.error != null) {
-                    val obj = handleJsonObject()
-                    scope.launch(Dispatchers.Main) {
-                        listener.error!!(
-                            Pair(
-                                HttpStatusCode.from(responseCode),
-                                if (obj != null && obj.has("code"))
-                                    APIError.from(obj.getInt("code"))
-                                else
-                                    APIError.GENERIC,
+                if (responseCode >= 400) {
+                    if (listener.error != null) {
+                        val obj = handleJsonObject()
+                        scope.launch(Dispatchers.Main) {
+                            listener.error!!(
+                                Pair(
+                                    HttpStatusCode.from(responseCode),
+                                    if (obj != null && obj.has("code"))
+                                        APIError.from(obj.getInt("code"))
+                                    else
+                                        APIError.GENERIC,
+                                )
                             )
-                        )
+                        }
                     }
                     return@makeHttpRequest
                 }

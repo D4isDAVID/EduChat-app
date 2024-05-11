@@ -245,8 +245,9 @@ fun ManageCategoryBottomSheet(
 
                     api.categories.delete(category!!.id)
                         .onSuccess {
-                            hideSheet()
+                            deleting = false
                             onDelete?.invoke()
+                            hideSheet()
                         }
                         .onError { (status, error) ->
                             val message = error.getMessage(context, status)
