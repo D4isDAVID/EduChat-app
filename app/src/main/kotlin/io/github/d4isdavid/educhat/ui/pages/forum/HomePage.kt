@@ -1,5 +1,6 @@
 package io.github.d4isdavid.educhat.ui.pages.forum
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -21,6 +22,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -33,6 +35,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import io.github.d4isdavid.educhat.R
 import io.github.d4isdavid.educhat.api.client.APIClient
@@ -59,6 +62,7 @@ fun HomePage(navController: NavController, api: APIClient, modifier: Modifier = 
     val scope = rememberCoroutineScope()
     val bottomNavController = rememberNavController()
     val snackbarHostState = remember { SnackbarHostState() }
+    val navBackStackEntry by bottomNavController.currentBackStackEntryAsState()
 
     @Composable
     fun RowScope.HomeNavBarItem(
@@ -68,14 +72,14 @@ fun HomePage(navController: NavController, api: APIClient, modifier: Modifier = 
         label: String,
     ) {
         NavigationBarItem(
-            selected = bottomNavController.currentDestination?.route == route,
+            selected = navBackStackEntry?.destination?.route == route,
             onClick = {
                 bottomNavController.popBackStack()
                 bottomNavController.navigate(route)
             },
             icon = {
                 Icon(
-                    imageVector = if (bottomNavController.currentDestination?.route == route)
+                    imageVector = if (navBackStackEntry?.destination?.route == route)
                         imageVectorSelected
                     else
                         imageVector,
@@ -149,6 +153,7 @@ fun HomePage(navController: NavController, api: APIClient, modifier: Modifier = 
             modifier = Modifier.padding(paddingValues)
         ) {
             composable(route = FORUM_ROUTE) {
+                @SuppressLint("UnrememberedMutableState")
                 val categories = mutableStateListOf<CategoryObject>()
 
                 if (!inspectionMode) {

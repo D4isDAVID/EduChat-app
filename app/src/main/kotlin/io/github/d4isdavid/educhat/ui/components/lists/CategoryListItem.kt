@@ -3,7 +3,6 @@ package io.github.d4isdavid.educhat.ui.components.lists
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
@@ -63,7 +62,6 @@ fun CategoryListItem(
             }
         },
         modifier = modifier
-            .padding(vertical = 8.dp)
             .clickable { navController.navigate(categoryPageRoute(category.id.toString())) },
         supportingContent = if (category.description != null) ({
             Text(text = category.description!!)

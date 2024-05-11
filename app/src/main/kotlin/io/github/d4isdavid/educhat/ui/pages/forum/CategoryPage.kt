@@ -1,15 +1,28 @@
 package io.github.d4isdavid.educhat.ui.pages.forum
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowUpward
+import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -21,9 +34,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import io.github.d4isdavid.educhat.R
@@ -36,8 +51,8 @@ import io.github.d4isdavid.educhat.api.utils.createMockClient
 import io.github.d4isdavid.educhat.api.utils.mockCategory
 import io.github.d4isdavid.educhat.api.utils.mockPost
 import io.github.d4isdavid.educhat.ui.components.bottomsheets.ManageCategoryBottomSheet
-import io.github.d4isdavid.educhat.ui.components.lists.CategoryList
-import io.github.d4isdavid.educhat.ui.components.lists.PostList
+import io.github.d4isdavid.educhat.ui.components.lists.CategoryListItem
+import io.github.d4isdavid.educhat.ui.components.lists.PostListItem
 import io.github.d4isdavid.educhat.ui.theme.EduChatTheme
 import kotlinx.coroutines.launch
 
@@ -52,9 +67,13 @@ fun CategoryPage(
     category: CategoryObject? = null,
 ) {
     val scope = rememberCoroutineScope()
+    val listState = rememberLazyListState()
+
     val snackbarHostState = remember { SnackbarHostState() }
-    val sheetState = rememberModalBottomSheetState()
-    var managing by remember { mutableStateOf(false) }
+    val creatingSheetState = rememberModalBottomSheetState()
+    var creating by remember { mutableStateOf(false) }
+    val editingSheetState = rememberModalBottomSheetState()
+    var editing by remember { mutableStateOf(false) }
 
     Scaffold(
         modifier = modifier,
@@ -76,8 +95,8 @@ fun CategoryPage(
                 actions = {
                     if (api.users.me != null && api.users.me!!.admin) {
                         IconButton(onClick = {
-                            managing = true
-                            scope.launch { sheetState.show() }
+                            editing = true
+                            scope.launch { editingSheetState.show() }
                         }) {
                             Icon(
                                 imageVector = Icons.Filled.Edit,
@@ -88,24 +107,101 @@ fun CategoryPage(
                 },
             )
         },
+        floatingActionButton = {
+            Column(
+                horizontalAlignment = Alignment.End,
+            ) {
+                AnimatedVisibility(visible = listState.canScrollBackward) {
+                    SmallFloatingActionButton(
+                        onClick = {
+                            scope.launch {
+                                listState.animateScrollToItem(0)
+                            }
+                        },
+                        shape = FloatingActionButtonDefaults.smallShape,
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.ArrowUpward,
+                            contentDescription = stringResource(id = R.string.up),
+                        )
+                    }
+                }
+
+                if (api.users.me != null && api.users.me!!.admin) {
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    SmallFloatingActionButton(
+                        onClick = { creating = true },
+                        shape = FloatingActionButtonDefaults.smallShape,
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Add,
+                            contentDescription = stringResource(id = R.string.add),
+                        )
+                    }
+                }
+
+                if (category != null && api.users.me != null) {
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    ExtendedFloatingActionButton(
+                        text = { Text(text = stringResource(id = R.string.write_post)) },
+                        icon = {
+                            Icon(
+                                imageVector = Icons.Filled.Create,
+                                contentDescription = stringResource(id = R.string.create),
+                            )
+                        },
+                        onClick = { /*TODO*/ }
+                    )
+                }
+            }
+        },
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
     ) { paddingValues ->
-        Column(
-            modifier = Modifier.padding(paddingValues)
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(paddingValues),
+            state = listState,
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            CategoryList(
-                navController = navController,
-                categories = categories,
-                modifier = Modifier.fillMaxWidth(),
-            )
-            PostList(posts = posts, modifier = Modifier.fillMaxWidth())
+            if (categories.isNotEmpty()) {
+                item { Text(text = "Categories", style = MaterialTheme.typography.titleMedium) }
+                items(categories, key = { "category${it.id}" }) {
+                    CategoryListItem(navController = navController, category = it)
+                }
+            }
+
+            if (posts.isNotEmpty()) {
+                item { Text(text = "Posts", style = MaterialTheme.typography.titleMedium) }
+                items(
+                    posts,
+                    key = { (post) -> "post${post.messageId}" }) { (post, message, author) ->
+                    PostListItem(post = post, message = message, author = author)
+                }
+            }
         }
     }
 
-    if (managing) {
+    if (creating) {
         ManageCategoryBottomSheet(
             api = api,
-            onDismissRequest = { managing = false },
+            onDismissRequest = { creating = false },
+            onError = {
+                scope.launch {
+                    snackbarHostState.currentSnackbarData?.dismiss()
+                    snackbarHostState.showSnackbar(it, withDismissAction = true)
+                }
+            },
+            parentId = category?.id,
+        )
+    }
+
+    if (editing) {
+        ManageCategoryBottomSheet(
+            api = api,
+            onDismissRequest = { editing = false },
             onError = {
                 scope.launch {
                     snackbarHostState.currentSnackbarData?.dismiss()
