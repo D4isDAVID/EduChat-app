@@ -11,16 +11,22 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import io.github.d4isdavid.educhat.R
 import io.github.d4isdavid.educhat.api.objects.CategoryObject
 import io.github.d4isdavid.educhat.api.utils.createMockClient
 import io.github.d4isdavid.educhat.api.utils.mockCategory
-import io.github.d4isdavid.educhat.ui.components.lists.CategoryList
+import io.github.d4isdavid.educhat.ui.pages.forum.CategoryPage
 import io.github.d4isdavid.educhat.ui.theme.EduChatTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ForumHomeSection(categories: List<CategoryObject>, modifier: Modifier = Modifier) {
+fun ForumHomeSection(
+    navController: NavController,
+    categories: List<CategoryObject>,
+    modifier: Modifier = Modifier,
+) {
     Scaffold(
         modifier = modifier,
         topBar = {
@@ -29,8 +35,10 @@ fun ForumHomeSection(categories: List<CategoryObject>, modifier: Modifier = Modi
             })
         }
     ) { paddingValues ->
-        CategoryList(
+        CategoryPage(
+            navController = navController,
             categories = categories,
+            posts = listOf(),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(paddingValues),
@@ -48,11 +56,12 @@ fun ForumHomeSectionPreview() {
             mockCategory(id = 3, name = "Three")
         }
         ForumHomeSection(
-            listOf(
+            rememberNavController(),
+            categories = listOf(
                 api.categories.cache.get(1)!!,
                 api.categories.cache.get(2)!!,
                 api.categories.cache.get(3)!!,
-            )
+            ),
         )
     }
 }

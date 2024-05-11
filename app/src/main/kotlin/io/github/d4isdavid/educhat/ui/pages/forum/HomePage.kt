@@ -166,6 +166,7 @@ fun HomePage(navController: NavController, api: APIClient, modifier: Modifier = 
                 }
 
                 ForumHomeSection(
+                    navController = navController,
                     categories = categories,
                     modifier = Modifier
                         .fillMaxWidth(),

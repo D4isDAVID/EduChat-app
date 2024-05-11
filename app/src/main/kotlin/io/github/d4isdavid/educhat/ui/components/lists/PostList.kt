@@ -10,29 +10,31 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import io.github.d4isdavid.educhat.api.objects.CategoryObject
+import io.github.d4isdavid.educhat.api.objects.MessageObject
+import io.github.d4isdavid.educhat.api.objects.PostObject
+import io.github.d4isdavid.educhat.api.objects.UserObject
 import io.github.d4isdavid.educhat.api.utils.createMockClient
-import io.github.d4isdavid.educhat.api.utils.mockCategory
+import io.github.d4isdavid.educhat.api.utils.mockPost
 import io.github.d4isdavid.educhat.ui.theme.EduChatTheme
 
 @Composable
-fun CategoryList(
-    categories: List<CategoryObject>,
+fun PostList(
+    posts: List<Triple<PostObject, MessageObject, UserObject>>,
     modifier: Modifier = Modifier,
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier,
     ) {
-        if (categories.isEmpty()) {
+        if (posts.isEmpty()) {
             return@Column
         }
 
-        Text(text = "Categories", style = MaterialTheme.typography.titleMedium)
+        Text(text = "Posts", style = MaterialTheme.typography.titleMedium)
 
         LazyColumn {
-            items(categories, key = { it.id }) {
-                CategoryListItem(category = it)
+            items(posts, key = { (post) -> post.messageId }) { (post, message, author) ->
+                PostListItem(post = post, message = message, author = author)
             }
         }
     }
@@ -43,15 +45,16 @@ fun CategoryList(
 private fun CategoryListPreview() {
     EduChatTheme(dynamicColor = false) {
         val api = createMockClient(rememberCoroutineScope()) {
-            mockCategory(id = 1, name = "One")
-            mockCategory(id = 2, name = "Two")
-            mockCategory(id = 3, name = "Three")
+            mockPost(messageId = 1, title = "One")
+            mockPost(messageId = 2, title = "Two")
+            mockPost(messageId = 3, title = "Three")
         }
-        CategoryList(
+        val author = api.users.cache.get(1)!!
+        PostList(
             listOf(
-                api.categories.cache.get(1)!!,
-                api.categories.cache.get(2)!!,
-                api.categories.cache.get(3)!!,
+                Triple(api.posts.cache.get(1)!!, api.messages.cache.get(1)!!, author),
+                Triple(api.posts.cache.get(2)!!, api.messages.cache.get(2)!!, author),
+                Triple(api.posts.cache.get(3)!!, api.messages.cache.get(3)!!, author),
             )
         )
     }
