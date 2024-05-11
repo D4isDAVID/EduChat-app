@@ -1,6 +1,8 @@
 package io.github.d4isdavid.educhat.ui.pages.forum
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -150,7 +152,11 @@ fun HomePage(navController: NavController, api: APIClient, modifier: Modifier = 
         NavHost(
             navController = bottomNavController,
             startDestination = FORUM_ROUTE,
-            modifier = Modifier.padding(paddingValues)
+            modifier = Modifier.padding(paddingValues),
+            enterTransition = { EnterTransition.None },
+            exitTransition = { ExitTransition.None },
+            popEnterTransition = { EnterTransition.None },
+            popExitTransition = { ExitTransition.None },
         ) {
             composable(route = FORUM_ROUTE) {
                 @SuppressLint("UnrememberedMutableState")
