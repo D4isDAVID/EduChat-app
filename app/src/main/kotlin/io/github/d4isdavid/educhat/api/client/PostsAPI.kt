@@ -16,10 +16,12 @@ import io.github.d4isdavid.educhat.api.utils.Routes
 import org.json.JSONObject
 import kotlin.reflect.KFunction
 
-class PostsAPI(client: APIClient) {
+class PostsAPI(private val client: APIClient) {
 
-    private val rest = client.rest
-    private val messagesCache = client.messages.cache
+    private val rest
+        get() = client.rest
+    private val messages
+        get() = client.messages
 
     val cache = Cache(client)
 
@@ -50,7 +52,7 @@ class PostsAPI(client: APIClient) {
     }
 
     fun getReplies(id: Int) = rest.get(Routes.postReplies(id.toString())) {
-        messagesCache.put(handleJsonArray()!!)
+        messages.cache.put(handleJsonArray()!!)
     }
 
     fun createReply(id: Int, input: PostReplyCreateObject) = rest.get(
@@ -59,13 +61,13 @@ class PostsAPI(client: APIClient) {
             writeJsonObject(input.toJSON())
         },
     ) {
-        messagesCache.put(handleJsonObject()!!)
+        messages.cache.put(handleJsonObject()!!)
     }
 
     fun getReply(id: Int, replyId: Int) = rest.get(
         Routes.postReplies(id.toString(), replyId.toString()),
     ) {
-        messagesCache.put(handleJsonObject()!!)
+        messages.cache.put(handleJsonObject()!!)
     }
 
     fun editReply(id: Int, replyId: Int, input: PostReplyEditObject) = rest.patch(
@@ -110,7 +112,10 @@ class PostsAPI(client: APIClient) {
         }
 
         override fun put(value: JSONObject, getKey: KFunction<Int>?, constructor: KFunction<PostObject>?): PostObject {
-            return put(value, getKey, constructor)
+            return put(
+                value, getKey, constructor,
+                null, null, null, null,
+            )
         }
 
     }

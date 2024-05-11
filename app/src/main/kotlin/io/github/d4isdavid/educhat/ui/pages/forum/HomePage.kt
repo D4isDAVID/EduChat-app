@@ -61,7 +61,6 @@ fun HomePage(navController: NavController, api: APIClient, modifier: Modifier = 
 
     val scope = rememberCoroutineScope()
     val bottomNavController = rememberNavController()
-    var currentRoute by remember { mutableStateOf(FORUM_ROUTE) }
     val snackbarHostState = remember { SnackbarHostState() }
 
     @Composable
@@ -72,15 +71,17 @@ fun HomePage(navController: NavController, api: APIClient, modifier: Modifier = 
         label: String,
     ) {
         NavigationBarItem(
-            selected = currentRoute == route,
+            selected = bottomNavController.currentDestination?.route == route,
             onClick = {
-                currentRoute = route
                 bottomNavController.popBackStack()
                 bottomNavController.navigate(route)
             },
             icon = {
                 Icon(
-                    imageVector = if (currentRoute == route) imageVectorSelected else imageVector,
+                    imageVector = if (bottomNavController.currentDestination?.route == route)
+                        imageVectorSelected
+                    else
+                        imageVector,
                     contentDescription = label,
                 )
             },
@@ -147,7 +148,7 @@ fun HomePage(navController: NavController, api: APIClient, modifier: Modifier = 
     ) { paddingValues ->
         NavHost(navController = bottomNavController, startDestination = FORUM_ROUTE, modifier = Modifier.padding(paddingValues)) {
             composable(route = FORUM_ROUTE) {
-                val categories = remember { mutableStateListOf<CategoryObject>() }
+                val categories = mutableStateListOf<CategoryObject>()
 
                 if (!inspectionMode) {
                     api.categories.get(CategoriesFetchParams(parentId = null))

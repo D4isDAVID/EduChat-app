@@ -25,7 +25,10 @@ class MessagesAPI(client: APIClient) {
         }
 
         override fun put(value: JSONObject, getKey: KFunction<Int>?, constructor: KFunction<MessageObject>?): MessageObject {
-            return put(value, getKey, constructor)
+            return put(
+                value, getKey, constructor,
+                null, null,
+            )
         }
 
     }

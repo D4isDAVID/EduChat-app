@@ -11,9 +11,10 @@ import io.github.d4isdavid.educhat.http.request.writers.writeJsonObject
 import io.github.d4isdavid.educhat.http.rest.RestResultListener
 import io.github.d4isdavid.educhat.api.utils.Routes
 
-class UsersAPI(client: APIClient) {
+class UsersAPI(private val client: APIClient) {
 
-    private val rest = client.rest
+    private val rest
+        get() = client.rest
 
     val cache = Cache()
     var me: UserObject? = null

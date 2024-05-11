@@ -62,7 +62,11 @@ fun CategoryPage(
         Column(
             modifier = Modifier.padding(paddingValues)
         ) {
-            CategoryList(categories = categories, modifier = Modifier.fillMaxWidth())
+            CategoryList(
+                navController = navController,
+                categories = categories,
+                modifier = Modifier.fillMaxWidth(),
+            )
             PostList(posts = posts, modifier = Modifier.fillMaxWidth())
         }
     }

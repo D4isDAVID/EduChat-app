@@ -5,11 +5,14 @@ import io.github.d4isdavid.educhat.api.utils.Routes
 import io.github.d4isdavid.educhat.api.utils.getJSONObjects
 import io.github.d4isdavid.educhat.http.request.handlers.handleJsonArray
 
-class ReactionsAPI(client: APIClient) {
+class ReactionsAPI(private val client: APIClient) {
 
-    private val rest = client.rest
-    private val messagesCache = client.messages.cache
-    private val users = client.users
+    private val rest
+        get() = client.rest
+    private val messages
+        get() = client.messages
+    private val users
+        get() = client.users
 
     val cache: MutableMap<Int, MutableMap<String, MutableSet<UserObject>>> = mutableMapOf()
 
@@ -54,7 +57,7 @@ class ReactionsAPI(client: APIClient) {
     ) {
         ensureCache(messageId, emoji)
         cache[messageId]!![emoji]!!.add(users.me!!)
-        messagesCache.get(messageId)?.putReaction(emoji)
+        messages.cache.get(messageId)?.putReaction(emoji)
 
         Unit
     }
@@ -64,7 +67,7 @@ class ReactionsAPI(client: APIClient) {
     ) {
         ensureCache(messageId, emoji)
         cache[messageId]!![emoji]!!.remove(users.me)
-        messagesCache.get(messageId)?.removeReaction(emoji)
+        messages.cache.get(messageId)?.removeReaction(emoji)
 
         Unit
     }

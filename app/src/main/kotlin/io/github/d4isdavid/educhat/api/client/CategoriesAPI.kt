@@ -13,9 +13,12 @@ import io.github.d4isdavid.educhat.http.request.handlers.handleJsonObject
 import io.github.d4isdavid.educhat.http.request.writers.writeJsonObject
 import io.github.d4isdavid.educhat.api.utils.Routes
 
-class CategoriesAPI(client: APIClient) {
+class CategoriesAPI(private val client: APIClient) {
 
-    private val rest = client.rest
+    private val rest
+        get() = client.rest
+    private val posts
+        get() = client.posts
 
     val cache = Cache()
 
@@ -56,7 +59,7 @@ class CategoriesAPI(client: APIClient) {
         Routes.categoryPosts(id.toString()),
         queryParams = params.toQuery(),
     ) {
-        cache.put(handleJsonArray()!!)
+        posts.cache.put(handleJsonArray()!!)
     }
 
     fun createPost(id: Int, input: PostCreateObject) = rest.post(
@@ -65,7 +68,7 @@ class CategoriesAPI(client: APIClient) {
             writeJsonObject(input.toJSON())
         },
     ) {
-        cache.put(handleJsonObject()!!)
+        posts.cache.put(handleJsonObject()!!)
     }
 
     class Cache : APICache<CategoryObject>(CategoryObject::class)

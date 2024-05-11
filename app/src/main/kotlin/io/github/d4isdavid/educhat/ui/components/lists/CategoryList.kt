@@ -10,6 +10,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import io.github.d4isdavid.educhat.api.objects.CategoryObject
 import io.github.d4isdavid.educhat.api.utils.createMockClient
 import io.github.d4isdavid.educhat.api.utils.mockCategory
@@ -17,6 +19,7 @@ import io.github.d4isdavid.educhat.ui.theme.EduChatTheme
 
 @Composable
 fun CategoryList(
+    navController: NavController,
     categories: List<CategoryObject>,
     modifier: Modifier = Modifier,
 ) {
@@ -32,7 +35,7 @@ fun CategoryList(
 
         LazyColumn {
             items(categories, key = { it.id }) {
-                CategoryListItem(category = it)
+                CategoryListItem(navController = navController, category = it)
             }
         }
     }
@@ -48,11 +51,12 @@ private fun CategoryListPreview() {
             mockCategory(id = 3, name = "Three")
         }
         CategoryList(
-            listOf(
+            navController = rememberNavController(),
+            categories = listOf(
                 api.categories.cache.get(1)!!,
                 api.categories.cache.get(2)!!,
                 api.categories.cache.get(3)!!,
-            )
+            ),
         )
     }
 }
