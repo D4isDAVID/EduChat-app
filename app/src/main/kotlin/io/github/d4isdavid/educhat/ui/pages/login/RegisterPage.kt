@@ -68,17 +68,17 @@ fun RegisterPage(navController: NavController, api: APIClient, modifier: Modifie
     Scaffold(
         modifier = modifier,
         topBar = {
-             TopAppBar(
-                 title = { Text(text = stringResource(id = R.string.register)) },
-                 navigationIcon = {
-                      IconButton(onClick = { navController.popBackStack() }) {
-                          Icon(
-                              imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                              contentDescription = stringResource(id = R.string.back)
-                          )
-                      }
-                 },
-             )
+            TopAppBar(
+                title = { Text(text = stringResource(id = R.string.register)) },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(id = R.string.back)
+                        )
+                    }
+                },
+            )
         },
         snackbarHost = {
             SnackbarHost(hostState = snackbarHostState)

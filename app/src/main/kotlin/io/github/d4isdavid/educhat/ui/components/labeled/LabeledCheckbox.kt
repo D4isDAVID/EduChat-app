@@ -83,6 +83,7 @@ fun LabeledCheckbox(
                 configuredSpacer()
                 configuredLabel()
             }
+
             LabeledCheckboxPosition.END -> {
                 configuredLabel()
                 configuredSpacer()
@@ -104,6 +105,10 @@ private fun LabeledCheckboxPreview() {
 @Composable
 private fun LabeledCheckboxEndPreview() {
     EduChatTheme(dynamicColor = false) {
-        LabeledCheckbox(checked = true, label = { Text(text = "Checkbox") }, checkboxPosition = LabeledCheckboxPosition.END)
+        LabeledCheckbox(
+            checked = true,
+            label = { Text(text = "Checkbox") },
+            checkboxPosition = LabeledCheckboxPosition.END
+        )
     }
 }

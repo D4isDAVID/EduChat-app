@@ -19,9 +19,14 @@ open class APICache<T : APIObject>(private val clazz: KClass<T>) {
         return _cache[key]
     }
 
-    open fun put(value: JSONObject, getKey: KFunction<Int>? = null, constructor: KFunction<T>? = null): T {
+    open fun put(
+        value: JSONObject,
+        getKey: KFunction<Int>? = null,
+        constructor: KFunction<T>? = null
+    ): T {
         val key = getKey?.call(value)
-            ?: clazz.companionObject!!.functions.first { it.name == "getKey" }.call(clazz.companionObjectInstance, value) as Int
+            ?: clazz.companionObject!!.functions.first { it.name == "getKey" }
+                .call(clazz.companionObjectInstance, value) as Int
 
         if (!_cache.contains(key))
             _cache[key] = (constructor ?: clazz.primaryConstructor!!).call()

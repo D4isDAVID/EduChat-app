@@ -9,10 +9,10 @@ import io.github.d4isdavid.educhat.api.input.toJSON
 import io.github.d4isdavid.educhat.api.objects.MessageObject
 import io.github.d4isdavid.educhat.api.objects.PostObject
 import io.github.d4isdavid.educhat.api.objects.UserObject
+import io.github.d4isdavid.educhat.api.utils.Routes
 import io.github.d4isdavid.educhat.http.request.handlers.handleJsonArray
 import io.github.d4isdavid.educhat.http.request.handlers.handleJsonObject
 import io.github.d4isdavid.educhat.http.request.writers.writeJsonObject
-import io.github.d4isdavid.educhat.api.utils.Routes
 import org.json.JSONObject
 import kotlin.reflect.KFunction
 
@@ -106,12 +106,22 @@ class PostsAPI(private val client: APIClient) {
             userConstructor: KFunction<UserObject>? = null,
         ): PostObject {
             val message = value.getJSONObject("message")
-            client.messages.cache.put(message, messageGetKey, messageConstructor, userGetKey, userConstructor)
+            client.messages.cache.put(
+                message,
+                messageGetKey,
+                messageConstructor,
+                userGetKey,
+                userConstructor
+            )
 
             return super.put(value, getKey, constructor)
         }
 
-        override fun put(value: JSONObject, getKey: KFunction<Int>?, constructor: KFunction<PostObject>?): PostObject {
+        override fun put(
+            value: JSONObject,
+            getKey: KFunction<Int>?,
+            constructor: KFunction<PostObject>?
+        ): PostObject {
             return put(
                 value, getKey, constructor,
                 null, null, null, null,

@@ -113,19 +113,23 @@ fun OutlinedPasswordField(
         placeholder = placeholder,
         leadingIcon = leadingIcon,
         trailingIcon = {
-            trailingIcon?.let { it() } ?: IconButton(onClick = { onValueVisibilityChange(!valueVisible) }) {
-                val image = if (valueVisible)
-                    Icons.Filled.Visibility
-                else
-                    Icons.Filled.VisibilityOff
+            trailingIcon?.let { it() }
+                ?: IconButton(onClick = { onValueVisibilityChange(!valueVisible) }) {
+                    val image = if (valueVisible)
+                        Icons.Filled.Visibility
+                    else
+                        Icons.Filled.VisibilityOff
 
-                val descriptionId = if (valueVisible)
-                    R.string.hide_password
-                else
-                    R.string.show_password
+                    val descriptionId = if (valueVisible)
+                        R.string.hide_password
+                    else
+                        R.string.show_password
 
-                Icon(imageVector = image, contentDescription = stringResource(id = descriptionId))
-            }
+                    Icon(
+                        imageVector = image,
+                        contentDescription = stringResource(id = descriptionId)
+                    )
+                }
         },
         prefix = prefix,
         suffix = suffix,

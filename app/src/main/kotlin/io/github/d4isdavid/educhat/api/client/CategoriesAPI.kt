@@ -8,10 +8,10 @@ import io.github.d4isdavid.educhat.api.objects.CategoryObject
 import io.github.d4isdavid.educhat.api.params.CategoriesFetchParams
 import io.github.d4isdavid.educhat.api.params.CategoryPostsFetchParams
 import io.github.d4isdavid.educhat.api.params.toQuery
+import io.github.d4isdavid.educhat.api.utils.Routes
 import io.github.d4isdavid.educhat.http.request.handlers.handleJsonArray
 import io.github.d4isdavid.educhat.http.request.handlers.handleJsonObject
 import io.github.d4isdavid.educhat.http.request.writers.writeJsonObject
-import io.github.d4isdavid.educhat.api.utils.Routes
 
 class CategoriesAPI(private val client: APIClient) {
 

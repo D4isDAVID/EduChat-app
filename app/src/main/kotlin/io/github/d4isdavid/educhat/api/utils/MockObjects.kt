@@ -57,7 +57,13 @@ fun APIClient.mockMessage(
         .put("hidden", hidden)
         .put("author", author)
         .put("reactions", reactions)
-    messages.cache.put(message, MessageObject::getKey, ::MessageObject, UserObject::getKey, ::UserObject)
+    messages.cache.put(
+        message,
+        MessageObject::getKey,
+        ::MessageObject,
+        UserObject::getKey,
+        ::UserObject
+    )
     return message
 }
 
@@ -103,7 +109,15 @@ fun APIClient.mockPost(
         .put("question", question)
         .put("answerId", answerId ?: JSONObject.NULL)
         .put("categoryId", categoryId)
-    posts.cache.put(post, PostObject::getKey, ::PostObject, MessageObject::getKey, ::MessageObject, UserObject::getKey, ::UserObject)
+    posts.cache.put(
+        post,
+        PostObject::getKey,
+        ::PostObject,
+        MessageObject::getKey,
+        ::MessageObject,
+        UserObject::getKey,
+        ::UserObject
+    )
     return post
 }
 
