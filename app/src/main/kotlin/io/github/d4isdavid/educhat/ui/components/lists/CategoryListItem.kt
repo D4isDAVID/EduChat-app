@@ -4,6 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Category
@@ -44,7 +45,7 @@ fun CategoryListItem(
         headlineContent = {
             Row {
                 Text(text = category.name)
-                Spacer(modifier = Modifier.padding(start = 8.dp))
+                Spacer(modifier = Modifier.width(8.dp))
                 if (category.locked) {
                     Icon(
                         imageVector = Icons.Filled.Lock,

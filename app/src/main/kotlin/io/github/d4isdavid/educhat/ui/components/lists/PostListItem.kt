@@ -2,7 +2,7 @@ package io.github.d4isdavid.educhat.ui.components.lists
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.automirrored.outlined.Chat
@@ -39,7 +39,7 @@ fun PostListItem(
         headlineContent = {
             Row {
                 Text(text = post.title)
-                Spacer(modifier = Modifier.padding(start = 8.dp))
+                Spacer(modifier = Modifier.width(8.dp))
                 if (post.locked) {
                     Icon(
                         imageVector = Icons.Filled.Lock,
@@ -83,7 +83,11 @@ fun PostListItem(
 private fun PostListItemPreview() {
     EduChatTheme(dynamicColor = false) {
         val api = createMockClient(rememberCoroutineScope()) { mockPost() }
-        PostListItem(api.posts.cache.get(1)!!, api.messages.cache.get(1)!!, api.users.cache.get(1)!!)
+        PostListItem(
+            api.posts.cache.get(1)!!,
+            api.messages.cache.get(1)!!,
+            api.users.cache.get(1)!!
+        )
     }
 }
 
@@ -92,7 +96,11 @@ private fun PostListItemPreview() {
 private fun QuestionPostListItemPreview() {
     EduChatTheme(dynamicColor = false) {
         val api = createMockClient(rememberCoroutineScope()) { mockPost(question = true) }
-        PostListItem(api.posts.cache.get(1)!!, api.messages.cache.get(1)!!, api.users.cache.get(1)!!)
+        PostListItem(
+            api.posts.cache.get(1)!!,
+            api.messages.cache.get(1)!!,
+            api.users.cache.get(1)!!
+        )
     }
 }
 
@@ -100,7 +108,12 @@ private fun QuestionPostListItemPreview() {
 @Preview(showBackground = true)
 private fun AnsweredPostListItemPreview() {
     EduChatTheme(dynamicColor = false) {
-        val api = createMockClient(rememberCoroutineScope()) { mockPost(question = true, answerId = 1) }
-        PostListItem(api.posts.cache.get(1)!!, api.messages.cache.get(1)!!, api.users.cache.get(1)!!)
+        val api =
+            createMockClient(rememberCoroutineScope()) { mockPost(question = true, answerId = 1) }
+        PostListItem(
+            api.posts.cache.get(1)!!,
+            api.messages.cache.get(1)!!,
+            api.users.cache.get(1)!!
+        )
     }
 }

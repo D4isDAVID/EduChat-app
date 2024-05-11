@@ -1,5 +1,6 @@
 package io.github.d4isdavid.educhat.ui.navigation.forum
 
+import android.annotation.SuppressLint
 import androidx.compose.runtime.mutableStateListOf
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -20,7 +21,10 @@ fun NavGraphBuilder.categoryPage(navController: NavController, api: APIClient) {
     composable(route = categoryPageRoute()) {
         val id = it.arguments!!.getString(CATEGORY_ID_ARGUMENT)!!.toInt()
 
+        @SuppressLint("UnrememberedMutableState")
         val categories = mutableStateListOf<CategoryObject>()
+
+        @SuppressLint("UnrememberedMutableState")
         val posts = mutableStateListOf<Triple<PostObject, MessageObject, UserObject>>()
 
         api.categories.get(id)
@@ -39,6 +43,7 @@ fun NavGraphBuilder.categoryPage(navController: NavController, api: APIClient) {
 
         CategoryPage(
             navController = navController,
+            api = api,
             categories = categories,
             posts = posts,
             category = api.categories.cache.get(id),

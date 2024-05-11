@@ -94,6 +94,7 @@ fun LoginPage(navController: NavController, api: APIClient, modifier: Modifier =
                     value = username,
                     onValueChange = { username = it },
                     modifier = Modifier.fillMaxWidth(),
+                    enabled = !fetching,
                     label = { Text(text = stringResource(id = R.string.username)) },
                     supportingText = if (usernameError.isEmpty()) null else ({
                         Text(text = usernameError)
@@ -107,6 +108,7 @@ fun LoginPage(navController: NavController, api: APIClient, modifier: Modifier =
                     valueVisible = passwordVisible,
                     onValueVisibilityChange = { passwordVisible = it },
                     modifier = Modifier.fillMaxWidth(),
+                    enabled = !fetching,
                     supportingText = if (passwordError.isEmpty()) null else ({
                         Text(text = passwordError)
                     }),

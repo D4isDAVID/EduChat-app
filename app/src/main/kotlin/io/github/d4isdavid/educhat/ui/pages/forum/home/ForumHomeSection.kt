@@ -14,6 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import io.github.d4isdavid.educhat.R
+import io.github.d4isdavid.educhat.api.client.APIClient
 import io.github.d4isdavid.educhat.api.objects.CategoryObject
 import io.github.d4isdavid.educhat.api.utils.createMockClient
 import io.github.d4isdavid.educhat.api.utils.mockCategory
@@ -24,6 +25,7 @@ import io.github.d4isdavid.educhat.ui.theme.EduChatTheme
 @Composable
 fun ForumHomeSection(
     navController: NavController,
+    api: APIClient,
     categories: List<CategoryObject>,
     modifier: Modifier = Modifier,
 ) {
@@ -37,6 +39,7 @@ fun ForumHomeSection(
     ) { paddingValues ->
         CategoryPage(
             navController = navController,
+            api = api,
             categories = categories,
             posts = listOf(),
             modifier = Modifier
@@ -56,7 +59,8 @@ fun ForumHomeSectionPreview() {
             mockCategory(id = 3, name = "Three")
         }
         ForumHomeSection(
-            rememberNavController(),
+            navController = rememberNavController(),
+            api = api,
             categories = listOf(
                 api.categories.cache.get(1)!!,
                 api.categories.cache.get(2)!!,
