@@ -32,13 +32,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import io.github.d4isdavid.educhat.BuildConfig
 import io.github.d4isdavid.educhat.R
 import io.github.d4isdavid.educhat.api.client.APIClient
 import io.github.d4isdavid.educhat.api.enums.APIError
 import io.github.d4isdavid.educhat.api.input.UserCreateObject
 import io.github.d4isdavid.educhat.api.utils.createMockClient
-import io.github.d4isdavid.educhat.http.rest.RestClient
 import io.github.d4isdavid.educhat.ui.components.labeled.LabeledCheckbox
 import io.github.d4isdavid.educhat.ui.components.textfields.OutlinedPasswordField
 import io.github.d4isdavid.educhat.ui.navigation.FORUM_SECTION_ROUTE
