@@ -37,6 +37,7 @@ import io.github.d4isdavid.educhat.R
 import io.github.d4isdavid.educhat.api.client.APIClient
 import io.github.d4isdavid.educhat.api.enums.APIError
 import io.github.d4isdavid.educhat.api.input.UserCreateObject
+import io.github.d4isdavid.educhat.api.utils.createMockClient
 import io.github.d4isdavid.educhat.http.rest.RestClient
 import io.github.d4isdavid.educhat.ui.components.labeled.LabeledCheckbox
 import io.github.d4isdavid.educhat.ui.components.textfields.OutlinedPasswordField
@@ -210,9 +211,10 @@ fun RegisterPage(navController: NavController, api: APIClient, modifier: Modifie
 @Composable
 private fun RegisterPagePreview() {
     EduChatTheme(dynamicColor = false) {
+        val api = createMockClient(rememberCoroutineScope()) {}
         RegisterPage(
             navController = rememberNavController(),
-            api = APIClient(RestClient(BuildConfig.API_BASE_URL, rememberCoroutineScope())),
+            api = api,
         )
     }
 }

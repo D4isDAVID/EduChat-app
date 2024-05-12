@@ -36,6 +36,7 @@ import io.github.d4isdavid.educhat.BuildConfig
 import io.github.d4isdavid.educhat.R
 import io.github.d4isdavid.educhat.api.client.APIClient
 import io.github.d4isdavid.educhat.api.enums.APIError
+import io.github.d4isdavid.educhat.api.utils.createMockClient
 import io.github.d4isdavid.educhat.http.rest.RestClient
 import io.github.d4isdavid.educhat.ui.components.textfields.OutlinedPasswordField
 import io.github.d4isdavid.educhat.ui.navigation.FORUM_SECTION_ROUTE
@@ -166,9 +167,10 @@ fun LoginPage(navController: NavController, api: APIClient, modifier: Modifier =
 @Composable
 fun LoginPagePreview() {
     EduChatTheme(dynamicColor = false) {
+        val api = createMockClient(rememberCoroutineScope()) {}
         LoginPage(
             navController = rememberNavController(),
-            api = APIClient(RestClient(BuildConfig.API_BASE_URL, rememberCoroutineScope())),
+            api = api,
         )
     }
 }
