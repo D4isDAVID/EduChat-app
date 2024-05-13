@@ -5,7 +5,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Save
@@ -31,12 +34,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -53,7 +60,7 @@ import io.github.d4isdavid.educhat.ui.components.labeled.LabeledIconButton
 import io.github.d4isdavid.educhat.ui.theme.EduChatTheme
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun ManageCategoryBottomSheet(
     api: APIClient,
@@ -76,6 +83,8 @@ fun ManageCategoryBottomSheet(
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
+
+    val (focusRequester) = FocusRequester.createRefs()
 
     var name by remember { mutableStateOf(category?.name ?: "") }
     var description: String? by remember { mutableStateOf(category?.description) }
@@ -103,7 +112,10 @@ fun ManageCategoryBottomSheet(
         windowInsets = windowInsets,
         properties = properties,
     ) {
-        Column {
+        Column(
+            modifier = Modifier
+                .navigationBarsPadding(),
+        ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -219,18 +231,36 @@ fun ManageCategoryBottomSheet(
                         Text(text = nameError)
                     }),
                     isError = nameError.isNotEmpty(),
+                    keyboardOptions = KeyboardOptions(
+                        autoCorrect = false,
+                        imeAction = ImeAction.Next,
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onNext = { focusRequester.requestFocus() },
+                    ),
+                    singleLine = true,
                 )
 
                 OutlinedTextField(
                     value = description ?: "",
                     onValueChange = { description = it.ifEmpty { null } },
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .focusRequester(focusRequester = focusRequester),
                     enabled = !fetching,
                     label = { Text(text = stringResource(id = R.string.description)) },
                     supportingText = if (descriptionError.isEmpty()) null else ({
                         Text(text = descriptionError)
                     }),
                     isError = descriptionError.isNotEmpty(),
+                    keyboardOptions = KeyboardOptions(
+                        autoCorrect = false,
+                        imeAction = ImeAction.Done,
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onNext = { focusRequester.freeFocus() },
+                    ),
+                    singleLine = true,
                 )
             }
         }

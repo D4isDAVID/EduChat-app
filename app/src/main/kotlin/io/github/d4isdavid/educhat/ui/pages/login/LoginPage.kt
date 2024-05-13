@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
@@ -25,9 +27,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -42,13 +49,15 @@ import io.github.d4isdavid.educhat.ui.navigation.LOGIN_SECTION_ROUTE
 import io.github.d4isdavid.educhat.ui.theme.EduChatTheme
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun LoginPage(navController: NavController, api: APIClient, modifier: Modifier = Modifier) {
     val context = LocalContext.current
 
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
+
+    val (focusRequester) = FocusRequester.createRefs()
 
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -99,6 +108,14 @@ fun LoginPage(navController: NavController, api: APIClient, modifier: Modifier =
                         Text(text = usernameError)
                     }),
                     isError = usernameError.isNotEmpty(),
+                    keyboardOptions = KeyboardOptions(
+                        autoCorrect = false,
+                        imeAction = ImeAction.Next,
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onNext = { focusRequester.requestFocus() },
+                    ),
+                    singleLine = true,
                 )
 
                 OutlinedPasswordField(
@@ -106,12 +123,23 @@ fun LoginPage(navController: NavController, api: APIClient, modifier: Modifier =
                     onValueChange = { password = it },
                     valueVisible = passwordVisible,
                     onValueVisibilityChange = { passwordVisible = it },
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .focusRequester(focusRequester = focusRequester),
                     enabled = !fetching,
                     supportingText = if (passwordError.isEmpty()) null else ({
                         Text(text = passwordError)
                     }),
-                    isError = usernameError.isNotEmpty(),
+                    isError = passwordError.isNotEmpty(),
+                    keyboardOptions = KeyboardOptions(
+                        autoCorrect = false,
+                        keyboardType = KeyboardType.Password,
+                        imeAction = ImeAction.Done,
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onNext = { focusRequester.freeFocus() },
+                    ),
+                    singleLine = true,
                 )
             }
 
