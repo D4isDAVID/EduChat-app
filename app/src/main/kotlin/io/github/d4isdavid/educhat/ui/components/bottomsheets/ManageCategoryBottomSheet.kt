@@ -10,8 +10,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Save
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.BottomSheetDefaults
@@ -125,12 +126,12 @@ fun ManageCategoryBottomSheet(
                     LabeledIconButton(
                         icon = {
                             Icon(
-                                imageVector = Icons.Filled.Save,
-                                contentDescription = stringResource(id = R.string.save),
+                                imageVector = Icons.Filled.Create,
+                                contentDescription = stringResource(id = R.string.create),
                             )
                         },
                         label = {
-                            Text(text = stringResource(id = R.string.save))
+                            Text(text = stringResource(id = R.string.create))
                         },
                         onClick = {
                             fetching = true
@@ -165,11 +166,11 @@ fun ManageCategoryBottomSheet(
                 LabeledIconButton(
                     icon = {
                         Icon(
-                            imageVector = Icons.Filled.Save,
-                            contentDescription = stringResource(id = R.string.save),
+                            imageVector = Icons.Filled.Edit,
+                            contentDescription = stringResource(id = R.string.edit),
                         )
                     },
-                    label = { Text(text = stringResource(id = R.string.save)) },
+                    label = { Text(text = stringResource(id = R.string.edit)) },
                     onClick = {
                         fetching = true
                         nameError = ""
