@@ -27,18 +27,14 @@
     <string name="locked">Locked</string>
     <string name="post">Post</string>
 
-    <string name="create_category">Create Category</string>
-    <string name="edit_category">Edit Category</string>
     <string name="name">Name</string>
     <string name="description">Description</string>
-    <string name="save">Save</string>
     <string name="delete">Delete</string>
     <string name="warning">Warning</string>
     <string name="edit">Edit</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
 
-    <string name="add_category">Add Category</string>
     <string name="write_post">Write Post</string>
     <string name="add">Add</string>
     <string name="create">Create</string>
