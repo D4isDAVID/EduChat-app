@@ -1,6 +1,5 @@
 package io.github.d4isdavid.educhat.ui.pages.forum
 
-import android.annotation.SuppressLint
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.RowScope
@@ -159,13 +158,15 @@ fun HomePage(navController: NavController, api: APIClient, modifier: Modifier = 
             popExitTransition = { ExitTransition.None },
         ) {
             composable(route = FORUM_ROUTE) {
-                @SuppressLint("UnrememberedMutableState")
-                val categories = mutableStateListOf<CategoryObject>()
+                val categories = remember { mutableStateListOf<CategoryObject>() }
 
                 if (!inspectionMode) {
                     api.categories.get(CategoriesFetchParams(parentId = null))
                         .onSuccess {
-                            it.forEach { c -> categories.add(c) }
+                            categories.clear()
+                            it.forEachIndexed { i, c ->
+                                categories.add(i, c)
+                            }
                         }
                         .onError { (status, error) ->
                             scope.launch {

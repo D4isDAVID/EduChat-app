@@ -27,7 +27,6 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -70,9 +69,7 @@ fun CategoryPage(
     val listState = rememberLazyListState()
 
     val snackbarHostState = remember { SnackbarHostState() }
-    val creatingSheetState = rememberModalBottomSheetState()
     var creating by remember { mutableStateOf(false) }
-    val editingSheetState = rememberModalBottomSheetState()
     var editing by remember { mutableStateOf(false) }
 
     Scaffold(
@@ -94,10 +91,7 @@ fun CategoryPage(
                 },
                 actions = {
                     if (api.users.me != null && api.users.me!!.admin) {
-                        IconButton(onClick = {
-                            editing = true
-                            scope.launch { editingSheetState.show() }
-                        }) {
+                        IconButton(onClick = { editing = true }) {
                             Icon(
                                 imageVector = Icons.Filled.Edit,
                                 contentDescription = stringResource(id = R.string.edit),
