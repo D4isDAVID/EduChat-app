@@ -7,10 +7,10 @@ import org.json.JSONObject
 import java.time.Instant
 import kotlin.properties.Delegates
 
+@Suppress("EmptyMethod")
 class MessageObject : APIObject() {
 
     companion object {
-        @Suppress("unused")
         fun getKey(obj: JSONObject) = obj.getInt("id")
     }
 

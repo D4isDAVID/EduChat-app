@@ -16,6 +16,7 @@ import io.github.d4isdavid.educhat.http.request.writers.writeJsonObject
 import org.json.JSONObject
 import kotlin.reflect.KFunction
 
+@Suppress("unused")
 class PostsAPI(private val client: APIClient) {
 
     private val rest

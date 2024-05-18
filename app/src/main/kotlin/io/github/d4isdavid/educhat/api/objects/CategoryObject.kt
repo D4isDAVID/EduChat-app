@@ -5,10 +5,10 @@ import io.github.d4isdavid.educhat.api.utils.nullableString
 import org.json.JSONObject
 import kotlin.properties.Delegates
 
+@Suppress("EmptyMethod")
 class CategoryObject : APIObject() {
 
     companion object {
-        @Suppress("unused")
         fun getKey(obj: JSONObject) = obj.getInt("id")
     }
 

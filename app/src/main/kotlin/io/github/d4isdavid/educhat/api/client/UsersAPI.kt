@@ -11,6 +11,7 @@ import io.github.d4isdavid.educhat.http.request.handlers.handleJsonObject
 import io.github.d4isdavid.educhat.http.request.writers.writeJsonObject
 import io.github.d4isdavid.educhat.http.rest.RestResultListener
 
+@Suppress("unused")
 class UsersAPI(private val client: APIClient) {
 
     private val rest

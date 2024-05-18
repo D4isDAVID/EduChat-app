@@ -7,6 +7,7 @@ val boundaryChars = ('A'..'Z') + ('a'..'z') + ('0'..'9')
 const val BOUNDARY_LENGTH = 40 // max is 70
 const val CHUNK_SIZE = 8192 // default BufferedWriter chunk size
 
+@Suppress("unused")
 fun HttpURLConnection.writeMultipartFormData(
     data: Array<HttpFormDataPart>,
     customBoundary: String?

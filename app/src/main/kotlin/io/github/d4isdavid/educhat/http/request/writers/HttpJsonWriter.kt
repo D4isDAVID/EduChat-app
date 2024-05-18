@@ -9,6 +9,7 @@ fun HttpURLConnection.writeJsonObject(data: JSONObject) {
     writeData(data.toString())
 }
 
+@Suppress("unused")
 fun HttpURLConnection.writeJsonArray(data: JSONArray) {
     setRequestProperty("Content-Type", "application/json")
     writeData(data.toString())

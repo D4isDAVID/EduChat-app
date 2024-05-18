@@ -5,6 +5,7 @@ import io.github.d4isdavid.educhat.api.utils.Routes
 import io.github.d4isdavid.educhat.api.utils.getJSONObjects
 import io.github.d4isdavid.educhat.http.request.handlers.handleJsonArray
 
+@Suppress("unused")
 class ReactionsAPI(private val client: APIClient) {
 
     private val rest
