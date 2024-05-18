@@ -40,6 +40,20 @@
     <string name="create">Create</string>
     <string name="up">Up</string>
 
+    <string name="error_notification_channel_name">Errors</string>
+    <string name="error_report">Error Report</string>
+    <string name="error_report_message">Sorry, that wasn\'t supposed to happen.</string>
+    <string name="message">Message</string>
+    <string name="stack_trace">Stack Trace</string>
+    <string name="no_message">No message</string>
+    <string name="error_toast">An error occurred, see the notification</string>
+
+    <string name="notifications_permission_info">Notifications are used for telling you about errors that happen while using the app.</string>
+    <string name="grant_permission">Grant permission</string>
+    <string name="cancel">Cancel</string>
+    <string name="permission_icon">Permission Icon</string>
+    <string name="missing_permission">Missing Permission</string>
+
     <string name="http_status_ok">200 OK</string>
     <string name="http_status_created">201 Created</string>
     <string name="http_status_no_content">204 No Content</string>
