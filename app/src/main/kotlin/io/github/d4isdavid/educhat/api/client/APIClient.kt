@@ -7,6 +7,7 @@ class APIClient(val rest: RestClient) {
     val categories = CategoriesAPI(this)
     val messages = MessagesAPI(this)
     val posts = PostsAPI(this)
+    val reactions = ReactionsAPI(this)
     val users = UsersAPI(this)
 
 }

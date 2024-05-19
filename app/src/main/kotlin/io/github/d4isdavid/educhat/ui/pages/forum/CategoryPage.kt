@@ -172,7 +172,12 @@ fun CategoryPage(
                 items(
                     posts,
                     key = { (post) -> "post${post.messageId}" }) { (post, message, author) ->
-                    PostListItem(post = post, message = message, author = author)
+                    PostListItem(
+                        navController = navController,
+                        post = post,
+                        message = message,
+                        author = author
+                    )
                 }
             }
         }

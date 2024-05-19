@@ -1,5 +1,6 @@
 package io.github.d4isdavid.educhat.ui.components.lists
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
@@ -20,16 +21,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import io.github.d4isdavid.educhat.R
 import io.github.d4isdavid.educhat.api.objects.MessageObject
 import io.github.d4isdavid.educhat.api.objects.PostObject
 import io.github.d4isdavid.educhat.api.objects.UserObject
 import io.github.d4isdavid.educhat.api.utils.createMockClient
 import io.github.d4isdavid.educhat.api.utils.mockPost
+import io.github.d4isdavid.educhat.ui.navigation.forum.postPageRoute
 import io.github.d4isdavid.educhat.ui.theme.EduChatTheme
 
 @Composable
 fun PostListItem(
+    navController: NavController,
     post: PostObject,
     message: MessageObject,
     author: UserObject,
@@ -56,7 +61,8 @@ fun PostListItem(
                 }
             }
         },
-        modifier = modifier,
+        modifier = modifier
+            .clickable { navController.navigate(postPageRoute(post.messageId.toString())) },
         overlineContent = { Text(text = author.name) },
         leadingContent = {
             Icon(
@@ -84,9 +90,10 @@ private fun PostListItemPreview() {
     EduChatTheme(dynamicColor = false) {
         val api = createMockClient(rememberCoroutineScope()) { mockPost() }
         PostListItem(
-            api.posts.cache.get(1)!!,
-            api.messages.cache.get(1)!!,
-            api.users.cache.get(1)!!
+            navController = rememberNavController(),
+            post = api.posts.cache.get(1)!!,
+            message = api.messages.cache.get(1)!!,
+            author = api.users.cache.get(1)!!
         )
     }
 }
@@ -97,9 +104,10 @@ private fun QuestionPostListItemPreview() {
     EduChatTheme(dynamicColor = false) {
         val api = createMockClient(rememberCoroutineScope()) { mockPost(question = true) }
         PostListItem(
-            api.posts.cache.get(1)!!,
-            api.messages.cache.get(1)!!,
-            api.users.cache.get(1)!!
+            navController = rememberNavController(),
+            post = api.posts.cache.get(1)!!,
+            message = api.messages.cache.get(1)!!,
+            author = api.users.cache.get(1)!!
         )
     }
 }
@@ -111,9 +119,10 @@ private fun AnsweredPostListItemPreview() {
         val api =
             createMockClient(rememberCoroutineScope()) { mockPost(question = true, answerId = 1) }
         PostListItem(
-            api.posts.cache.get(1)!!,
-            api.messages.cache.get(1)!!,
-            api.users.cache.get(1)!!
+            navController = rememberNavController(),
+            post = api.posts.cache.get(1)!!,
+            message = api.messages.cache.get(1)!!,
+            author = api.users.cache.get(1)!!
         )
     }
 }

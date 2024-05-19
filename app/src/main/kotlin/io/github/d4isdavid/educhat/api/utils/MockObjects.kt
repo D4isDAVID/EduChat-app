@@ -38,6 +38,7 @@ fun APIClient.mockMessage(
     editedAt: Instant? = null,
     pinned: Boolean = true,
     hidden: Boolean = false,
+    parentId: Int? = null,
     authorId: Int = 1,
     authorName: String = "MockUser",
     authorCreatedAt: Instant = Instant.now(),
@@ -55,6 +56,7 @@ fun APIClient.mockMessage(
         .put("editedAt", editedAt?.toString() ?: JSONObject.NULL)
         .put("pinned", pinned)
         .put("hidden", hidden)
+        .put("parentId", parentId ?: JSONObject.NULL)
         .put("author", author)
         .put("reactions", reactions)
     messages.cache.put(
@@ -74,6 +76,7 @@ fun APIClient.mockPost(
     messageEditedAt: Instant? = null,
     messagePinned: Boolean = true,
     messageHidden: Boolean = false,
+    messageParentId: Int? = null,
     authorId: Int = 1,
     authorName: String = "MockUser",
     authorCreatedAt: Instant = Instant.now(),
@@ -94,6 +97,7 @@ fun APIClient.mockPost(
         messageEditedAt,
         messagePinned,
         messageHidden,
+        messageParentId,
         authorId,
         authorName,
         authorCreatedAt,
@@ -139,6 +143,18 @@ fun APIClient.mockUser(
     UserObject.getKey(user)
     users.cache.put(user, UserObject::getKey, ::UserObject)
     return user
+}
+
+fun createMockReactionCount(
+    emoji: String = "😎",
+    count: Int = 10,
+    me: Boolean = false,
+): JSONObject {
+    val reaction = JSONObject()
+        .put("emoji", emoji)
+        .put("count", count)
+        .put("me", me)
+    return reaction
 }
 
 fun createMockClient(scope: CoroutineScope, func: APIClient.() -> Unit): APIClient {

@@ -3,6 +3,7 @@ package io.github.d4isdavid.educhat.api.objects
 import io.github.d4isdavid.educhat.api.utils.getInstant
 import io.github.d4isdavid.educhat.api.utils.getJSONObjects
 import io.github.d4isdavid.educhat.api.utils.nullableInstant
+import io.github.d4isdavid.educhat.api.utils.nullableInt
 import org.json.JSONObject
 import java.time.Instant
 import kotlin.properties.Delegates
@@ -26,6 +27,8 @@ class MessageObject : APIObject() {
         private set
     var hidden by Delegates.notNull<Boolean>()
         private set
+    var parentId: Int? = null
+        private set
     var authorId by Delegates.notNull<Int>()
         private set
     var reactions = mutableMapOf<String, ReactionCountObject>()
@@ -38,6 +41,7 @@ class MessageObject : APIObject() {
         editedAt = obj.nullableInstant("editedAt")
         pinned = obj.getBoolean("pinned")
         hidden = obj.getBoolean("hidden")
+        parentId = obj.nullableInt("parentId")
         authorId = obj.getJSONObject("author").getInt("id")
 
         reactions.clear()

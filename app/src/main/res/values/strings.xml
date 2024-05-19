@@ -54,6 +54,10 @@
     <string name="permission_icon">Permission Icon</string>
     <string name="missing_permission">Missing Permission</string>
 
+    <string name="add_emoji">Add Emoji</string>
+    <string name="replies_count">%1$d replies</string>
+    <string name="more">more</string>
+
     <string name="http_status_ok">200 OK</string>
     <string name="http_status_created">201 Created</string>
     <string name="http_status_no_content">204 No Content</string>
