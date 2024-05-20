@@ -27,7 +27,7 @@ enum class HttpStatusCode(val code: Int) {
         BAD_REQUEST -> context.resources.getString(R.string.http_status_bad_request)
         UNAUTHORIZED -> context.resources.getString(R.string.http_status_unauthorized)
         FORBIDDEN -> context.resources.getString(R.string.http_status_forbidden)
-        NOT_FOUND -> context.resources.getString(R.string.http_status_not_implemented)
+        NOT_FOUND -> context.resources.getString(R.string.http_status_not_found)
         METHOD_NOT_ALLOWED -> context.resources.getString(R.string.http_status_method_not_allowed)
         CONFLICT -> context.resources.getString(R.string.http_status_conflict)
         GONE -> context.resources.getString(R.string.http_status_gone)

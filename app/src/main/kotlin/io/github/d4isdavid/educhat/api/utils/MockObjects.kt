@@ -159,6 +159,6 @@ fun createMockReactionCount(
 
 fun createMockClient(scope: CoroutineScope, func: APIClient.() -> Unit): APIClient {
     val api = APIClient(RestClient(BuildConfig.API_BASE_URL, scope))
-    api.func()
+    func(api)
     return api
 }

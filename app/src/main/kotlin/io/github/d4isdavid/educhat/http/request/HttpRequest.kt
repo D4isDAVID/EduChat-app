@@ -14,7 +14,7 @@ fun <T> makeHttpRequest(url: URL, hook: HttpURLConnection.() -> T): T {
 
     try {
         connection.setRequestProperty("User-Agent", System.getProperty("http.agent"))
-        return connection.hook()
+        return hook(connection)
     } finally {
         connection.disconnect()
     }

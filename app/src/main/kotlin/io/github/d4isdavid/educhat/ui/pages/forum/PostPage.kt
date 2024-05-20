@@ -24,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -96,7 +97,7 @@ fun PostPage(
                 MessageCard(api = api, message = message, author = author)
 
                 Text(
-                    text = stringResource(id = R.string.replies_count).format(replies.size),
+                    text = pluralStringResource(id = R.plurals.reply_count, count = replies.size, replies.size).format(replies.size),
                     modifier = Modifier.padding(start = 16.dp, top = 16.dp),
                     style = MaterialTheme.typography.titleMedium,
                 )

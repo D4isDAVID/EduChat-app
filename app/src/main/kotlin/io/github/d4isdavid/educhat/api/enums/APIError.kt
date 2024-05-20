@@ -11,6 +11,7 @@ enum class APIError(val code: Int) {
     UNKNOWN_CATEGORY(1002),
     UNKNOWN_POST(1003),
     UNKNOWN_POST_REPLY(1004),
+    UNKNOWN_MESSAGE(1005),
 
     INVALID_OBJECT(2001),
     BAD_USERNAME_FORMAT(2002),
@@ -21,6 +22,7 @@ enum class APIError(val code: Int) {
     INVALID_PASSWORD(2007),
     INVALID_CATEGORY_NAME(2008),
     INVALID_POST_TITLE(2009),
+    INVALID_EMOJI(2010),
 
     NOT_STUDENT_OR_TEACHER(3001),
     USERNAME_UNAVAILABLE(3002),
@@ -43,6 +45,7 @@ enum class APIError(val code: Int) {
         UNKNOWN_CATEGORY -> context.resources.getString(R.string.api_error_unknown_category)
         UNKNOWN_POST -> context.resources.getString(R.string.api_error_unknown_post)
         UNKNOWN_POST_REPLY -> context.resources.getString(R.string.api_error_unknown_post_reply)
+        UNKNOWN_MESSAGE -> context.resources.getString(R.string.api_error_unknown_message)
         INVALID_OBJECT -> context.resources.getString(R.string.api_error_invalid_object)
         BAD_USERNAME_FORMAT -> context.resources.getString(R.string.api_error_bad_username_format)
         BAD_EMAIL_FORMAT -> context.resources.getString(R.string.api_error_bad_email_format)
@@ -52,6 +55,7 @@ enum class APIError(val code: Int) {
         INVALID_PASSWORD -> context.resources.getString(R.string.api_error_invalid_password)
         INVALID_CATEGORY_NAME -> context.resources.getString(R.string.api_error_invalid_category_name)
         INVALID_POST_TITLE -> context.resources.getString(R.string.api_error_invalid_post_title)
+        INVALID_EMOJI -> context.resources.getString(R.string.api_error_invalid_emoji)
         NOT_STUDENT_OR_TEACHER -> context.resources.getString(R.string.api_error_not_student_or_teacher)
         USERNAME_UNAVAILABLE -> context.resources.getString(R.string.api_error_username_unavailable)
         EMAIL_TAKEN -> context.resources.getString(R.string.api_error_email_taken)

@@ -148,11 +148,13 @@ fun ManagePostBottomSheet(
                             titleError = ""
                             contentError = ""
 
-                            api.categories.createPost(categoryId, PostCreateObject(
-                                message = MessageCreateObject(content),
-                                title = title,
-                                question = question,
-                            ))
+                            api.categories.createPost(
+                                categoryId, PostCreateObject(
+                                    message = MessageCreateObject(content),
+                                    title = title,
+                                    question = question,
+                                )
+                            )
                                 .onSuccess { hideSheet() }
                                 .onError { (status, error) ->
                                     hideSheet()

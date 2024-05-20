@@ -13,7 +13,6 @@ import io.github.d4isdavid.educhat.http.request.handlers.handleJsonArray
 import io.github.d4isdavid.educhat.http.request.handlers.handleJsonObject
 import io.github.d4isdavid.educhat.http.request.writers.writeJsonObject
 
-@Suppress("unused")
 class CategoriesAPI(private val client: APIClient) {
 
     private val rest

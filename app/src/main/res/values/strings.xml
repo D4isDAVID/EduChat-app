@@ -55,7 +55,6 @@
     <string name="missing_permission">Missing Permission</string>
 
     <string name="add_emoji">Add Emoji</string>
-    <string name="replies_count">%1$d replies</string>
     <string name="more">More</string>
     <string name="title">Title</string>
     <string name="content">Content</string>
