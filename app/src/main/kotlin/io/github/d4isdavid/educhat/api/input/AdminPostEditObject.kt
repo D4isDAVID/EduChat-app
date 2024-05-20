@@ -3,14 +3,14 @@ package io.github.d4isdavid.educhat.api.input
 import org.json.JSONObject
 
 data class AdminPostEditObject(
-    val message: MessageEditObject?,
+    val message: AdminMessageEditObject?,
     val title: String?,
-    val pinned: Boolean?,
     val locked: Boolean?,
+    val question: Boolean?,
 )
 
 fun AdminPostEditObject.toJSON(): JSONObject = JSONObject()
     .put("message", message?.toJSON())
     .put("title", title)
-    .put("pinned", pinned)
     .put("locked", locked)
+    .put("question", question)

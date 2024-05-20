@@ -4,9 +4,9 @@ import org.json.JSONObject
 
 data class AdminMessageEditObject(
     val content: String?,
-    val hidden: Boolean?,
+    val pinned: Boolean?,
 )
 
 fun AdminMessageEditObject.toJSON(): JSONObject = JSONObject()
     .put("content", content)
-    .put("hidden", hidden)
+    .put("pinned", pinned)

@@ -25,8 +25,6 @@ class MessageObject : APIObject() {
         private set
     var pinned by Delegates.notNull<Boolean>()
         private set
-    var hidden by Delegates.notNull<Boolean>()
-        private set
     var parentId: Int? = null
         private set
     var authorId by Delegates.notNull<Int>()
@@ -40,7 +38,6 @@ class MessageObject : APIObject() {
         createdAt = obj.getInstant("createdAt")
         editedAt = obj.nullableInstant("editedAt")
         pinned = obj.getBoolean("pinned")
-        hidden = obj.getBoolean("hidden")
         parentId = obj.nullableInt("parentId")
         authorId = obj.getJSONObject("author").getInt("id")
 
