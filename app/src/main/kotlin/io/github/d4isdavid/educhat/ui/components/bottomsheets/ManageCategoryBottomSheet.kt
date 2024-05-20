@@ -57,6 +57,7 @@ import io.github.d4isdavid.educhat.api.objects.CategoryObject
 import io.github.d4isdavid.educhat.api.utils.JSONNullable
 import io.github.d4isdavid.educhat.api.utils.createMockClient
 import io.github.d4isdavid.educhat.api.utils.mockCategory
+import io.github.d4isdavid.educhat.ui.components.labeled.LabeledCheckbox
 import io.github.d4isdavid.educhat.ui.components.labeled.LabeledIconButton
 import io.github.d4isdavid.educhat.ui.theme.EduChatTheme
 import kotlinx.coroutines.launch
@@ -89,6 +90,8 @@ fun ManageCategoryBottomSheet(
 
     var name by remember { mutableStateOf(category?.name ?: "") }
     var description: String? by remember { mutableStateOf(category?.description) }
+    var pinned by remember { mutableStateOf(category?.pinned ?: false) }
+    var locked by remember { mutableStateOf(category?.locked ?: false) }
 
     var nameError by remember { mutableStateOf("") }
     var descriptionError by remember { mutableStateOf("") }
@@ -181,8 +184,8 @@ fun ManageCategoryBottomSheet(
                             CategoryEditObject(
                                 name,
                                 JSONNullable(description),
-                                null,
-                                null,
+                                pinned,
+                                locked,
                                 null,
                             )
                         ).onSuccess { hideSheet() }.onError { (status, error) ->
@@ -263,6 +266,21 @@ fun ManageCategoryBottomSheet(
                     ),
                     singleLine = true,
                 )
+
+                if (category != null) {
+                    LabeledCheckbox(
+                        checked = pinned,
+                        label = { Text(text = stringResource(id = R.string.pinned)) },
+                        onCheckedChange = { pinned = it },
+                    )
+
+                    LabeledCheckbox(
+                        checked = locked,
+                        label = { Text(text = stringResource(id = R.string.locked)) },
+                        onCheckedChange = { locked = it },
+                    )
+
+                }
             }
         }
     }

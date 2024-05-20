@@ -52,12 +52,16 @@ import androidx.compose.ui.unit.dp
 import io.github.d4isdavid.educhat.R
 import io.github.d4isdavid.educhat.api.client.APIClient
 import io.github.d4isdavid.educhat.api.enums.APIError
+import io.github.d4isdavid.educhat.api.input.AdminMessageEditObject
+import io.github.d4isdavid.educhat.api.input.AdminPostEditObject
 import io.github.d4isdavid.educhat.api.input.MessageCreateObject
 import io.github.d4isdavid.educhat.api.input.PostCreateObject
 import io.github.d4isdavid.educhat.api.input.PostEditObject
 import io.github.d4isdavid.educhat.api.objects.PostObject
 import io.github.d4isdavid.educhat.api.utils.createMockClient
 import io.github.d4isdavid.educhat.api.utils.mockPost
+import io.github.d4isdavid.educhat.http.request.HttpStatusCode
+import io.github.d4isdavid.educhat.ui.components.labeled.LabeledCheckbox
 import io.github.d4isdavid.educhat.ui.components.labeled.LabeledIconButton
 import io.github.d4isdavid.educhat.ui.theme.EduChatTheme
 import kotlinx.coroutines.launch
@@ -91,8 +95,10 @@ fun ManagePostBottomSheet(
     val (focusRequester) = FocusRequester.createRefs()
 
     var title by remember { mutableStateOf(post?.title ?: "") }
+    var question by remember { mutableStateOf(post?.question ?: true) }
+    var locked by remember { mutableStateOf(post?.locked ?: false) }
+    var pinned by remember { mutableStateOf(message?.pinned ?: false) }
     var content by remember { mutableStateOf(message?.content ?: "") }
-    var question by remember { mutableStateOf(true) }
 
     var titleError by remember { mutableStateOf("") }
     var contentError by remember { mutableStateOf("") }
@@ -184,15 +190,7 @@ fun ManagePostBottomSheet(
                         titleError = ""
                         contentError = ""
 
-                        api.posts.edit(
-                            post.messageId,
-                            PostEditObject(
-                                message = MessageCreateObject(content),
-                                title = title,
-                                question = question,
-                                answerId = null,
-                            )
-                        ).onSuccess { hideSheet() }.onError { (status, error) ->
+                        val onError: (Pair<HttpStatusCode, APIError>) -> Unit = { (status, error) ->
                             val errMessage = error.getMessage(context, status)
 
                             when (error) {
@@ -207,6 +205,34 @@ fun ManagePostBottomSheet(
 
                             hideSheet()
                         }
+
+                        api.posts.edit(
+                            post.messageId,
+                            PostEditObject(
+                                message = MessageCreateObject(content),
+                                title = title,
+                                question = question,
+                                answerId = null,
+                            )
+                        ).onSuccess {
+                            if (!api.users.me!!.admin) {
+                                hideSheet()
+                                return@onSuccess
+                            }
+
+                            api.posts.edit(
+                                post.messageId,
+                                AdminPostEditObject(
+                                    message = AdminMessageEditObject(
+                                        content = null,
+                                        pinned = pinned,
+                                    ),
+                                    title = null,
+                                    locked = locked,
+                                    question = null,
+                                )
+                            ).onSuccess { hideSheet() }.onError(onError)
+                        }.onError(onError)
                     },
                     enabled = title.isNotEmpty() && content.isNotEmpty() && !fetching,
                 )
@@ -248,6 +274,26 @@ fun ManagePostBottomSheet(
                     ),
                     singleLine = true,
                 )
+
+                LabeledCheckbox(
+                    checked = question,
+                    label = { Text(text = stringResource(id = R.string.question)) },
+                    onCheckedChange = { question = it },
+                )
+
+                if (post != null && api.users.me?.admin == true) {
+                    LabeledCheckbox(
+                        checked = locked,
+                        label = { Text(text = stringResource(id = R.string.locked)) },
+                        onCheckedChange = { locked = it },
+                    )
+
+                    LabeledCheckbox(
+                        checked = pinned,
+                        label = { Text(text = stringResource(id = R.string.pinned)) },
+                        onCheckedChange = { pinned = it },
+                    )
+                }
 
                 OutlinedTextField(
                     value = content,

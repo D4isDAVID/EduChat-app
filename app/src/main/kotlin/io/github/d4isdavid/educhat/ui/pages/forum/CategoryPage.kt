@@ -137,7 +137,7 @@ fun CategoryPage(
                     }
                 }
 
-                if (category != null && api.users.me != null) {
+                if (category != null && api.users.me != null && !category.locked) {
                     Spacer(modifier = Modifier.height(24.dp))
 
                     ExtendedFloatingActionButton(
@@ -148,7 +148,7 @@ fun CategoryPage(
                                 contentDescription = stringResource(id = R.string.create),
                             )
                         },
-                        onClick = { posting = true }
+                        onClick = { posting = true },
                     )
                 }
             }
