@@ -29,7 +29,7 @@ fun createErrorNotificationChannel(context: Context) {
 
 fun postErrorNotification(context: Context, t: Thread, e: Throwable) {
     val intent = Intent(context, ErrorActivity::class.java)
-    intent.putExtra(ERROR_EXCEPTION_MESSAGE_EXTRA, e.localizedMessage)
+    intent.putExtra(ERROR_EXCEPTION_MESSAGE_EXTRA, e.localizedMessage ?: "None")
     intent.putExtra(ERROR_EXCEPTION_STACK_EXTRA, e.stackTraceToString().trim())
 
     val pendingIntent = PendingIntent.getActivity(
