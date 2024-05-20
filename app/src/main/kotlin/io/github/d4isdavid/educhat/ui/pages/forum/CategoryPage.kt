@@ -50,6 +50,7 @@ import io.github.d4isdavid.educhat.api.utils.createMockClient
 import io.github.d4isdavid.educhat.api.utils.mockCategory
 import io.github.d4isdavid.educhat.api.utils.mockPost
 import io.github.d4isdavid.educhat.ui.components.bottomsheets.ManageCategoryBottomSheet
+import io.github.d4isdavid.educhat.ui.components.bottomsheets.ManagePostBottomSheet
 import io.github.d4isdavid.educhat.ui.components.lists.CategoryListItem
 import io.github.d4isdavid.educhat.ui.components.lists.PostListItem
 import io.github.d4isdavid.educhat.ui.theme.EduChatTheme
@@ -71,6 +72,7 @@ fun CategoryPage(
     val snackbarHostState = remember { SnackbarHostState() }
     var creating by remember { mutableStateOf(false) }
     var editing by remember { mutableStateOf(false) }
+    var posting by remember { mutableStateOf(false) }
 
     Scaffold(
         modifier = modifier,
@@ -146,7 +148,7 @@ fun CategoryPage(
                                 contentDescription = stringResource(id = R.string.create),
                             )
                         },
-                        onClick = { /*TODO*/ }
+                        onClick = { posting = true }
                     )
                 }
             }
@@ -209,6 +211,20 @@ fun CategoryPage(
             },
             onDelete = { navController.popBackStack() },
             category = category,
+        )
+    }
+
+    if (category != null && posting) {
+        ManagePostBottomSheet(
+            api = api,
+            categoryId = category.id,
+            onDismissRequest = { posting = false },
+            onError = {
+                scope.launch {
+                    snackbarHostState.currentSnackbarData?.dismiss()
+                    snackbarHostState.showSnackbar(it, withDismissAction = true)
+                }
+            },
         )
     }
 }

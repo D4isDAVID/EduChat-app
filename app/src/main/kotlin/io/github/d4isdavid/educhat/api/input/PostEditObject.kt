@@ -7,8 +7,8 @@ import org.json.JSONObject
 data class PostEditObject(
     val message: MessageCreateObject?,
     val title: String?,
-    val question: String?,
-    val answerId: JSONNullable<Int>?
+    val question: Boolean?,
+    val answerId: JSONNullable<Int>?,
 )
 
 fun PostEditObject.toJSON(): JSONObject = JSONObject()

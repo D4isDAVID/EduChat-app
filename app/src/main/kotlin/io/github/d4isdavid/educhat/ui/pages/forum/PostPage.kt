@@ -6,16 +6,23 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -30,8 +37,10 @@ import io.github.d4isdavid.educhat.api.objects.UserObject
 import io.github.d4isdavid.educhat.api.utils.createMockClient
 import io.github.d4isdavid.educhat.api.utils.mockMessage
 import io.github.d4isdavid.educhat.api.utils.mockPost
+import io.github.d4isdavid.educhat.ui.components.bottomsheets.ManagePostBottomSheet
 import io.github.d4isdavid.educhat.ui.components.cards.MessageCard
 import io.github.d4isdavid.educhat.ui.theme.EduChatTheme
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -42,8 +51,13 @@ fun PostPage(
     replies: List<Pair<MessageObject, UserObject>>,
     modifier: Modifier = Modifier,
 ) {
+    val scope = rememberCoroutineScope()
+
+    val snackbarHostState = remember { SnackbarHostState() }
     val message = api.messages.cache.get(post.messageId)!!
     val author = api.users.cache.get(message.authorId)!!
+
+    var editing by remember { mutableStateOf(false) }
 
     Scaffold(
         modifier = modifier,
@@ -58,9 +72,20 @@ fun PostPage(
                         )
                     }
                 },
+                actions = {
+                    if (api.users.me?.id == author.id) {
+                        IconButton(onClick = { editing = true }) {
+                            Icon(
+                                imageVector = Icons.Filled.Edit,
+                                contentDescription = stringResource(id = R.string.edit),
+                            )
+                        }
+                    }
+                },
                 scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(),
             )
         },
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
     ) { paddingValues ->
         LazyColumn(
             modifier = Modifier
@@ -87,6 +112,25 @@ fun PostPage(
                 )
             }
         }
+    }
+
+    if (editing) {
+        ManagePostBottomSheet(
+            api = api,
+            categoryId = post.categoryId,
+            onDismissRequest = { editing = false },
+            onError = {
+                scope.launch {
+                    snackbarHostState.currentSnackbarData?.dismiss()
+                    snackbarHostState.showSnackbar(it, withDismissAction = true)
+                }
+            },
+            onDelete = {
+                navController.popBackStack()
+                navController.popBackStack()
+            },
+            post = post,
+        )
     }
 }
 
