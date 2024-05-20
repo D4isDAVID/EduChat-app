@@ -59,11 +59,11 @@ fun LoginPage(navController: NavController, api: APIClient, modifier: Modifier =
 
     val (focusRequester) = FocusRequester.createRefs()
 
-    var username by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
 
-    var usernameError by remember { mutableStateOf("") }
+    var emailError by remember { mutableStateOf("") }
     var passwordError by remember { mutableStateOf("") }
     var fetching by remember { mutableStateOf(false) }
 
@@ -99,17 +99,18 @@ fun LoginPage(navController: NavController, api: APIClient, modifier: Modifier =
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 OutlinedTextField(
-                    value = username,
-                    onValueChange = { username = it },
+                    value = email,
+                    onValueChange = { email = it },
                     modifier = Modifier.fillMaxWidth(),
                     enabled = !fetching,
-                    label = { Text(text = stringResource(id = R.string.username)) },
-                    supportingText = if (usernameError.isEmpty()) null else ({
-                        Text(text = usernameError)
+                    label = { Text(text = stringResource(id = R.string.email)) },
+                    supportingText = if (emailError.isEmpty()) null else ({
+                        Text(text = emailError)
                     }),
-                    isError = usernameError.isNotEmpty(),
+                    isError = emailError.isNotEmpty(),
                     keyboardOptions = KeyboardOptions(
                         autoCorrect = false,
+                        keyboardType = KeyboardType.Email,
                         imeAction = ImeAction.Next,
                     ),
                     keyboardActions = KeyboardActions(
@@ -146,10 +147,10 @@ fun LoginPage(navController: NavController, api: APIClient, modifier: Modifier =
             Button(
                 onClick = {
                     fetching = true
-                    usernameError = ""
+                    emailError = ""
                     passwordError = ""
 
-                    api.users.logIn(username, password)
+                    api.users.logIn(email, password)
                         .onSuccess {
                             navController.navigate(FORUM_SECTION_ROUTE) {
                                 popUpTo(LOGIN_SECTION_ROUTE) {
@@ -161,7 +162,7 @@ fun LoginPage(navController: NavController, api: APIClient, modifier: Modifier =
                             val message = error.getMessage(context, status)
 
                             when (error) {
-                                APIError.INVALID_USERNAME -> usernameError = message
+                                APIError.INVALID_EMAIL -> emailError = message
                                 APIError.INVALID_PASSWORD -> passwordError = message
 
                                 else -> scope.launch {
@@ -177,7 +178,7 @@ fun LoginPage(navController: NavController, api: APIClient, modifier: Modifier =
                         }
                 },
                 modifier = Modifier.fillMaxWidth(),
-                enabled = username.isNotEmpty() && password.isNotEmpty() && !fetching,
+                enabled = email.isNotEmpty() && password.isNotEmpty() && !fetching,
             ) {
                 if (fetching) {
                     CircularProgressIndicator(modifier = Modifier.size(ButtonDefaults.IconSize))

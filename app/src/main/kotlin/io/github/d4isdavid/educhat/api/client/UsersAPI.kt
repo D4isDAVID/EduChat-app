@@ -72,9 +72,9 @@ class UsersAPI(private val client: APIClient) {
         me = null
     }
 
-    fun logIn(name: String, password: String): RestResultListener<UserObject> {
+    fun logIn(email: String, password: String): RestResultListener<UserObject> {
         val credentials = Base64.encodeToString(
-            "$name:$password".toByteArray(),
+            "$email:$password".toByteArray(),
             Base64.NO_WRAP or Base64.NO_PADDING
         )
 

@@ -88,7 +88,7 @@
     <string name="api_error_bad_email_format">Invalid email format</string>
     <string name="api_error_bad_password_format">Password must contain a mix of numbers, letters and symbols</string>
     <string name="api_error_invalid_authorization">Invalid authorization</string>
-    <string name="api_error_invalid_username">Invalid username</string>
+    <string name="api_error_invalid_email">Invalid email</string>
     <string name="api_error_invalid_password">Invalid password</string>
     <string name="api_error_invalid_category_name">Category names cannot contain newlines</string>
     <string name="api_error_invalid_post_title">Post titles cannot contain newlines</string>

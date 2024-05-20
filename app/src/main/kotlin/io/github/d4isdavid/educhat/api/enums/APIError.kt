@@ -17,7 +17,7 @@ enum class APIError(val code: Int) {
     BAD_EMAIL_FORMAT(2003),
     BAD_PASSWORD_FORMAT(2004),
     INVALID_AUTHORIZATION(2005),
-    INVALID_USERNAME(2006),
+    INVALID_EMAIL(2006),
     INVALID_PASSWORD(2007),
     INVALID_CATEGORY_NAME(2008),
     INVALID_POST_TITLE(2009),
@@ -48,7 +48,7 @@ enum class APIError(val code: Int) {
         BAD_EMAIL_FORMAT -> context.resources.getString(R.string.api_error_bad_email_format)
         BAD_PASSWORD_FORMAT -> context.resources.getString(R.string.api_error_bad_password_format)
         INVALID_AUTHORIZATION -> context.resources.getString(R.string.api_error_invalid_authorization)
-        INVALID_USERNAME -> context.resources.getString(R.string.api_error_invalid_username)
+        INVALID_EMAIL -> context.resources.getString(R.string.api_error_invalid_email)
         INVALID_PASSWORD -> context.resources.getString(R.string.api_error_invalid_password)
         INVALID_CATEGORY_NAME -> context.resources.getString(R.string.api_error_invalid_category_name)
         INVALID_POST_TITLE -> context.resources.getString(R.string.api_error_invalid_post_title)
