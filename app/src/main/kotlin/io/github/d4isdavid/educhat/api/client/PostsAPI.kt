@@ -77,7 +77,7 @@ class PostsAPI(private val client: APIClient) {
             writeJsonObject(input.toJSON())
         },
     ) {
-        handleJsonObject()?.let { cache.put(it) }
+        handleJsonObject()?.let { messages.cache.put(it) }
     }
 
     fun editReply(id: Int, replyId: Int, input: AdminPostReplyEditObject) = rest.patch(
@@ -86,13 +86,13 @@ class PostsAPI(private val client: APIClient) {
             writeJsonObject(input.toJSON())
         },
     ) {
-        handleJsonObject()?.let { cache.put(it) }
+        handleJsonObject()?.let { messages.cache.put(it) }
     }
 
     fun deleteReply(id: Int, replyId: Int) = rest.delete(
         Routes.postReplies(id.toString(), replyId.toString()),
     ) {
-        cache.remove(id)
+        messages.cache.remove(id)
     }
 
     class Cache(private var client: APIClient) : APICache<PostObject>(PostObject::class) {
