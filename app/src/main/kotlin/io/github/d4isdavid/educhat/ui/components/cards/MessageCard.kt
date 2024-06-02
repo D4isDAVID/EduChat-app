@@ -5,12 +5,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.PushPin
 import androidx.compose.material.icons.filled.ThumbDown
 import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material.icons.outlined.ThumbDown
@@ -68,6 +70,27 @@ fun MessageCard(
         Column(
             modifier = Modifier.padding(16.dp),
         ) {
+            if (message.pinned) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.PushPin,
+                        contentDescription = stringResource(id = R.string.pinned),
+                        modifier = Modifier
+                            .size(24.dp)
+                            .padding(end = 8.dp),
+                    )
+
+                    Text(
+                        text = stringResource(id = R.string.pinned),
+                        style = MaterialTheme.typography.labelMedium,
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+
             Row(
                 modifier = Modifier
                     .fillMaxWidth(),
