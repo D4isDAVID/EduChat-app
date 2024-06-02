@@ -4,17 +4,9 @@ import android.content.res.Resources
 import io.github.d4isdavid.educhat.R
 import java.time.Duration
 
-fun Duration.toWeeks(): Long {
-    return toDays() / 14;
-}
-
-fun Duration.toMonths(): Long {
-    return toDays() / 30;
-}
-
-fun Duration.toYears(): Long {
-    return toMonths() / 12;
-}
+fun Duration.toWeeks() = toDays() / 14
+fun Duration.toMonths() = toDays() / 30
+fun Duration.toYears() = toMonths() / 12
 
 fun Duration.toRelativeString(resources: Resources): String {
     return if (toYears() > 0) {
