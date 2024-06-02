@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.ThumbDown
 import androidx.compose.material.icons.filled.ThumbUp
@@ -52,6 +51,7 @@ fun MessageCard(
     message: MessageObject,
     author: UserObject,
     modifier: Modifier = Modifier,
+    trailingIcon: (@Composable () -> Unit)? = null,
     shape: Shape = CutCornerShape(0.dp),
     colors: CardColors = CardDefaults.elevatedCardColors(
         contentColor = MaterialTheme.colorScheme.scrim,
@@ -101,10 +101,7 @@ fun MessageCard(
                     }
                 }
 
-                Icon(
-                    imageVector = Icons.Filled.MoreVert,
-                    contentDescription = stringResource(id = R.string.more),
-                )
+                trailingIcon?.invoke()
             }
 
             Text(text = message.content, modifier = Modifier.padding(vertical = 8.dp))

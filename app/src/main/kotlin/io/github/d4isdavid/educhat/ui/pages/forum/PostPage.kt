@@ -1,18 +1,32 @@
 package io.github.d4isdavid.educhat.ui.pages.forum
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowUpward
+import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -23,6 +37,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -39,6 +54,7 @@ import io.github.d4isdavid.educhat.api.utils.createMockClient
 import io.github.d4isdavid.educhat.api.utils.mockMessage
 import io.github.d4isdavid.educhat.api.utils.mockPost
 import io.github.d4isdavid.educhat.ui.components.bottomsheets.ManagePostBottomSheet
+import io.github.d4isdavid.educhat.ui.components.bottomsheets.ManagePostReplyBottomSheet
 import io.github.d4isdavid.educhat.ui.components.cards.MessageCard
 import io.github.d4isdavid.educhat.ui.theme.EduChatTheme
 import kotlinx.coroutines.launch
@@ -49,16 +65,19 @@ fun PostPage(
     navController: NavController,
     api: APIClient,
     post: PostObject,
-    replies: List<Pair<MessageObject, UserObject>>,
+    replies: MutableList<Pair<MessageObject, UserObject>>,
     modifier: Modifier = Modifier,
 ) {
     val scope = rememberCoroutineScope()
+    val listState = rememberLazyListState()
 
     val snackbarHostState = remember { SnackbarHostState() }
     val message = api.messages.cache.get(post.messageId)!!
     val author = api.users.cache.get(message.authorId)!!
 
     var editing by remember { mutableStateOf(false) }
+    var replying by remember { mutableStateOf(false) }
+    var editingReply: MessageObject? by remember { mutableStateOf(null) }
 
     Scaffold(
         modifier = modifier,
@@ -87,11 +106,46 @@ fun PostPage(
             )
         },
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+        floatingActionButton = {
+            Column(
+                horizontalAlignment = Alignment.End,
+            ) {
+                AnimatedVisibility(visible = listState.canScrollBackward) {
+                    SmallFloatingActionButton(
+                        onClick = {
+                            scope.launch {
+                                listState.animateScrollToItem(0)
+                            }
+                        },
+                        shape = FloatingActionButtonDefaults.smallShape,
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.ArrowUpward,
+                            contentDescription = stringResource(id = R.string.up),
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                ExtendedFloatingActionButton(
+                    text = { Text(text = stringResource(id = R.string.write_reply)) },
+                    icon = {
+                        Icon(
+                            imageVector = Icons.Filled.Create,
+                            contentDescription = stringResource(id = R.string.create),
+                        )
+                    },
+                    onClick = { replying = true },
+                )
+            }
+        },
     ) { paddingValues ->
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues),
+            state = listState,
         ) {
             item {
                 MessageCard(
@@ -113,6 +167,8 @@ fun PostPage(
             }
 
             items(replies, key = { (m) -> "${m.id}" }) { (m, u) ->
+                var expanded by remember { mutableStateOf(false) }
+
                 MessageCard(
                     navController = navController,
                     api = api,
@@ -120,6 +176,35 @@ fun PostPage(
                     author = u,
                     modifier = Modifier
                         .padding(top = 8.dp),
+                    trailingIcon = {
+                        if (api.users.me?.id != m.authorId) {
+                            return@MessageCard
+                        }
+
+                        Box(
+                            contentAlignment = Alignment.TopEnd,
+                        ) {
+                            IconButton(onClick = { expanded = true }) {
+                                Icon(
+                                    imageVector = Icons.Filled.MoreVert,
+                                    contentDescription = stringResource(id = R.string.more),
+                                )
+                            }
+
+                            DropdownMenu(
+                                expanded = expanded,
+                                onDismissRequest = { expanded = false },
+                            ) {
+                                DropdownMenuItem(
+                                    text = { Text(text = stringResource(id = R.string.edit)) },
+                                    onClick = {
+                                        expanded = false
+                                        editingReply = m
+                                    },
+                                )
+                            }
+                        }
+                    },
                 )
             }
         }
@@ -143,6 +228,38 @@ fun PostPage(
             post = post,
         )
     }
+
+    if (replying) {
+        ManagePostReplyBottomSheet(
+            api = api,
+            postId = post.messageId,
+            onDismissRequest = { replying = false },
+            onError = {
+                scope.launch {
+                    snackbarHostState.currentSnackbarData?.dismiss()
+                    snackbarHostState.showSnackbar(it, withDismissAction = true)
+                }
+            },
+        )
+    }
+
+    if (editingReply != null) {
+        ManagePostReplyBottomSheet(
+            api = api,
+            postId = post.messageId,
+            onDismissRequest = { editingReply = null },
+            onError = {
+                scope.launch {
+                    snackbarHostState.currentSnackbarData?.dismiss()
+                    snackbarHostState.showSnackbar(it, withDismissAction = true)
+                }
+            },
+            onDelete = {
+                replies.removeIf { (m) -> m.id == editingReply!!.id }
+            },
+            message = editingReply,
+        )
+    }
 }
 
 @Composable
@@ -160,7 +277,7 @@ private fun PostPagePreview() {
             navController = rememberNavController(),
             api = api,
             post = api.posts.cache.get(1)!!,
-            replies = listOf(
+            replies = mutableListOf(
                 Pair(api.messages.cache.get(2)!!, author),
                 Pair(api.messages.cache.get(3)!!, author),
                 Pair(api.messages.cache.get(4)!!, author),

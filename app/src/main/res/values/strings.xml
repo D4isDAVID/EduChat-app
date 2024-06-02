@@ -72,6 +72,14 @@
     <string name="upvote">Upvote</string>
     <string name="downvote">Downvote</string>
 
+    <string name="write_reply">Write Reply</string>
+    <string name="delete_category">Delete Category</string>
+    <string name="delete_category_are_you_sure">Are you sure you want to delete this category?</string>
+    <string name="delete_post">Delete Post</string>
+    <string name="delete_post_are_you_sure">Are you sure you want to delete this post?</string>
+    <string name="delete_reply">Delete Reply</string>
+    <string name="delete_reply_are_you_sure">Are you sure you want to delete this reply?</string>
+
     <string name="http_status_ok">200 OK</string>
     <string name="http_status_created">201 Created</string>
     <string name="http_status_no_content">204 No Content</string>

@@ -92,7 +92,7 @@ class PostsAPI(private val client: APIClient) {
     fun deleteReply(id: Int, replyId: Int) = rest.delete(
         Routes.postReplies(id.toString(), replyId.toString()),
     ) {
-        messages.cache.remove(id)
+        messages.cache.remove(replyId)
     }
 
     class Cache(private var client: APIClient) : APICache<PostObject>(PostObject::class) {

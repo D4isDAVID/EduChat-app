@@ -52,14 +52,12 @@ import androidx.compose.ui.unit.dp
 import io.github.d4isdavid.educhat.R
 import io.github.d4isdavid.educhat.api.client.APIClient
 import io.github.d4isdavid.educhat.api.enums.APIError
-import io.github.d4isdavid.educhat.api.input.AdminMessageEditObject
-import io.github.d4isdavid.educhat.api.input.AdminPostEditObject
-import io.github.d4isdavid.educhat.api.input.MessageCreateObject
-import io.github.d4isdavid.educhat.api.input.PostCreateObject
-import io.github.d4isdavid.educhat.api.input.PostEditObject
-import io.github.d4isdavid.educhat.api.objects.PostObject
+import io.github.d4isdavid.educhat.api.input.AdminPostReplyEditObject
+import io.github.d4isdavid.educhat.api.input.PostReplyCreateObject
+import io.github.d4isdavid.educhat.api.input.PostReplyEditObject
+import io.github.d4isdavid.educhat.api.objects.MessageObject
 import io.github.d4isdavid.educhat.api.utils.createMockClient
-import io.github.d4isdavid.educhat.api.utils.mockPost
+import io.github.d4isdavid.educhat.api.utils.mockMessage
 import io.github.d4isdavid.educhat.http.request.HttpStatusCode
 import io.github.d4isdavid.educhat.ui.components.labeled.LabeledCheckbox
 import io.github.d4isdavid.educhat.ui.components.labeled.LabeledIconButton
@@ -68,14 +66,14 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
-fun ManagePostBottomSheet(
+fun ManagePostReplyBottomSheet(
     api: APIClient,
-    categoryId: Int,
+    postId: Int,
     onDismissRequest: () -> Unit,
     onError: (String) -> Unit,
     modifier: Modifier = Modifier,
     onDelete: (() -> Unit)? = null,
-    post: PostObject? = null,
+    message: MessageObject? = null,
     sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
     sheetMaxWidth: Dp = BottomSheetDefaults.SheetMaxWidth,
     shape: Shape = BottomSheetDefaults.ExpandedShape,
@@ -90,17 +88,11 @@ fun ManagePostBottomSheet(
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    val message = if (post != null) api.messages.cache.get(post.messageId) else null
-
     val (focusRequester) = FocusRequester.createRefs()
 
-    var title by remember { mutableStateOf(post?.title ?: "") }
-    var question by remember { mutableStateOf(post?.question ?: true) }
-    var locked by remember { mutableStateOf(post?.locked ?: false) }
     var pinned by remember { mutableStateOf(message?.pinned ?: false) }
     var content by remember { mutableStateOf(message?.content ?: "") }
 
-    var titleError by remember { mutableStateOf("") }
     var contentError by remember { mutableStateOf("") }
     var fetching by remember { mutableStateOf(false) }
     var deleting by remember { mutableStateOf(false) }
@@ -132,7 +124,7 @@ fun ManagePostBottomSheet(
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center,
             ) {
-                if (post == null) {
+                if (message == null) {
                     LabeledIconButton(
                         icon = {
                             Icon(
@@ -145,15 +137,11 @@ fun ManagePostBottomSheet(
                         },
                         onClick = {
                             fetching = true
-                            titleError = ""
                             contentError = ""
 
-                            api.categories.createPost(
-                                categoryId, PostCreateObject(
-                                    message = MessageCreateObject(content),
-                                    title = title,
-                                    question = question,
-                                )
+                            api.posts.createReply(
+                                postId,
+                                PostReplyCreateObject(content = content),
                             )
                                 .onSuccess { hideSheet() }
                                 .onError { (status, error) ->
@@ -162,9 +150,6 @@ fun ManagePostBottomSheet(
                                     val errMessage = error.getMessage(context, status)
 
                                     when (error) {
-                                        APIError.BAD_POST_TITLE_LENGTH,
-                                        APIError.INVALID_POST_TITLE -> titleError = errMessage
-
                                         APIError.BAD_MESSAGE_CONTENT_LENGTH ->
                                             contentError = errMessage
 
@@ -174,7 +159,7 @@ fun ManagePostBottomSheet(
                                     fetching = false
                                 }
                         },
-                        enabled = title.isNotEmpty() && content.isNotEmpty() && !fetching,
+                        enabled = content.isNotEmpty() && !fetching,
                     )
                     return@Row
                 }
@@ -189,54 +174,40 @@ fun ManagePostBottomSheet(
                     label = { Text(text = stringResource(id = R.string.edit)) },
                     onClick = {
                         fetching = true
-                        titleError = ""
                         contentError = ""
 
-                        val onError: (Pair<HttpStatusCode, APIError>) -> Unit = { (status, error) ->
-                            val errMessage = error.getMessage(context, status)
+                        val onEditError: (Pair<HttpStatusCode, APIError>) -> Unit =
+                            { (status, error) ->
+                                val errMessage = error.getMessage(context, status)
 
-                            when (error) {
-                                APIError.BAD_POST_TITLE_LENGTH,
-                                APIError.INVALID_POST_TITLE -> titleError = errMessage
+                                when (error) {
+                                    APIError.BAD_MESSAGE_CONTENT_LENGTH ->
+                                        contentError = errMessage
 
-                                APIError.BAD_MESSAGE_CONTENT_LENGTH ->
-                                    contentError = errMessage
+                                    else -> onError(errMessage)
+                                }
 
-                                else -> onError(errMessage)
-                            }
-
-                            hideSheet()
-                        }
-
-                        api.posts.edit(
-                            post.messageId,
-                            PostEditObject(
-                                message = MessageCreateObject(content),
-                                title = title,
-                                question = question,
-                                answerId = null,
-                            )
-                        ).onSuccess {
-                            if (!api.users.me!!.admin) {
                                 hideSheet()
-                                return@onSuccess
                             }
 
-                            api.posts.edit(
-                                post.messageId,
-                                AdminPostEditObject(
-                                    message = AdminMessageEditObject(
-                                        content = null,
-                                        pinned = pinned,
-                                    ),
-                                    title = null,
-                                    locked = locked,
-                                    question = null,
+                        if (api.users.me!!.admin) {
+                            api.posts.editReply(
+                                postId,
+                                message.id,
+                                AdminPostReplyEditObject(
+                                    content = content,
+                                    pinned = pinned,
                                 )
-                            ).onSuccess { hideSheet() }.onError(onError)
-                        }.onError(onError)
+                            ).onSuccess { hideSheet() }.onError(onEditError)
+                        } else {
+                            api.posts.editReply(
+                                postId,
+                                message.id,
+                                PostReplyEditObject(content = content),
+                            ).onSuccess { hideSheet() }.onError(onEditError)
+                        }
                     },
-                    enabled = title.isNotEmpty() && content.isNotEmpty() && !fetching,
+                    enabled = content.isNotEmpty() && !fetching,
                 )
 
                 LabeledIconButton(
@@ -257,39 +228,7 @@ fun ManagePostBottomSheet(
                     .fillMaxWidth()
                     .padding(24.dp),
             ) {
-                OutlinedTextField(
-                    value = title,
-                    onValueChange = { title = it },
-                    modifier = Modifier.fillMaxWidth(),
-                    enabled = !fetching,
-                    label = { Text(text = stringResource(id = R.string.title)) },
-                    supportingText = if (titleError.isEmpty()) null else ({
-                        Text(text = titleError)
-                    }),
-                    isError = titleError.isNotEmpty(),
-                    keyboardOptions = KeyboardOptions(
-                        autoCorrect = false,
-                        imeAction = ImeAction.Next,
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onNext = { focusRequester.requestFocus() },
-                    ),
-                    singleLine = true,
-                )
-
-                LabeledCheckbox(
-                    checked = question,
-                    label = { Text(text = stringResource(id = R.string.question)) },
-                    onCheckedChange = { question = it },
-                )
-
-                if (post != null && api.users.me?.admin == true) {
-                    LabeledCheckbox(
-                        checked = locked,
-                        label = { Text(text = stringResource(id = R.string.locked)) },
-                        onCheckedChange = { locked = it },
-                    )
-
+                if (message != null && api.users.me?.admin == true) {
                     LabeledCheckbox(
                         checked = pinned,
                         label = { Text(text = stringResource(id = R.string.pinned)) },
@@ -328,7 +267,7 @@ fun ManagePostBottomSheet(
                 TextButton(onClick = {
                     fetching = true
 
-                    api.posts.delete(post!!.messageId)
+                    api.posts.deleteReply(postId, message!!.id)
                         .onSuccess {
                             deleting = false
                             onDelete?.invoke()
@@ -355,8 +294,8 @@ fun ManagePostBottomSheet(
                     contentDescription = stringResource(id = R.string.warning),
                 )
             },
-            title = { Text(text = stringResource(id = R.string.delete_post)) },
-            text = { Text(text = stringResource(id = R.string.delete_post_are_you_sure)) },
+            title = { Text(text = stringResource(id = R.string.delete_reply)) },
+            text = { Text(text = stringResource(id = R.string.delete_reply_are_you_sure)) },
         )
     }
 }
@@ -364,12 +303,12 @@ fun ManagePostBottomSheet(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 @Preview(showBackground = true)
-private fun CreatePostBottomSheetPreview() {
+private fun CreatePostReplyBottomSheetPreview() {
     EduChatTheme(dynamicColor = false) {
         val api = createMockClient(rememberCoroutineScope()) {}
-        ManagePostBottomSheet(
+        ManagePostReplyBottomSheet(
             api = api,
-            categoryId = 1,
+            postId = 1,
             onDismissRequest = {},
             onError = {},
             sheetState = SheetState(
@@ -384,15 +323,15 @@ private fun CreatePostBottomSheetPreview() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 @Preview(showBackground = true)
-private fun EditPostBottomSheetPreview() {
+private fun EditPostReplyBottomSheetPreview() {
     EduChatTheme(dynamicColor = false) {
-        val api = createMockClient(rememberCoroutineScope()) { mockPost() }
-        ManagePostBottomSheet(
+        val api = createMockClient(rememberCoroutineScope()) { mockMessage() }
+        ManagePostReplyBottomSheet(
             api = api,
-            categoryId = 1,
+            postId = 1,
             onDismissRequest = {},
             onError = {},
-            post = api.posts.cache.get(1)!!,
+            message = api.messages.cache.get(1)!!,
             sheetState = SheetState(
                 skipPartiallyExpanded = true,
                 density = LocalDensity.current,

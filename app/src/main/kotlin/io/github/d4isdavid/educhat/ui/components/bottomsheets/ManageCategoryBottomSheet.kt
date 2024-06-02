@@ -319,8 +319,8 @@ fun ManageCategoryBottomSheet(
                     contentDescription = stringResource(id = R.string.warning),
                 )
             },
-            title = { Text(text = "Delete Category") },
-            text = { Text(text = "Are you sure you want to delete ${category!!.name}?") },
+            title = { Text(text = stringResource(id = R.string.delete_category)) },
+            text = { Text(text = stringResource(id = R.string.delete_category_are_you_sure)) },
         )
     }
 }
