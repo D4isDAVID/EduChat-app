@@ -136,18 +136,20 @@ fun PostPage(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(24.dp))
+                if (!post.locked) {
+                    Spacer(modifier = Modifier.height(24.dp))
 
-                ExtendedFloatingActionButton(
-                    text = { Text(text = stringResource(id = R.string.write_reply)) },
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Filled.Create,
-                            contentDescription = stringResource(id = R.string.create),
-                        )
-                    },
-                    onClick = { replying = true },
-                )
+                    ExtendedFloatingActionButton(
+                        text = { Text(text = stringResource(id = R.string.write_reply)) },
+                        icon = {
+                            Icon(
+                                imageVector = Icons.Filled.Create,
+                                contentDescription = stringResource(id = R.string.create),
+                            )
+                        },
+                        onClick = { replying = true },
+                    )
+                }
             }
         },
     ) { paddingValues ->

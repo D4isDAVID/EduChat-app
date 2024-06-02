@@ -208,20 +208,7 @@ fun ManagePostBottomSheet(
                             hideSheet()
                         }
 
-                        api.posts.edit(
-                            post.messageId,
-                            PostEditObject(
-                                message = MessageCreateObject(content),
-                                title = title,
-                                question = question,
-                                answerId = null,
-                            )
-                        ).onSuccess {
-                            if (!api.users.me!!.admin) {
-                                hideSheet()
-                                return@onSuccess
-                            }
-
+                        if (api.users.me?.admin == true) {
                             api.posts.edit(
                                 post.messageId,
                                 AdminPostEditObject(
@@ -232,9 +219,20 @@ fun ManagePostBottomSheet(
                                     title = null,
                                     locked = locked,
                                     question = null,
+                                    answerId = null,
                                 )
                             ).onSuccess { hideSheet() }.onError(onError)
-                        }.onError(onError)
+                        } else {
+                            api.posts.edit(
+                                post.messageId,
+                                PostEditObject(
+                                    message = MessageCreateObject(content),
+                                    title = title,
+                                    question = question,
+                                    answerId = null,
+                                )
+                            ).onSuccess { hideSheet() }.onError(onError)
+                        }
                     },
                     enabled = title.isNotEmpty() && content.isNotEmpty() && !fetching,
                 )

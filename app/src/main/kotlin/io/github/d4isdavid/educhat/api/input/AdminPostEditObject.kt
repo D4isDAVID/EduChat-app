@@ -1,5 +1,7 @@
 package io.github.d4isdavid.educhat.api.input
 
+import io.github.d4isdavid.educhat.api.utils.JSONNullable
+import io.github.d4isdavid.educhat.api.utils.putNullable
 import org.json.JSONObject
 
 data class AdminPostEditObject(
@@ -7,6 +9,7 @@ data class AdminPostEditObject(
     val title: String?,
     val locked: Boolean?,
     val question: Boolean?,
+    val answerId: JSONNullable<Int>?,
 )
 
 fun AdminPostEditObject.toJSON(): JSONObject = JSONObject()
@@ -14,3 +17,4 @@ fun AdminPostEditObject.toJSON(): JSONObject = JSONObject()
     .put("title", title)
     .put("locked", locked)
     .put("question", question)
+    .putNullable("answerId", answerId)
