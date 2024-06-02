@@ -8,6 +8,7 @@
 !/.idea/scopes/
 /captures/
 *.iml
+*.log
 
 # OS-related
 .DS_Store
