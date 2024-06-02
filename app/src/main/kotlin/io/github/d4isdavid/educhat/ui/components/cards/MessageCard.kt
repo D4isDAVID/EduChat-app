@@ -1,11 +1,11 @@
 package io.github.d4isdavid.educhat.ui.components.cards
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -13,6 +13,7 @@ import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PushPin
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.ThumbDown
 import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material.icons.outlined.ThumbDown
@@ -29,6 +30,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -53,10 +55,19 @@ fun MessageCard(
     message: MessageObject,
     author: UserObject,
     modifier: Modifier = Modifier,
+    answer: Boolean = false,
     trailingIcon: (@Composable () -> Unit)? = null,
     shape: Shape = CutCornerShape(0.dp),
     colors: CardColors = CardDefaults.elevatedCardColors(
+        containerColor = if (answer)
+            MaterialTheme.colorScheme.primaryContainer
+        else
+            Color.Unspecified,
         contentColor = MaterialTheme.colorScheme.scrim,
+        disabledContainerColor = if (answer)
+            MaterialTheme.colorScheme.primaryContainer
+        else
+            Color.Unspecified,
         disabledContentColor = MaterialTheme.colorScheme.scrim,
     ),
     elevation: CardElevation = CardDefaults.elevatedCardElevation(),
@@ -70,25 +81,49 @@ fun MessageCard(
         Column(
             modifier = Modifier.padding(16.dp),
         ) {
-            if (message.pinned) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.PushPin,
-                        contentDescription = stringResource(id = R.string.pinned),
-                        modifier = Modifier
-                            .size(24.dp)
-                            .padding(end = 8.dp),
-                    )
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                if (message.pinned) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(bottom = 8.dp),
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.PushPin,
+                            contentDescription = stringResource(id = R.string.pinned),
+                            modifier = Modifier
+                                .padding(end = 4.dp)
+                                .size(16.dp),
+                        )
 
-                    Text(
-                        text = stringResource(id = R.string.pinned),
-                        style = MaterialTheme.typography.labelMedium,
-                    )
+                        Text(
+                            text = stringResource(id = R.string.pinned),
+                            style = MaterialTheme.typography.labelMedium,
+                        )
+                    }
                 }
 
-                Spacer(modifier = Modifier.height(8.dp))
+                if (answer) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(bottom = 8.dp),
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Star,
+                            contentDescription = stringResource(id = R.string.answer),
+                            modifier = Modifier
+                                .padding(end = 4.dp)
+                                .size(16.dp),
+                        )
+
+                        Text(
+                            text = stringResource(id = R.string.answer),
+                            style = MaterialTheme.typography.labelMedium,
+                        )
+                    }
+                }
             }
 
             Row(
@@ -190,6 +225,23 @@ private fun MessageCardPreview() {
             api = api,
             message = api.messages.cache.get(1)!!,
             author = api.users.cache.get(1)!!,
+        )
+    }
+}
+
+@Composable
+@Preview(showBackground = true)
+private fun MessageCardAnswerPreview() {
+    EduChatTheme(dynamicColor = false) {
+        val api = createMockClient(rememberCoroutineScope()) {
+            mockMessage()
+        }
+        MessageCard(
+            navController = rememberNavController(),
+            api = api,
+            message = api.messages.cache.get(1)!!,
+            author = api.users.cache.get(1)!!,
+            answer = true,
         )
     }
 }

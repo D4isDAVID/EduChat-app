@@ -16,6 +16,8 @@ import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -30,6 +32,7 @@ import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -39,6 +42,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -47,9 +51,11 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import io.github.d4isdavid.educhat.R
 import io.github.d4isdavid.educhat.api.client.APIClient
+import io.github.d4isdavid.educhat.api.input.PostEditObject
 import io.github.d4isdavid.educhat.api.objects.MessageObject
 import io.github.d4isdavid.educhat.api.objects.PostObject
 import io.github.d4isdavid.educhat.api.objects.UserObject
+import io.github.d4isdavid.educhat.api.utils.JSONNullable
 import io.github.d4isdavid.educhat.api.utils.createMockClient
 import io.github.d4isdavid.educhat.api.utils.mockMessage
 import io.github.d4isdavid.educhat.api.utils.mockPost
@@ -68,6 +74,8 @@ fun PostPage(
     replies: MutableList<Pair<MessageObject, UserObject>>,
     modifier: Modifier = Modifier,
 ) {
+    val context = LocalContext.current
+
     val scope = rememberCoroutineScope()
     val listState = rememberLazyListState()
 
@@ -78,6 +86,8 @@ fun PostPage(
     var editing by remember { mutableStateOf(false) }
     var replying by remember { mutableStateOf(false) }
     var editingReply: MessageObject? by remember { mutableStateOf(null) }
+    var selecting: MessageObject? by remember { mutableStateOf(null) }
+    var deselecting by remember { mutableStateOf(false) }
 
     Scaffold(
         modifier = modifier,
@@ -176,6 +186,7 @@ fun PostPage(
                     author = u,
                     modifier = Modifier
                         .padding(top = 8.dp),
+                    answer = post.answerId == m.id,
                     trailingIcon = {
                         if (api.users.me?.id != m.authorId) {
                             return@MessageCard
@@ -202,6 +213,24 @@ fun PostPage(
                                         editingReply = m
                                     },
                                 )
+
+                                if (post.answerId == m.id) {
+                                    DropdownMenuItem(
+                                        text = { Text(text = stringResource(id = R.string.deselect_answer)) },
+                                        onClick = {
+                                            expanded = false
+                                            deselecting = true
+                                        },
+                                    )
+                                } else if (post.question) {
+                                    DropdownMenuItem(
+                                        text = { Text(text = stringResource(id = R.string.select_answer)) },
+                                        onClick = {
+                                            expanded = false
+                                            selecting = m
+                                        },
+                                    )
+                                }
                             }
                         }
                     },
@@ -210,17 +239,19 @@ fun PostPage(
         }
     }
 
+    val onError: (String) -> Unit = {
+        scope.launch {
+            snackbarHostState.currentSnackbarData?.dismiss()
+            snackbarHostState.showSnackbar(it, withDismissAction = true)
+        }
+    }
+
     if (editing) {
         ManagePostBottomSheet(
             api = api,
             categoryId = post.categoryId,
             onDismissRequest = { editing = false },
-            onError = {
-                scope.launch {
-                    snackbarHostState.currentSnackbarData?.dismiss()
-                    snackbarHostState.showSnackbar(it, withDismissAction = true)
-                }
-            },
+            onError = onError,
             onDelete = {
                 navController.popBackStack()
                 navController.popBackStack()
@@ -234,12 +265,7 @@ fun PostPage(
             api = api,
             postId = post.messageId,
             onDismissRequest = { replying = false },
-            onError = {
-                scope.launch {
-                    snackbarHostState.currentSnackbarData?.dismiss()
-                    snackbarHostState.showSnackbar(it, withDismissAction = true)
-                }
-            },
+            onError = onError,
         )
     }
 
@@ -248,16 +274,81 @@ fun PostPage(
             api = api,
             postId = post.messageId,
             onDismissRequest = { editingReply = null },
-            onError = {
-                scope.launch {
-                    snackbarHostState.currentSnackbarData?.dismiss()
-                    snackbarHostState.showSnackbar(it, withDismissAction = true)
-                }
-            },
+            onError = onError,
             onDelete = {
                 replies.removeIf { (m) -> m.id == editingReply!!.id }
             },
             message = editingReply,
+        )
+    }
+
+    if (selecting != null) {
+        AlertDialog(
+            onDismissRequest = { selecting = null },
+            confirmButton = {
+                TextButton(onClick = {
+                    api.posts.edit(
+                        post.messageId,
+                        PostEditObject(
+                            message = null,
+                            title = null,
+                            question = null,
+                            answerId = JSONNullable(selecting!!.id),
+                        ),
+                    ).onError { (c, e) -> onError(e.getMessage(context, c)) }
+                    selecting = null
+                }) {
+                    Text(text = stringResource(id = R.string.yes))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { selecting = null }) {
+                    Text(text = stringResource(id = R.string.no))
+                }
+            },
+            icon = {
+                Icon(
+                    imageVector = Icons.Filled.Warning,
+                    contentDescription = stringResource(id = R.string.warning),
+                )
+            },
+            title = { Text(text = stringResource(id = R.string.select_answer)) },
+            text = { Text(text = stringResource(id = R.string.select_answer_are_you_sure)) },
+        )
+    }
+
+    if (deselecting) {
+        AlertDialog(
+            onDismissRequest = { deselecting = false },
+            confirmButton = {
+                TextButton(onClick = {
+                    api.posts.edit(
+                        post.messageId,
+                        PostEditObject(
+                            message = null,
+                            title = null,
+                            question = null,
+                            answerId = JSONNullable(null),
+                        ),
+                    ).onError { (c, e) -> onError(e.getMessage(context, c)) }
+                    deselecting = false
+                }) {
+                    Text(text = stringResource(id = R.string.yes))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { deselecting = false }) {
+                    Text(text = stringResource(id = R.string.no))
+                }
+            },
+            icon = {
+                Icon(
+                    imageVector = Icons.Filled.Warning,
+                    contentDescription = stringResource(id = R.string.warning),
+                )
+            },
+            title = { Text(text = stringResource(id = R.string.deselect_answer)) },
+            text = { Text(text = stringResource(id = R.string.deselect_answer_are_you_sure)) },
         )
     }
 }

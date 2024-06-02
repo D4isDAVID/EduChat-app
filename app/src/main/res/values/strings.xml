@@ -80,6 +80,12 @@
     <string name="delete_reply">Delete Reply</string>
     <string name="delete_reply_are_you_sure">Are you sure you want to delete this reply?</string>
 
+    <string name="select_answer">Select Answer</string>
+    <string name="select_answer_are_you_sure">Are you sure you want to select this as the answer?</string>
+    <string name="deselect_answer">Deselect Answer</string>
+    <string name="deselect_answer_are_you_sure">Are you sure you want to deselect this answer?</string>
+    <string name="answer">Answer</string>
+
     <string name="http_status_ok">200 OK</string>
     <string name="http_status_created">201 Created</string>
     <string name="http_status_no_content">204 No Content</string>
