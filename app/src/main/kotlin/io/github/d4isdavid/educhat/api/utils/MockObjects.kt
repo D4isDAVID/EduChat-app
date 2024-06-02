@@ -8,7 +8,6 @@ import io.github.d4isdavid.educhat.api.objects.PostObject
 import io.github.d4isdavid.educhat.api.objects.UserObject
 import io.github.d4isdavid.educhat.http.rest.RestClient
 import kotlinx.coroutines.CoroutineScope
-import org.json.JSONArray
 import org.json.JSONObject
 import java.time.Instant
 
@@ -45,7 +44,9 @@ fun APIClient.mockMessage(
     authorAdmin: Boolean = true,
     authorStudent: Boolean = true,
     authorTeacher: Boolean = true,
-    reactions: JSONArray = JSONArray(),
+    votes: JSONObject = JSONObject()
+        .put("count", 47)
+        .put("me", JSONObject.NULL),
 ): JSONObject {
     val author =
         mockUser(authorId, authorName, authorCreatedAt, authorAdmin, authorStudent, authorTeacher)
@@ -58,7 +59,7 @@ fun APIClient.mockMessage(
         .put("hidden", hidden)
         .put("parentId", parentId ?: JSONObject.NULL)
         .put("author", author)
-        .put("reactions", reactions)
+        .put("votes", votes)
     messages.cache.put(
         message,
         MessageObject::getKey,
@@ -83,7 +84,9 @@ fun APIClient.mockPost(
     authorAdmin: Boolean = true,
     authorStudent: Boolean = true,
     authorTeacher: Boolean = true,
-    messageReactions: JSONArray = JSONArray(),
+    messageVotes: JSONObject = JSONObject()
+        .put("count", 47)
+        .put("me", JSONObject.NULL),
     title: String = "Mock Post",
     locked: Boolean = true,
     question: Boolean = false,
@@ -104,7 +107,7 @@ fun APIClient.mockPost(
         authorAdmin,
         authorStudent,
         authorTeacher,
-        messageReactions,
+        messageVotes,
     )
     val post = JSONObject()
         .put("message", message)

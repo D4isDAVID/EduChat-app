@@ -1,7 +1,6 @@
 package io.github.d4isdavid.educhat.api.objects
 
 import io.github.d4isdavid.educhat.api.utils.getInstant
-import io.github.d4isdavid.educhat.api.utils.getJSONObjects
 import io.github.d4isdavid.educhat.api.utils.nullableInstant
 import io.github.d4isdavid.educhat.api.utils.nullableInt
 import org.json.JSONObject
@@ -29,7 +28,7 @@ class MessageObject : APIObject() {
         private set
     var authorId by Delegates.notNull<Int>()
         private set
-    var reactions = mutableMapOf<String, ReactionCountObject>()
+    lateinit var votes: MessageVoteCountObject
         private set
 
     override fun update(obj: JSONObject) {
@@ -40,65 +39,15 @@ class MessageObject : APIObject() {
         pinned = obj.getBoolean("pinned")
         parentId = obj.nullableInt("parentId")
         authorId = obj.getJSONObject("author").getInt("id")
-
-        reactions.clear()
-        obj.getJSONArray("reactions").getJSONObjects().forEach {
-            val countObj = ReactionCountObject(it)
-            reactions[countObj.emoji] = countObj
-        }
+        votes = MessageVoteCountObject(obj.getJSONObject("votes"))
     }
 
-    fun putReaction(emoji: String) {
-        if (reactions.contains(emoji)) {
-            reactions[emoji]!!.addMe()
-            return
-        }
-
-        reactions[emoji] = ReactionCountObject(
-            JSONObject()
-                .put("emoji", emoji)
-                .put("count", 1)
-                .put("me", true)
-        )
+    fun putReaction(positive: Boolean) {
+        votes.addMe(positive)
     }
 
-    fun removeReaction(emoji: String) {
-        if (!reactions.contains(emoji)) {
-            return
-        }
-
-        reactions[emoji]!!.removeMe()
-        if (reactions[emoji]!!.count < 1)
-            reactions.remove(emoji)
-    }
-
-    class ReactionCountObject(obj: JSONObject) {
-
-        var emoji: String = obj.getString("emoji")
-            private set
-        var count = obj.getInt("count")
-            private set
-        var me = obj.getBoolean("me")
-            private set
-
-        fun addMe() {
-            if (me) {
-                return
-            }
-
-            count++
-            me = true
-        }
-
-        fun removeMe() {
-            if (!me) {
-                return
-            }
-
-            count--
-            me = false
-        }
-
+    fun removeReaction() {
+        votes.removeMe()
     }
 
 }

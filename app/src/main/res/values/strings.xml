@@ -54,12 +54,23 @@
     <string name="permission_icon">Permission Icon</string>
     <string name="missing_permission">Missing Permission</string>
 
-    <string name="add_emoji">Add Emoji</string>
     <string name="more">More</string>
     <string name="title">Title</string>
     <string name="content">Content</string>
 
     <string name="question">Question</string>
+
+    <string name="user">User</string>
+    <string name="joined">Joined %1$s</string>
+    <string name="just_now">just now</string>
+    <string name="close">Close</string>
+    <string name="admin">Admin</string>
+    <string name="admin_description">This user is an EduChat administrator.</string>
+    <string name="student_description">This user is a student.</string>
+    <string name="teacher_description">This user is a teacher.</string>
+
+    <string name="upvote">Upvote</string>
+    <string name="downvote">Downvote</string>
 
     <string name="http_status_ok">200 OK</string>
     <string name="http_status_created">201 Created</string>

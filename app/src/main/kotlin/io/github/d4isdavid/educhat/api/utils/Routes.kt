@@ -11,10 +11,10 @@ object Routes {
     fun postReplies(postId: String, id: String? = null) =
         appendOptional("/posts/$postId/replies", id)
 
-    fun reactions(messageId: String, emoji: String? = null, userId: String? = null) =
-        appendOptional(appendOptional("/reactions/$messageId", emoji), userId)
-
     fun users(id: String? = null) = appendOptional("/users", id)
+
+    fun votes(messageId: String, userId: String? = null) =
+        appendOptional("/votes/$messageId", userId)
 
     private fun appendOptional(base: String, str: String? = null) =
         if (str == null) base else "$base/$str"

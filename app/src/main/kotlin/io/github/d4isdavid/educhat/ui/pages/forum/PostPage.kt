@@ -94,10 +94,19 @@ fun PostPage(
                 .padding(paddingValues),
         ) {
             item {
-                MessageCard(api = api, message = message, author = author)
+                MessageCard(
+                    navController = navController,
+                    api = api,
+                    message = message,
+                    author = author,
+                )
 
                 Text(
-                    text = pluralStringResource(id = R.plurals.reply_count, count = replies.size, replies.size).format(replies.size),
+                    text = pluralStringResource(
+                        id = R.plurals.reply_count,
+                        count = replies.size,
+                        replies.size
+                    ).format(replies.size),
                     modifier = Modifier.padding(start = 16.dp, top = 16.dp),
                     style = MaterialTheme.typography.titleMedium,
                 )
@@ -105,6 +114,7 @@ fun PostPage(
 
             items(replies, key = { (m) -> "${m.id}" }) { (m, u) ->
                 MessageCard(
+                    navController = navController,
                     api = api,
                     message = m,
                     author = u,

@@ -47,6 +47,7 @@ import io.github.d4isdavid.educhat.api.utils.mockCategory
 import io.github.d4isdavid.educhat.ui.navigation.FORUM_SECTION_ROUTE
 import io.github.d4isdavid.educhat.ui.navigation.LOGIN_SECTION_ROUTE
 import io.github.d4isdavid.educhat.ui.pages.forum.home.ForumHomeSection
+import io.github.d4isdavid.educhat.ui.pages.forum.home.ProfileHomeSection
 import io.github.d4isdavid.educhat.ui.theme.EduChatTheme
 import kotlinx.coroutines.launch
 
@@ -192,7 +193,21 @@ fun HomePage(navController: NavController, api: APIClient, modifier: Modifier = 
 
             composable(route = SEARCH_ROUTE) {}
 
-            composable(route = PROFILE_ROUTE) {}
+            composable(route = PROFILE_ROUTE) {
+                if (api.users.me == null) {
+                    return@composable
+                }
+
+                api.users.getSelf()
+
+                ProfileHomeSection(
+                    navController = navController,
+                    api = api,
+                    user = api.users.me!!,
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                )
+            }
         }
     }
 }

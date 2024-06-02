@@ -15,57 +15,49 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import io.github.d4isdavid.educhat.R
 import io.github.d4isdavid.educhat.api.client.APIClient
-import io.github.d4isdavid.educhat.api.objects.CategoryObject
+import io.github.d4isdavid.educhat.api.objects.UserObject
 import io.github.d4isdavid.educhat.api.utils.createMockClient
-import io.github.d4isdavid.educhat.api.utils.mockCategory
-import io.github.d4isdavid.educhat.ui.pages.forum.CategoryPage
+import io.github.d4isdavid.educhat.api.utils.mockUser
+import io.github.d4isdavid.educhat.ui.pages.forum.UserPage
 import io.github.d4isdavid.educhat.ui.theme.EduChatTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ForumHomeSection(
+fun ProfileHomeSection(
     navController: NavController,
     api: APIClient,
-    categories: List<CategoryObject>,
+    user: UserObject,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
         modifier = modifier,
         topBar = {
             TopAppBar(title = {
-                Text(text = stringResource(id = R.string.forum))
+                Text(text = stringResource(id = R.string.profile))
             })
         }
     ) { paddingValues ->
-        CategoryPage(
+        UserPage(
             navController = navController,
             api = api,
-            categories = categories,
-            posts = listOf(),
+            user = user,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(paddingValues),
+            showTopBar = false,
         )
     }
 }
 
 @Composable
 @Preview(showBackground = true)
-private fun ForumHomeSectionPreview() {
+private fun ProfileHomeSectionPreview() {
     EduChatTheme(dynamicColor = false) {
-        val api = createMockClient(rememberCoroutineScope()) {
-            mockCategory(id = 1, name = "One")
-            mockCategory(id = 2, name = "Two")
-            mockCategory(id = 3, name = "Three")
-        }
-        ForumHomeSection(
+        val api = createMockClient(rememberCoroutineScope()) { mockUser() }
+        ProfileHomeSection(
             navController = rememberNavController(),
             api = api,
-            categories = listOf(
-                api.categories.cache.get(1)!!,
-                api.categories.cache.get(2)!!,
-                api.categories.cache.get(3)!!,
-            ),
+            user = api.users.cache.get(1)!!,
         )
     }
 }
