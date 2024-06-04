@@ -291,12 +291,7 @@ fun PostPage(
                 TextButton(onClick = {
                     api.posts.edit(
                         post.messageId,
-                        PostEditObject(
-                            message = null,
-                            title = null,
-                            question = null,
-                            answerId = JSONNullable(selecting!!.id),
-                        ),
+                        PostEditObject(answerId = JSONNullable(selecting!!.id)),
                     ).onError { (c, e) -> onError(e.getMessage(context, c)) }
                     selecting = null
                 }) {
@@ -326,12 +321,7 @@ fun PostPage(
                 TextButton(onClick = {
                     api.posts.edit(
                         post.messageId,
-                        PostEditObject(
-                            message = null,
-                            title = null,
-                            question = null,
-                            answerId = JSONNullable(null),
-                        ),
+                        PostEditObject(answerId = JSONNullable(null)),
                     ).onError { (c, e) -> onError(e.getMessage(context, c)) }
                     deselecting = false
                 }) {

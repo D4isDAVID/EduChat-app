@@ -5,11 +5,11 @@ import io.github.d4isdavid.educhat.api.utils.putNullable
 import org.json.JSONObject
 
 data class CategoryEditObject(
-    val name: String?,
-    val description: JSONNullable<String>?,
-    val pinned: Boolean?,
-    val locked: Boolean?,
-    val parentId: Int?,
+    val name: String? = null,
+    val description: JSONNullable<String>? = null,
+    val pinned: Boolean? = null,
+    val locked: Boolean? = null,
+    val parentId: Int? = null,
 )
 
 fun CategoryEditObject.toJSON(): JSONObject = JSONObject()

@@ -5,10 +5,10 @@ import io.github.d4isdavid.educhat.api.utils.putNullable
 import org.json.JSONObject
 
 data class PostEditObject(
-    val message: MessageEditObject?,
-    val title: String?,
-    val question: Boolean?,
-    val answerId: JSONNullable<Int>?,
+    val message: MessageEditObject? = null,
+    val title: String? = null,
+    val question: Boolean? = null,
+    val answerId: JSONNullable<Int>? = null,
 )
 
 fun PostEditObject.toJSON(): JSONObject = JSONObject()

@@ -214,12 +214,8 @@ fun ManagePostBottomSheet(
                                 post.messageId,
                                 AdminPostEditObject(
                                     message = AdminMessageEditObject(
-                                        content = null,
                                         pinned = pinned,
                                     ),
-                                    title = null,
-                                    question = null,
-                                    answerId = null,
                                     locked = locked,
                                 )
                             ).onSuccess { hideSheet() }.onError(onError)
@@ -230,7 +226,6 @@ fun ManagePostBottomSheet(
                                     message = MessageEditObject(content),
                                     title = title,
                                     question = question,
-                                    answerId = null,
                                 )
                             ).onSuccess { hideSheet() }.onError(onError)
                         }

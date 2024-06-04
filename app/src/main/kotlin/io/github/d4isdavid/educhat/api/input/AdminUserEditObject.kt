@@ -3,9 +3,9 @@ package io.github.d4isdavid.educhat.api.input
 import org.json.JSONObject
 
 data class AdminUserEditObject(
-    val name: String?,
-    val admin: Boolean?,
-    val helper: Boolean?,
+    val name: String? = null,
+    val admin: Boolean? = null,
+    val helper: Boolean? = null,
 )
 
 fun AdminUserEditObject.toJSON(): JSONObject = JSONObject()

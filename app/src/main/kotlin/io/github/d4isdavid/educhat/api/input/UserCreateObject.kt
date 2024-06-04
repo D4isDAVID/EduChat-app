@@ -6,8 +6,8 @@ data class UserCreateObject(
     val name: String,
     val email: String,
     val password: String,
-    val student: Boolean?,
-    val teacher: Boolean?,
+    val student: Boolean? = null,
+    val teacher: Boolean? = null,
 )
 
 fun UserCreateObject.toJSON(): JSONObject = JSONObject()

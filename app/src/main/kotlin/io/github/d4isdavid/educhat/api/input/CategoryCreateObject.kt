@@ -4,8 +4,8 @@ import org.json.JSONObject
 
 data class CategoryCreateObject(
     val name: String,
-    val description: String?,
-    val parentId: Int?,
+    val description: String? = null,
+    val parentId: Int? = null,
 )
 
 fun CategoryCreateObject.toJSON(): JSONObject = JSONObject()

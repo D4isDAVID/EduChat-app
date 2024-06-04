@@ -186,7 +186,6 @@ fun ManageCategoryBottomSheet(
                                 JSONNullable(description),
                                 pinned,
                                 locked,
-                                null,
                             )
                         ).onSuccess { hideSheet() }.onError { (status, error) ->
                             val message = error.getMessage(context, status)
