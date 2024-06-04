@@ -20,6 +20,8 @@ class UserObject : APIObject() {
         private set
     var admin by Delegates.notNull<Boolean>()
         private set
+    var helper by Delegates.notNull<Boolean>()
+        private set
     var student by Delegates.notNull<Boolean>()
         private set
     var teacher by Delegates.notNull<Boolean>()
@@ -30,6 +32,7 @@ class UserObject : APIObject() {
         name = obj.getString("name")
         createdAt = obj.getInstant("createdAt")
         admin = obj.getBoolean("admin")
+        helper = obj.getBoolean("helper")
         student = obj.getBoolean("student")
         teacher = obj.getBoolean("teacher")
     }
