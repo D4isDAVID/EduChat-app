@@ -42,14 +42,20 @@ fun APIClient.mockMessage(
     authorName: String = "MockUser",
     authorCreatedAt: Instant = Instant.now(),
     authorAdmin: Boolean = true,
+    authorHelper: Boolean = true,
     authorStudent: Boolean = true,
     authorTeacher: Boolean = true,
-    votes: JSONObject = JSONObject()
-        .put("count", 47)
-        .put("me", JSONObject.NULL),
+    votes: JSONObject = createMockVoteCount(),
 ): JSONObject {
-    val author =
-        mockUser(authorId, authorName, authorCreatedAt, authorAdmin, authorStudent, authorTeacher)
+    val author = mockUser(
+        authorId,
+        authorName,
+        authorCreatedAt,
+        authorAdmin,
+        authorHelper,
+        authorStudent,
+        authorTeacher
+    )
     val message = JSONObject()
         .put("id", id)
         .put("content", content)
@@ -82,11 +88,10 @@ fun APIClient.mockPost(
     authorName: String = "MockUser",
     authorCreatedAt: Instant = Instant.now(),
     authorAdmin: Boolean = true,
+    authorHelper: Boolean = true,
     authorStudent: Boolean = true,
     authorTeacher: Boolean = true,
-    messageVotes: JSONObject = JSONObject()
-        .put("count", 47)
-        .put("me", JSONObject.NULL),
+    messageVotes: JSONObject = createMockVoteCount(),
     title: String = "Mock Post",
     locked: Boolean = true,
     question: Boolean = false,
@@ -105,6 +110,7 @@ fun APIClient.mockPost(
         authorName,
         authorCreatedAt,
         authorAdmin,
+        authorHelper,
         authorStudent,
         authorTeacher,
         messageVotes,
@@ -133,6 +139,7 @@ fun APIClient.mockUser(
     name: String = "MockUser",
     createdAt: Instant = Instant.now(),
     admin: Boolean = true,
+    helper: Boolean = true,
     student: Boolean = true,
     teacher: Boolean = true,
 ): JSONObject {
@@ -141,6 +148,7 @@ fun APIClient.mockUser(
         .put("name", name)
         .put("createdAt", createdAt.toString())
         .put("admin", admin)
+        .put("helper", helper)
         .put("student", student)
         .put("teacher", teacher)
     UserObject.getKey(user)
@@ -148,15 +156,13 @@ fun APIClient.mockUser(
     return user
 }
 
-fun createMockReactionCount(
-    emoji: String = "😎",
-    count: Int = 10,
-    me: Boolean = false,
+fun createMockVoteCount(
+    count: Int = 47,
+    me: Boolean? = null,
 ): JSONObject {
     val reaction = JSONObject()
-        .put("emoji", emoji)
         .put("count", count)
-        .put("me", me)
+        .put("me", me ?: JSONObject.NULL)
     return reaction
 }
 
