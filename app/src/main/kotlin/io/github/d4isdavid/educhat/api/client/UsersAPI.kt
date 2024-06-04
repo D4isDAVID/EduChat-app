@@ -1,12 +1,12 @@
 package io.github.d4isdavid.educhat.api.client
 
-import android.util.Base64
 import io.github.d4isdavid.educhat.api.input.AdminUserEditObject
 import io.github.d4isdavid.educhat.api.input.UserCreateObject
 import io.github.d4isdavid.educhat.api.input.UserEditObject
 import io.github.d4isdavid.educhat.api.input.toJSON
 import io.github.d4isdavid.educhat.api.objects.UserObject
 import io.github.d4isdavid.educhat.api.utils.Routes
+import io.github.d4isdavid.educhat.api.utils.encodeCredentials
 import io.github.d4isdavid.educhat.http.request.handlers.handleJsonObject
 import io.github.d4isdavid.educhat.http.request.writers.writeJsonObject
 import io.github.d4isdavid.educhat.http.rest.RestResultListener
@@ -27,12 +27,7 @@ class UsersAPI(private val client: APIClient) {
             writeJsonObject(input.toJSON())
         },
     ) {
-        val credentials = Base64.encodeToString(
-            "${input.name}:${input.password}".toByteArray(),
-            Base64.NO_WRAP or Base64.NO_PADDING
-        )
-        rest.headers["Authorization"] = "Basic $credentials"
-
+        rest.headers["Authorization"] = "Basic ${encodeCredentials(input.email, input.password)}"
         me = cache.put(handleJsonObject()!!)
         me!!
     }
@@ -73,12 +68,7 @@ class UsersAPI(private val client: APIClient) {
     }
 
     fun logIn(email: String, password: String): RestResultListener<UserObject> {
-        val credentials = Base64.encodeToString(
-            "$email:$password".toByteArray(),
-            Base64.NO_WRAP or Base64.NO_PADDING
-        )
-
-        val auth = "Basic $credentials"
+        val auth = "Basic ${encodeCredentials(email, password)}"
 
         return rest.get(
             Routes.users("@me"),
