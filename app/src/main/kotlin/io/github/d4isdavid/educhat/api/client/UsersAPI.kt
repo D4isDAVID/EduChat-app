@@ -1,8 +1,8 @@
 package io.github.d4isdavid.educhat.api.client
 
 import io.github.d4isdavid.educhat.api.input.AdminUserEditObject
+import io.github.d4isdavid.educhat.api.input.SelfUserEditObject
 import io.github.d4isdavid.educhat.api.input.UserCreateObject
-import io.github.d4isdavid.educhat.api.input.UserEditObject
 import io.github.d4isdavid.educhat.api.input.toJSON
 import io.github.d4isdavid.educhat.api.objects.UserObject
 import io.github.d4isdavid.educhat.api.utils.Routes
@@ -53,7 +53,7 @@ class UsersAPI(private val client: APIClient) {
         cache.put(handleJsonObject()!!)
     }
 
-    fun editSelf(input: UserEditObject) = rest.patch(
+    fun editSelf(input: SelfUserEditObject) = rest.patch(
         Routes.users("@me"),
         hook = {
             writeJsonObject(input.toJSON())

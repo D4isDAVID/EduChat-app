@@ -2,13 +2,13 @@ package io.github.d4isdavid.educhat.api.input
 
 import org.json.JSONObject
 
-data class UserEditObject(
+data class SelfUserEditObject(
     val name: String?,
     val email: String?,
     val password: String?,
 )
 
-fun UserEditObject.toJSON(): JSONObject = JSONObject()
+fun SelfUserEditObject.toJSON(): JSONObject = JSONObject()
     .put("name", name)
     .put("email", email)
     .put("password", password)

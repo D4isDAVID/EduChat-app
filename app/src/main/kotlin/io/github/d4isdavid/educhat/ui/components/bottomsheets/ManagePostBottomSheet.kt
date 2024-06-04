@@ -55,6 +55,7 @@ import io.github.d4isdavid.educhat.api.enums.APIError
 import io.github.d4isdavid.educhat.api.input.AdminMessageEditObject
 import io.github.d4isdavid.educhat.api.input.AdminPostEditObject
 import io.github.d4isdavid.educhat.api.input.MessageCreateObject
+import io.github.d4isdavid.educhat.api.input.MessageEditObject
 import io.github.d4isdavid.educhat.api.input.PostCreateObject
 import io.github.d4isdavid.educhat.api.input.PostEditObject
 import io.github.d4isdavid.educhat.api.objects.PostObject
@@ -217,16 +218,16 @@ fun ManagePostBottomSheet(
                                         pinned = pinned,
                                     ),
                                     title = null,
-                                    locked = locked,
                                     question = null,
                                     answerId = null,
+                                    locked = locked,
                                 )
                             ).onSuccess { hideSheet() }.onError(onError)
                         } else {
                             api.posts.edit(
                                 post.messageId,
                                 PostEditObject(
-                                    message = MessageCreateObject(content),
+                                    message = MessageEditObject(content),
                                     title = title,
                                     question = question,
                                     answerId = null,
