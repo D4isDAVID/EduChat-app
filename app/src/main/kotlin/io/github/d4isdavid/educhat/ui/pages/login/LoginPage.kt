@@ -38,7 +38,9 @@ import io.github.d4isdavid.educhat.api.client.APIClient
 import io.github.d4isdavid.educhat.api.enums.APIError
 import io.github.d4isdavid.educhat.api.utils.createMockClient
 import io.github.d4isdavid.educhat.ui.components.buttons.BackIconButton
+import io.github.d4isdavid.educhat.ui.components.icons.EmailIcon
 import io.github.d4isdavid.educhat.ui.components.icons.LoginIcon
+import io.github.d4isdavid.educhat.ui.components.icons.PasswordIcon
 import io.github.d4isdavid.educhat.ui.components.textfields.OutlinedPasswordField
 import io.github.d4isdavid.educhat.ui.navigation.FORUM_SECTION_ROUTE
 import io.github.d4isdavid.educhat.ui.navigation.LOGIN_SECTION_ROUTE
@@ -87,6 +89,7 @@ fun LoginPage(navController: NavController, api: APIClient, modifier: Modifier =
                     modifier = Modifier.fillMaxWidth(),
                     enabled = !fetching,
                     label = { Text(text = stringResource(id = R.string.email)) },
+                    leadingIcon = { EmailIcon() },
                     supportingText = if (emailError.isNotEmpty()) ({
                         Text(text = emailError)
                     }) else null,
@@ -105,6 +108,7 @@ fun LoginPage(navController: NavController, api: APIClient, modifier: Modifier =
                     modifier = Modifier
                         .fillMaxWidth(),
                     enabled = !fetching,
+                    leadingIcon = { PasswordIcon() },
                     supportingText = if (passwordError.isNotEmpty()) ({
                         Text(text = passwordError)
                     }) else null,

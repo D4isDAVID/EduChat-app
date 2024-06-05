@@ -38,7 +38,10 @@ import io.github.d4isdavid.educhat.api.enums.APIError
 import io.github.d4isdavid.educhat.api.input.UserCreateObject
 import io.github.d4isdavid.educhat.api.utils.createMockClient
 import io.github.d4isdavid.educhat.ui.components.buttons.BackIconButton
+import io.github.d4isdavid.educhat.ui.components.icons.EmailIcon
+import io.github.d4isdavid.educhat.ui.components.icons.PasswordIcon
 import io.github.d4isdavid.educhat.ui.components.icons.RegisterIcon
+import io.github.d4isdavid.educhat.ui.components.icons.UserIcon
 import io.github.d4isdavid.educhat.ui.components.labeled.LabeledCheckbox
 import io.github.d4isdavid.educhat.ui.components.textfields.OutlinedPasswordField
 import io.github.d4isdavid.educhat.ui.navigation.FORUM_SECTION_ROUTE
@@ -92,6 +95,7 @@ fun RegisterPage(navController: NavController, api: APIClient, modifier: Modifie
                     modifier = Modifier.fillMaxWidth(),
                     enabled = !fetching,
                     label = { Text(text = stringResource(id = R.string.username)) },
+                    leadingIcon = { UserIcon() },
                     supportingText = if (usernameError.isNotEmpty()) ({
                         Text(text = usernameError)
                     }) else null,
@@ -110,6 +114,7 @@ fun RegisterPage(navController: NavController, api: APIClient, modifier: Modifie
                         .fillMaxWidth(),
                     enabled = !fetching,
                     label = { Text(text = stringResource(id = R.string.email)) },
+                    leadingIcon = { EmailIcon() },
                     supportingText = if (emailError.isNotEmpty()) ({
                         Text(text = emailError)
                     }) else null,
@@ -128,6 +133,7 @@ fun RegisterPage(navController: NavController, api: APIClient, modifier: Modifie
                     modifier = Modifier
                         .fillMaxWidth(),
                     enabled = !fetching,
+                    leadingIcon = { PasswordIcon() },
                     supportingText = if (passwordError.isNotEmpty()) ({
                         Text(text = passwordError)
                     }) else null,
