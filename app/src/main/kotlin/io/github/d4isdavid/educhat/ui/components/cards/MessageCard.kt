@@ -132,7 +132,7 @@ fun MessageCard(
                         contentDescription = stringResource(id = R.string.user),
                         modifier = Modifier
                             .size(40.dp)
-                            .clickable {
+                            .clickable(enabled = api.users.me != null) {
                                 navController.navigate(userPageRoute(author.id.toString()))
                             },
                     )
@@ -144,7 +144,7 @@ fun MessageCard(
                             text = author.name,
                             style = MaterialTheme.typography.titleMedium,
                             modifier = Modifier
-                                .clickable {
+                                .clickable(enabled = api.users.me != null) {
                                     navController.navigate(userPageRoute(author.id.toString()))
                                 },
                         )
