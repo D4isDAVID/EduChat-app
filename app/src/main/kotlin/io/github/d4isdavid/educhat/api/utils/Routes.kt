@@ -6,7 +6,7 @@ object Routes {
 
     fun categoryPosts(id: String) = "/categories/$id/posts"
 
-    fun posts(id: String) = "/posts/$id"
+    fun posts(id: String? = null) = appendOptional("/posts", id)
 
     fun postReplies(postId: String, id: String? = null) =
         appendOptional("/posts/$postId/replies", id)

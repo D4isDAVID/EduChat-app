@@ -2,6 +2,7 @@ package io.github.d4isdavid.educhat.api.client
 
 import io.github.d4isdavid.educhat.api.input.AdminPostEditObject
 import io.github.d4isdavid.educhat.api.input.AdminPostReplyEditObject
+import io.github.d4isdavid.educhat.api.input.PostCreateObject
 import io.github.d4isdavid.educhat.api.input.PostEditObject
 import io.github.d4isdavid.educhat.api.input.PostReplyCreateObject
 import io.github.d4isdavid.educhat.api.input.PostReplyEditObject
@@ -27,6 +28,15 @@ class PostsAPI(private val client: APIClient) {
     val cache = Cache(client)
 
     fun get(id: Int) = rest.get(Routes.posts(id.toString())) {
+        cache.put(handleJsonObject()!!)
+    }
+
+    fun create(input: PostCreateObject) = rest.post(
+        Routes.posts(),
+        hook = {
+            writeJsonObject(input.toJSON())
+        },
+    ) {
         cache.put(handleJsonObject()!!)
     }
 

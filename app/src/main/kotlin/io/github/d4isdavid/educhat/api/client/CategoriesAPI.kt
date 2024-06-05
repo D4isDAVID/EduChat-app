@@ -2,7 +2,6 @@ package io.github.d4isdavid.educhat.api.client
 
 import io.github.d4isdavid.educhat.api.input.CategoryCreateObject
 import io.github.d4isdavid.educhat.api.input.CategoryEditObject
-import io.github.d4isdavid.educhat.api.input.PostCreateObject
 import io.github.d4isdavid.educhat.api.input.toJSON
 import io.github.d4isdavid.educhat.api.objects.CategoryObject
 import io.github.d4isdavid.educhat.api.params.CategoriesFetchParams
@@ -60,15 +59,6 @@ class CategoriesAPI(private val client: APIClient) {
         queryParams = params.toQuery(),
     ) {
         posts.cache.put(handleJsonArray()!!)
-    }
-
-    fun createPost(id: Int, input: PostCreateObject) = rest.post(
-        Routes.categoryPosts(id.toString()),
-        hook = {
-            writeJsonObject(input.toJSON())
-        },
-    ) {
-        posts.cache.put(handleJsonObject()!!)
     }
 
     class Cache : APICache<CategoryObject>(CategoryObject::class)
