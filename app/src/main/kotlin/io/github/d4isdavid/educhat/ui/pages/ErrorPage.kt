@@ -9,10 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -25,6 +22,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.github.d4isdavid.educhat.R
+import io.github.d4isdavid.educhat.ui.components.icons.BackIcon
 import io.github.d4isdavid.educhat.ui.theme.EduChatTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -41,18 +39,14 @@ fun ErrorPage(
             TopAppBar(
                 title = { Text(text = stringResource(id = R.string.error_report)) },
                 navigationIcon = {
-                    IconButton(onClick = onNavigationClick) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(id = R.string.back),
-                        )
-                    }
+                    IconButton(onClick = onNavigationClick) { BackIcon() }
                 },
             )
         },
     ) {
         Column(
             modifier = Modifier
+                .verticalScroll(rememberScrollState())
                 .padding(it)
                 .fillMaxSize()
                 .padding(16.dp),
@@ -81,10 +75,9 @@ fun ErrorPage(
             Text(
                 text = exceptionStack,
                 modifier = Modifier
-                    .verticalScroll(rememberScrollState())
-                    .horizontalScroll(rememberScrollState())
                     .background(color = MaterialTheme.colorScheme.surfaceContainerHighest)
-                    .padding(8.dp),
+                    .padding(8.dp)
+                    .horizontalScroll(rememberScrollState()),
                 style = MaterialTheme.typography.bodySmall
             )
         }
@@ -93,7 +86,7 @@ fun ErrorPage(
 
 @Composable
 @Preview(showBackground = true)
-private fun ErrorPagePreview() {
+private fun Preview() {
     EduChatTheme(dynamicColor = false) {
         val e = Error("Mock Error")
         ErrorPage(

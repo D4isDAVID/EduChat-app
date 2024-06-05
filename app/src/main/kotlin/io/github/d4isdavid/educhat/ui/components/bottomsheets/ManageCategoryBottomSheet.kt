@@ -327,7 +327,7 @@ fun ManageCategoryBottomSheet(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 @Preview(showBackground = true)
-private fun CreateCategoryBottomSheetPreview() {
+private fun CreatePreview() {
     EduChatTheme(dynamicColor = false) {
         val api = createMockClient(rememberCoroutineScope()) {}
         ManageCategoryBottomSheet(
@@ -347,7 +347,7 @@ private fun CreateCategoryBottomSheetPreview() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 @Preview(showBackground = true)
-private fun EditCategoryBottomSheetPreview() {
+private fun EditPreview() {
     EduChatTheme(dynamicColor = false) {
         val api = createMockClient(rememberCoroutineScope()) { mockCategory() }
         ManageCategoryBottomSheet(

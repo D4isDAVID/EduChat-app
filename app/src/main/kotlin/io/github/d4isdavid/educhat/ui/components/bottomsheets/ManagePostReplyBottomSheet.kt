@@ -303,7 +303,7 @@ fun ManagePostReplyBottomSheet(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 @Preview(showBackground = true)
-private fun CreatePostReplyBottomSheetPreview() {
+private fun CreatePreview() {
     EduChatTheme(dynamicColor = false) {
         val api = createMockClient(rememberCoroutineScope()) {}
         ManagePostReplyBottomSheet(
@@ -323,7 +323,7 @@ private fun CreatePostReplyBottomSheetPreview() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 @Preview(showBackground = true)
-private fun EditPostReplyBottomSheetPreview() {
+private fun EditPreview() {
     EduChatTheme(dynamicColor = false) {
         val api = createMockClient(rememberCoroutineScope()) { mockMessage() }
         ManagePostReplyBottomSheet(

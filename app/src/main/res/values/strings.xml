@@ -12,8 +12,8 @@
     <string name="password">Password</string>
     <string name="student">Student</string>
     <string name="teacher">Teacher</string>
-    <string name="show_password">Show password</string>
-    <string name="hide_password">Hide password</string>
+    <string name="show">Show</string>
+    <string name="hide">Hide</string>
 
     <string name="forum">Forum</string>
     <string name="notifications">Notifications</string>
@@ -85,6 +85,9 @@
     <string name="deselect_answer">Deselect Answer</string>
     <string name="deselect_answer_are_you_sure">Are you sure you want to deselect this answer?</string>
     <string name="answer">Answer</string>
+
+    <string name="loading">Loading</string>
+    <string name="replies">Replies</string>
 
     <string name="http_status_ok">200 OK</string>
     <string name="http_status_created">201 Created</string>

@@ -30,7 +30,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -41,7 +40,6 @@ import io.github.d4isdavid.educhat.R
 import io.github.d4isdavid.educhat.api.client.APIClient
 import io.github.d4isdavid.educhat.api.input.MessageVoteUpsertObject
 import io.github.d4isdavid.educhat.api.objects.MessageObject
-import io.github.d4isdavid.educhat.api.objects.UserObject
 import io.github.d4isdavid.educhat.api.utils.createMockClient
 import io.github.d4isdavid.educhat.api.utils.mockMessage
 import io.github.d4isdavid.educhat.ui.components.lists.UserBadges
@@ -53,7 +51,6 @@ fun MessageCard(
     navController: NavController,
     api: APIClient,
     message: MessageObject,
-    author: UserObject,
     modifier: Modifier = Modifier,
     answer: Boolean = false,
     trailingIcon: (@Composable () -> Unit)? = null,
@@ -62,16 +59,13 @@ fun MessageCard(
         containerColor = if (answer)
             MaterialTheme.colorScheme.primaryContainer
         else
-            Color.Unspecified,
-        contentColor = MaterialTheme.colorScheme.scrim,
-        disabledContainerColor = if (answer)
-            MaterialTheme.colorScheme.primaryContainer
-        else
-            Color.Unspecified,
-        disabledContentColor = MaterialTheme.colorScheme.scrim,
+            MaterialTheme.colorScheme.surface,
+        contentColor = MaterialTheme.colorScheme.onSurface,
     ),
     elevation: CardElevation = CardDefaults.elevatedCardElevation(),
 ) {
+    val author = api.users.cache.get(message.authorId)!!
+
     ElevatedCard(
         modifier = modifier,
         shape = shape,
@@ -215,32 +209,32 @@ fun MessageCard(
 
 @Composable
 @Preview(showBackground = true)
-private fun MessageCardPreview() {
+private fun Preview() {
     EduChatTheme(dynamicColor = false) {
         val api = createMockClient(rememberCoroutineScope()) {
             mockMessage()
         }
+
         MessageCard(
             navController = rememberNavController(),
             api = api,
             message = api.messages.cache.get(1)!!,
-            author = api.users.cache.get(1)!!,
         )
     }
 }
 
 @Composable
 @Preview(showBackground = true)
-private fun MessageCardAnswerPreview() {
+private fun AnswerPreview() {
     EduChatTheme(dynamicColor = false) {
         val api = createMockClient(rememberCoroutineScope()) {
             mockMessage()
         }
+
         MessageCard(
             navController = rememberNavController(),
             api = api,
             message = api.messages.cache.get(1)!!,
-            author = api.users.cache.get(1)!!,
             answer = true,
         )
     }

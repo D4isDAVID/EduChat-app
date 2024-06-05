@@ -46,7 +46,7 @@ fun UserBadges(
 
 @Composable
 @Preview(showBackground = true)
-private fun UserBadgesPreview() {
+private fun Preview() {
     EduChatTheme(dynamicColor = false) {
         val api = createMockClient(rememberCoroutineScope()) { mockUser() }
         UserBadges(

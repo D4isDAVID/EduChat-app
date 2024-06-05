@@ -1,9 +1,9 @@
 package io.github.d4isdavid.educhat.api.params
 
 data class CategoryPostsFetchParams(
-    val limit: Int?,
-    val after: Int?,
-    val before: Int?,
+    val limit: Int? = null,
+    val after: Int? = null,
+    val before: Int? = null,
 )
 
 fun CategoryPostsFetchParams.toQuery(): Map<String, String?> {

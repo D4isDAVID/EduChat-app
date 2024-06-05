@@ -1,19 +1,16 @@
 package io.github.d4isdavid.educhat.ui.pages.login
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -26,11 +23,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -44,6 +37,8 @@ import io.github.d4isdavid.educhat.api.client.APIClient
 import io.github.d4isdavid.educhat.api.enums.APIError
 import io.github.d4isdavid.educhat.api.input.UserCreateObject
 import io.github.d4isdavid.educhat.api.utils.createMockClient
+import io.github.d4isdavid.educhat.ui.components.buttons.BackIconButton
+import io.github.d4isdavid.educhat.ui.components.icons.RegisterIcon
 import io.github.d4isdavid.educhat.ui.components.labeled.LabeledCheckbox
 import io.github.d4isdavid.educhat.ui.components.textfields.OutlinedPasswordField
 import io.github.d4isdavid.educhat.ui.navigation.FORUM_SECTION_ROUTE
@@ -51,7 +46,7 @@ import io.github.d4isdavid.educhat.ui.navigation.LOGIN_SECTION_ROUTE
 import io.github.d4isdavid.educhat.ui.theme.EduChatTheme
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterPage(navController: NavController, api: APIClient, modifier: Modifier = Modifier) {
     val context = LocalContext.current
@@ -59,50 +54,37 @@ fun RegisterPage(navController: NavController, api: APIClient, modifier: Modifie
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
 
-    val (emailFocus, passwordFocus) = FocusRequester.createRefs()
-
     var username by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    var passwordVisible by remember { mutableStateOf(false) }
     var student by remember { mutableStateOf(false) }
     var teacher by remember { mutableStateOf(false) }
 
+    var fetching by remember { mutableStateOf(false) }
     var usernameError by remember { mutableStateOf("") }
     var emailError by remember { mutableStateOf("") }
     var passwordError by remember { mutableStateOf("") }
-    var fetching by remember { mutableStateOf(false) }
 
     Scaffold(
         modifier = modifier,
         topBar = {
             TopAppBar(
                 title = { Text(text = stringResource(id = R.string.register)) },
-                navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(id = R.string.back)
-                        )
-                    }
-                },
+                navigationIcon = { BackIconButton(navController = navController) },
             )
         },
-        snackbarHost = {
-            SnackbarHost(hostState = snackbarHostState)
-        },
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
     ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(24.dp)
+                .padding(16.dp)
                 .padding(paddingValues),
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f),
-                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 OutlinedTextField(
                     value = username,
@@ -110,16 +92,13 @@ fun RegisterPage(navController: NavController, api: APIClient, modifier: Modifie
                     modifier = Modifier.fillMaxWidth(),
                     enabled = !fetching,
                     label = { Text(text = stringResource(id = R.string.username)) },
-                    supportingText = if (usernameError.isEmpty()) null else ({
+                    supportingText = if (usernameError.isNotEmpty()) ({
                         Text(text = usernameError)
-                    }),
+                    }) else null,
                     isError = usernameError.isNotEmpty(),
                     keyboardOptions = KeyboardOptions(
                         autoCorrect = false,
                         imeAction = ImeAction.Next,
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onNext = { emailFocus.requestFocus() },
                     ),
                     singleLine = true,
                 )
@@ -128,21 +107,17 @@ fun RegisterPage(navController: NavController, api: APIClient, modifier: Modifie
                     value = email,
                     onValueChange = { email = it },
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .focusRequester(focusRequester = emailFocus),
+                        .fillMaxWidth(),
                     enabled = !fetching,
                     label = { Text(text = stringResource(id = R.string.email)) },
-                    supportingText = if (emailError.isEmpty()) null else ({
+                    supportingText = if (emailError.isNotEmpty()) ({
                         Text(text = emailError)
-                    }),
+                    }) else null,
                     isError = emailError.isNotEmpty(),
                     keyboardOptions = KeyboardOptions(
                         autoCorrect = false,
                         keyboardType = KeyboardType.Email,
                         imeAction = ImeAction.Next,
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onNext = { passwordFocus.requestFocus() },
                     ),
                     singleLine = true,
                 )
@@ -150,44 +125,34 @@ fun RegisterPage(navController: NavController, api: APIClient, modifier: Modifie
                 OutlinedPasswordField(
                     value = password,
                     onValueChange = { password = it },
-                    valueVisible = passwordVisible,
-                    onValueVisibilityChange = { passwordVisible = it },
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .focusRequester(focusRequester = passwordFocus),
+                        .fillMaxWidth(),
                     enabled = !fetching,
-                    supportingText = if (passwordError.isEmpty()) null else ({
+                    supportingText = if (passwordError.isNotEmpty()) ({
                         Text(text = passwordError)
-                    }),
+                    }) else null,
                     isError = passwordError.isNotEmpty(),
                     keyboardOptions = KeyboardOptions(
                         autoCorrect = false,
                         keyboardType = KeyboardType.Password,
                         imeAction = ImeAction.Done,
                     ),
-                    keyboardActions = KeyboardActions(
-                        onNext = { passwordFocus.freeFocus() },
-                    ),
                     singleLine = true,
                 )
 
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
-                    LabeledCheckbox(
-                        checked = student,
-                        label = { Text(text = stringResource(id = R.string.student)) },
-                        onCheckedChange = { student = it },
-                        enabled = !fetching,
-                    )
+                LabeledCheckbox(
+                    checked = student,
+                    label = { Text(text = stringResource(id = R.string.student)) },
+                    onCheckedChange = { student = it },
+                    enabled = !fetching,
+                )
 
-                    LabeledCheckbox(
-                        checked = teacher,
-                        label = { Text(text = stringResource(id = R.string.teacher)) },
-                        onCheckedChange = { teacher = it },
-                        enabled = !fetching,
-                    )
-                }
+                LabeledCheckbox(
+                    checked = teacher,
+                    label = { Text(text = stringResource(id = R.string.teacher)) },
+                    onCheckedChange = { teacher = it },
+                    enabled = !fetching,
+                )
             }
 
             Button(
@@ -237,6 +202,8 @@ fun RegisterPage(navController: NavController, api: APIClient, modifier: Modifie
                 if (fetching) {
                     CircularProgressIndicator(modifier = Modifier.size(ButtonDefaults.IconSize))
                 } else {
+                    RegisterIcon()
+                    Spacer(modifier = Modifier.width(8.dp))
                     Text(text = stringResource(id = R.string.register))
                 }
             }
@@ -246,7 +213,7 @@ fun RegisterPage(navController: NavController, api: APIClient, modifier: Modifie
 
 @Preview(showBackground = true)
 @Composable
-private fun RegisterPagePreview() {
+private fun Preview() {
     EduChatTheme(dynamicColor = false) {
         val api = createMockClient(rememberCoroutineScope()) {}
         RegisterPage(

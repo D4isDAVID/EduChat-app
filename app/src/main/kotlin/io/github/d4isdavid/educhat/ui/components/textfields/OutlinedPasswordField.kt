@@ -24,7 +24,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import io.github.d4isdavid.educhat.R
@@ -34,13 +33,11 @@ import io.github.d4isdavid.educhat.ui.theme.EduChatTheme
 fun OutlinedPasswordField(
     value: String,
     onValueChange: (String) -> Unit,
-    valueVisible: Boolean,
-    onValueVisibilityChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     readOnly: Boolean = false,
     textStyle: TextStyle = LocalTextStyle.current,
-    label: @Composable (() -> Unit) = { Text(text = stringResource(id = R.string.password)) },
+    label: @Composable (() -> Unit)? = { Text(text = stringResource(id = R.string.password)) },
     placeholder: @Composable (() -> Unit)? = null,
     leadingIcon: @Composable (() -> Unit)? = null,
     trailingIcon: @Composable (() -> Unit)? = null,
@@ -57,67 +54,8 @@ fun OutlinedPasswordField(
     shape: Shape = OutlinedTextFieldDefaults.shape,
     colors: TextFieldColors = OutlinedTextFieldDefaults.colors(),
 ) {
-    var textFieldValue by remember { mutableStateOf(TextFieldValue(text = value)) }
+    var visible by remember { mutableStateOf(false) }
 
-    OutlinedPasswordField(
-        value = textFieldValue,
-        onValueChange = {
-            textFieldValue = it
-            if (value != it.text)
-                onValueChange(it.text)
-        },
-        valueVisible = valueVisible,
-        onValueVisibilityChange = onValueVisibilityChange,
-        modifier = modifier,
-        enabled = enabled,
-        readOnly = readOnly,
-        textStyle = textStyle,
-        label = label,
-        placeholder = placeholder,
-        leadingIcon = leadingIcon,
-        trailingIcon = trailingIcon,
-        prefix = prefix,
-        suffix = suffix,
-        supportingText = supportingText,
-        isError = isError,
-        keyboardOptions = keyboardOptions,
-        keyboardActions = keyboardActions,
-        singleLine = singleLine,
-        maxLines = maxLines,
-        minLines = minLines,
-        interactionSource = interactionSource,
-        shape = shape,
-        colors = colors,
-    )
-}
-
-@Composable
-fun OutlinedPasswordField(
-    value: TextFieldValue,
-    onValueChange: (TextFieldValue) -> Unit,
-    valueVisible: Boolean,
-    onValueVisibilityChange: (Boolean) -> Unit,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-    readOnly: Boolean = false,
-    textStyle: TextStyle = LocalTextStyle.current,
-    label: @Composable (() -> Unit) = { Text(text = stringResource(id = R.string.password)) },
-    placeholder: @Composable (() -> Unit)? = null,
-    leadingIcon: @Composable (() -> Unit)? = null,
-    trailingIcon: @Composable (() -> Unit)? = null,
-    prefix: @Composable (() -> Unit)? = null,
-    suffix: @Composable (() -> Unit)? = null,
-    supportingText: @Composable (() -> Unit)? = null,
-    isError: Boolean = false,
-    keyboardOptions: KeyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-    keyboardActions: KeyboardActions = KeyboardActions.Default,
-    singleLine: Boolean = false,
-    maxLines: Int = if (singleLine) 1 else Int.MAX_VALUE,
-    minLines: Int = 1,
-    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    shape: Shape = OutlinedTextFieldDefaults.shape,
-    colors: TextFieldColors = OutlinedTextFieldDefaults.colors(),
-) {
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
@@ -129,29 +67,28 @@ fun OutlinedPasswordField(
         placeholder = placeholder,
         leadingIcon = leadingIcon,
         trailingIcon = {
-            trailingIcon?.let { it() }
-                ?: IconButton(onClick = { onValueVisibilityChange(!valueVisible) }) {
-                    val image = if (valueVisible)
-                        Icons.Filled.Visibility
-                    else
+            if (trailingIcon != null) {
+                trailingIcon()
+                return@OutlinedTextField
+            }
+
+            IconButton(onClick = { visible = !visible }) {
+                Icon(
+                    imageVector = if (visible)
                         Icons.Filled.VisibilityOff
-
-                    val descriptionId = if (valueVisible)
-                        R.string.hide_password
                     else
-                        R.string.show_password
-
-                    Icon(
-                        imageVector = image,
-                        contentDescription = stringResource(id = descriptionId)
-                    )
-                }
+                        Icons.Filled.Visibility,
+                    contentDescription = stringResource(
+                        id = if (visible) R.string.hide else R.string.show
+                    ),
+                )
+            }
         },
         prefix = prefix,
         suffix = suffix,
         supportingText = supportingText,
         isError = isError,
-        visualTransformation = if (valueVisible) VisualTransformation.None else PasswordVisualTransformation(),
+        visualTransformation = if (visible) VisualTransformation.None else PasswordVisualTransformation(),
         keyboardOptions = keyboardOptions,
         keyboardActions = keyboardActions,
         singleLine = singleLine,
@@ -165,13 +102,11 @@ fun OutlinedPasswordField(
 
 @Composable
 @Preview(showBackground = true)
-private fun OutlinedPasswordFieldPreview() {
+private fun Preview() {
     EduChatTheme(dynamicColor = false) {
         OutlinedPasswordField(
             value = "",
             onValueChange = {},
-            valueVisible = false,
-            onValueVisibilityChange = {},
         )
     }
 }

@@ -53,7 +53,7 @@ fun LabeledIconButton(
 
 @Composable
 @Preview(showBackground = true)
-private fun LabeledIconPreview() {
+private fun Preview() {
     EduChatTheme(dynamicColor = false) {
         LabeledIconButton(
             icon = {

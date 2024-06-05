@@ -9,11 +9,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -21,11 +20,15 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -36,7 +39,9 @@ import io.github.d4isdavid.educhat.api.client.APIClient
 import io.github.d4isdavid.educhat.api.objects.UserObject
 import io.github.d4isdavid.educhat.api.utils.createMockClient
 import io.github.d4isdavid.educhat.api.utils.mockUser
+import io.github.d4isdavid.educhat.ui.components.buttons.BackIconButton
 import io.github.d4isdavid.educhat.ui.theme.EduChatTheme
+import io.github.d4isdavid.educhat.utils.errorToSnackbar
 import io.github.d4isdavid.educhat.utils.toRelativeString
 import java.time.Duration
 import java.time.Instant
@@ -46,82 +51,101 @@ import java.time.Instant
 fun UserPage(
     navController: NavController,
     api: APIClient,
-    user: UserObject,
     modifier: Modifier = Modifier,
-    showTopBar: Boolean = true,
+    userId: Int? = null,
+    withBackButton: Boolean = true,
 ) {
     val context = LocalContext.current
+    val inspectionMode = LocalInspectionMode.current
 
+    val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
+    val onError = errorToSnackbar(scope, snackbarHostState)
+
+    var user: UserObject? by remember { mutableStateOf(null) }
+    if (inspectionMode) {
+        user = api.users.cache.get(userId ?: 1)
+    }
 
     Scaffold(
         modifier = modifier,
         topBar = {
-            if (!showTopBar) {
-                return@Scaffold
-            }
-
             TopAppBar(
-                title = { Text(text = stringResource(id = R.string.user)) },
+                title = { Text(text = user?.name ?: stringResource(id = R.string.loading)) },
                 navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(id = R.string.back),
-                        )
+                    if (!withBackButton) {
+                        return@TopAppBar
                     }
-                },
-                actions = {
-                    // TODO
+
+                    BackIconButton(navController = navController)
                 },
             )
         },
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
     ) { paddingValues ->
+        if (user == null) {
+            LinearProgressIndicator(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(paddingValues),
+            )
+            return@Scaffold
+        }
+
         Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(paddingValues),
+                .padding(paddingValues)
+                .padding(16.dp),
         ) {
-            Column(
-                modifier = Modifier
-                    .padding(16.dp),
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Person,
-                        contentDescription = stringResource(id = R.string.user),
-                        modifier = Modifier
-                            .size(48.dp),
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(text = user.name, style = MaterialTheme.typography.titleMedium)
-                }
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = stringResource(
-                        id = R.string.joined,
-                        Duration.between(user.createdAt, Instant.now())
-                            .toRelativeString(resources = context.resources),
-                    ),
-                    style = MaterialTheme.typography.bodyMedium,
+                Icon(
+                    imageVector = Icons.Filled.Person,
+                    contentDescription = stringResource(id = R.string.user),
+                    modifier = Modifier
+                        .size(48.dp),
                 )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(text = user!!.name, style = MaterialTheme.typography.titleMedium)
             }
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = stringResource(
+                    id = R.string.joined,
+                    Duration.between(user!!.createdAt, Instant.now())
+                        .toRelativeString(resources = context.resources),
+                ),
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        }
+    }
+
+    if (!inspectionMode) {
+        if (userId == null) {
+            api.users.getSelf()
+                .onSuccess { user = it }
+                .onError { (status, error) -> onError(error.getMessage(context, status)) }
+        } else {
+            api.users.get(userId)
+                .onSuccess { user = it }
+                .onError { (status, error) -> onError(error.getMessage(context, status)) }
         }
     }
 }
 
 @Composable
 @Preview(showBackground = true)
-private fun UserPagePreview() {
+private fun Preview() {
     EduChatTheme(dynamicColor = false) {
-        val api = createMockClient(rememberCoroutineScope()) { mockUser() }
+        val api = createMockClient(rememberCoroutineScope()) {
+            mockUser()
+        }
+
         UserPage(
             navController = rememberNavController(),
             api = api,
-            user = api.users.cache.get(1)!!,
+            userId = 1,
         )
     }
 }

@@ -95,7 +95,7 @@ fun LabeledCheckbox(
 
 @Preview(showBackground = true)
 @Composable
-private fun LabeledCheckboxPreview() {
+private fun Preview() {
     EduChatTheme(dynamicColor = false) {
         LabeledCheckbox(checked = true, label = { Text(text = "Checkbox") })
     }
@@ -103,7 +103,7 @@ private fun LabeledCheckboxPreview() {
 
 @Preview(showBackground = true)
 @Composable
-private fun LabeledCheckboxEndPreview() {
+private fun EndPreview() {
     EduChatTheme(dynamicColor = false) {
         LabeledCheckbox(
             checked = true,

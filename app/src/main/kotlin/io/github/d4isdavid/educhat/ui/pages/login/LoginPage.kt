@@ -1,19 +1,16 @@
 package io.github.d4isdavid.educhat.ui.pages.login
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -26,11 +23,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -43,6 +37,8 @@ import io.github.d4isdavid.educhat.R
 import io.github.d4isdavid.educhat.api.client.APIClient
 import io.github.d4isdavid.educhat.api.enums.APIError
 import io.github.d4isdavid.educhat.api.utils.createMockClient
+import io.github.d4isdavid.educhat.ui.components.buttons.BackIconButton
+import io.github.d4isdavid.educhat.ui.components.icons.LoginIcon
 import io.github.d4isdavid.educhat.ui.components.textfields.OutlinedPasswordField
 import io.github.d4isdavid.educhat.ui.navigation.FORUM_SECTION_ROUTE
 import io.github.d4isdavid.educhat.ui.navigation.LOGIN_SECTION_ROUTE
@@ -57,46 +53,33 @@ fun LoginPage(navController: NavController, api: APIClient, modifier: Modifier =
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
 
-    val (focusRequester) = FocusRequester.createRefs()
-
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    var passwordVisible by remember { mutableStateOf(false) }
 
+    var fetching by remember { mutableStateOf(false) }
     var emailError by remember { mutableStateOf("") }
     var passwordError by remember { mutableStateOf("") }
-    var fetching by remember { mutableStateOf(false) }
 
     Scaffold(
         modifier = modifier,
         topBar = {
             TopAppBar(
                 title = { Text(text = stringResource(id = R.string.login)) },
-                navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(id = R.string.back),
-                        )
-                    }
-                },
+                navigationIcon = { BackIconButton(navController = navController) },
             )
         },
-        snackbarHost = {
-            SnackbarHost(hostState = snackbarHostState)
-        },
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
     ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(24.dp)
+                .padding(16.dp)
                 .padding(paddingValues),
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f),
-                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 OutlinedTextField(
                     value = email,
@@ -104,17 +87,14 @@ fun LoginPage(navController: NavController, api: APIClient, modifier: Modifier =
                     modifier = Modifier.fillMaxWidth(),
                     enabled = !fetching,
                     label = { Text(text = stringResource(id = R.string.email)) },
-                    supportingText = if (emailError.isEmpty()) null else ({
+                    supportingText = if (emailError.isNotEmpty()) ({
                         Text(text = emailError)
-                    }),
+                    }) else null,
                     isError = emailError.isNotEmpty(),
                     keyboardOptions = KeyboardOptions(
                         autoCorrect = false,
                         keyboardType = KeyboardType.Email,
                         imeAction = ImeAction.Next,
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onNext = { focusRequester.requestFocus() },
                     ),
                     singleLine = true,
                 )
@@ -122,23 +102,17 @@ fun LoginPage(navController: NavController, api: APIClient, modifier: Modifier =
                 OutlinedPasswordField(
                     value = password,
                     onValueChange = { password = it },
-                    valueVisible = passwordVisible,
-                    onValueVisibilityChange = { passwordVisible = it },
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .focusRequester(focusRequester = focusRequester),
+                        .fillMaxWidth(),
                     enabled = !fetching,
-                    supportingText = if (passwordError.isEmpty()) null else ({
+                    supportingText = if (passwordError.isNotEmpty()) ({
                         Text(text = passwordError)
-                    }),
+                    }) else null,
                     isError = passwordError.isNotEmpty(),
                     keyboardOptions = KeyboardOptions(
                         autoCorrect = false,
                         keyboardType = KeyboardType.Password,
                         imeAction = ImeAction.Done,
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onNext = { focusRequester.freeFocus() },
                     ),
                     singleLine = true,
                 )
@@ -183,6 +157,8 @@ fun LoginPage(navController: NavController, api: APIClient, modifier: Modifier =
                 if (fetching) {
                     CircularProgressIndicator(modifier = Modifier.size(ButtonDefaults.IconSize))
                 } else {
+                    LoginIcon()
+                    Spacer(modifier = Modifier.width(8.dp))
                     Text(text = stringResource(id = R.string.login))
                 }
             }
@@ -192,7 +168,7 @@ fun LoginPage(navController: NavController, api: APIClient, modifier: Modifier =
 
 @Preview(showBackground = true)
 @Composable
-fun LoginPagePreview() {
+private fun Preview() {
     EduChatTheme(dynamicColor = false) {
         val api = createMockClient(rememberCoroutineScope()) {}
         LoginPage(

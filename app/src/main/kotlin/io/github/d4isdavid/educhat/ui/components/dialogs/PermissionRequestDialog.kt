@@ -64,7 +64,7 @@ fun PermissionRequestDialog(
 @Composable
 @Preview(showBackground = true)
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-private fun PermissionRequestDialogPreview() {
+private fun Preview() {
     EduChatTheme(dynamicColor = false) {
         PermissionRequestDialog(
             permission = Manifest.permission.POST_NOTIFICATIONS,

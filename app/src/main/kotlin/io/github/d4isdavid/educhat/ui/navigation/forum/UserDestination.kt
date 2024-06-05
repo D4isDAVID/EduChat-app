@@ -13,12 +13,10 @@ fun NavGraphBuilder.userPage(navController: NavController, api: APIClient) {
     composable(route = userPageRoute()) {
         val id = it.arguments!!.getString(USER_ID_ARGUMENT)!!.toInt()
 
-        api.users.get(id)
-
         UserPage(
             navController = navController,
             api = api,
-            user = api.users.cache.get(id)!!,
+            userId = id,
         )
     }
 }

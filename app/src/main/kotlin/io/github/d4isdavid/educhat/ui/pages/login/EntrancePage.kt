@@ -2,9 +2,11 @@ package io.github.d4isdavid.educhat.ui.pages.login
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -18,6 +20,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import io.github.d4isdavid.educhat.R
+import io.github.d4isdavid.educhat.ui.components.icons.LoginIcon
+import io.github.d4isdavid.educhat.ui.components.icons.RegisterIcon
 import io.github.d4isdavid.educhat.ui.navigation.forum.HOME_PAGE_ROUTE
 import io.github.d4isdavid.educhat.ui.navigation.login.LOGIN_PAGE_ROUTE
 import io.github.d4isdavid.educhat.ui.navigation.login.REGISTER_PAGE_ROUTE
@@ -28,7 +32,8 @@ fun EntrancePage(navController: NavController, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(24.dp),
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Box(
             modifier = Modifier
@@ -38,41 +43,42 @@ fun EntrancePage(navController: NavController, modifier: Modifier = Modifier) {
         ) {
             Text(
                 text = stringResource(id = R.string.welcome_to_app),
-                style = MaterialTheme.typography.headlineLarge
+                style = MaterialTheme.typography.headlineLarge,
             )
         }
 
-        Column(
+        Button(
+            onClick = { navController.navigate(LOGIN_PAGE_ROUTE) },
             modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Button(
-                onClick = { navController.navigate(LOGIN_PAGE_ROUTE) },
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                Text(text = stringResource(id = R.string.login))
-            }
+            LoginIcon()
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(text = stringResource(id = R.string.login))
+        }
 
-            Button(
-                onClick = { navController.navigate(REGISTER_PAGE_ROUTE) },
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                Text(text = stringResource(id = R.string.register))
-            }
+        Button(
+            onClick = { navController.navigate(REGISTER_PAGE_ROUTE) },
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            RegisterIcon()
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(text = stringResource(id = R.string.register))
+        }
 
-            TextButton(onClick = {
+        TextButton(
+            onClick = {
                 navController.popBackStack()
                 navController.navigate(HOME_PAGE_ROUTE)
-            }) {
-                Text(text = stringResource(id = R.string.continue_as_guest))
-            }
+            },
+        ) {
+            Text(text = stringResource(id = R.string.continue_as_guest))
         }
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-private fun EntrancePagePreview() {
+private fun Preview() {
     EduChatTheme(dynamicColor = false) {
         EntrancePage(navController = rememberNavController())
     }
