@@ -10,6 +10,8 @@ import io.github.d4isdavid.educhat.api.input.toJSON
 import io.github.d4isdavid.educhat.api.objects.MessageObject
 import io.github.d4isdavid.educhat.api.objects.PostObject
 import io.github.d4isdavid.educhat.api.objects.UserObject
+import io.github.d4isdavid.educhat.api.params.PostsFetchParams
+import io.github.d4isdavid.educhat.api.params.toQuery
 import io.github.d4isdavid.educhat.api.utils.Routes
 import io.github.d4isdavid.educhat.http.request.handlers.handleJsonArray
 import io.github.d4isdavid.educhat.http.request.handlers.handleJsonObject
@@ -26,6 +28,13 @@ class PostsAPI(private val client: APIClient) {
         get() = client.messages
 
     val cache = Cache(client)
+
+    fun get(params: PostsFetchParams) = rest.get(
+        Routes.posts(),
+        queryParams = params.toQuery(),
+    ) {
+        cache.put(handleJsonArray()!!)
+    }
 
     fun get(id: Int) = rest.get(Routes.posts(id.toString())) {
         cache.put(handleJsonObject()!!)

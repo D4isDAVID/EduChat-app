@@ -98,6 +98,8 @@
     <string name="grant_helper">Grant Helper</string>
     <string name="revoke_helper">Revoke Helper</string>
 
+    <string name="search_posts">Search Posts</string>
+
     <string name="http_status_ok">200 OK</string>
     <string name="http_status_created">201 Created</string>
     <string name="http_status_no_content">204 No Content</string>

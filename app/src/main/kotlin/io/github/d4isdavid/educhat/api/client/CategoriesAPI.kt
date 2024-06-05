@@ -5,7 +5,6 @@ import io.github.d4isdavid.educhat.api.input.CategoryEditObject
 import io.github.d4isdavid.educhat.api.input.toJSON
 import io.github.d4isdavid.educhat.api.objects.CategoryObject
 import io.github.d4isdavid.educhat.api.params.CategoriesFetchParams
-import io.github.d4isdavid.educhat.api.params.CategoryPostsFetchParams
 import io.github.d4isdavid.educhat.api.params.toQuery
 import io.github.d4isdavid.educhat.api.utils.Routes
 import io.github.d4isdavid.educhat.http.request.handlers.handleJsonArray
@@ -16,8 +15,6 @@ class CategoriesAPI(private val client: APIClient) {
 
     private val rest
         get() = client.rest
-    private val posts
-        get() = client.posts
 
     val cache = Cache()
 
@@ -52,13 +49,6 @@ class CategoriesAPI(private val client: APIClient) {
 
     fun delete(id: Int) = rest.delete(Routes.categories(id.toString())) {
         cache.remove(id)
-    }
-
-    fun getPosts(id: Int, params: CategoryPostsFetchParams) = rest.get(
-        Routes.categoryPosts(id.toString()),
-        queryParams = params.toQuery(),
-    ) {
-        posts.cache.put(handleJsonArray()!!)
     }
 
     class Cache : APICache<CategoryObject>(CategoryObject::class)

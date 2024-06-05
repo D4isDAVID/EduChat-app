@@ -7,8 +7,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Forum
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Forum
 import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -34,8 +36,10 @@ import io.github.d4isdavid.educhat.ui.navigation.FORUM_SECTION_ROUTE
 import io.github.d4isdavid.educhat.ui.navigation.LOGIN_SECTION_ROUTE
 import io.github.d4isdavid.educhat.ui.navigation.forum.home.FORUM_HOME_SECTION_ROUTE
 import io.github.d4isdavid.educhat.ui.navigation.forum.home.PROFILE_HOME_SECTION_ROUTE
+import io.github.d4isdavid.educhat.ui.navigation.forum.home.SEARCH_HOME_SECTION_ROUTE
 import io.github.d4isdavid.educhat.ui.navigation.forum.home.forumHomeSection
 import io.github.d4isdavid.educhat.ui.navigation.forum.home.profileHomeSection
+import io.github.d4isdavid.educhat.ui.navigation.forum.home.searchHomeSection
 import io.github.d4isdavid.educhat.ui.theme.EduChatTheme
 
 @Composable
@@ -80,6 +84,13 @@ fun HomePage(navController: NavController, api: APIClient, modifier: Modifier = 
                     label = stringResource(id = R.string.forum),
                 )
 
+                HomeNavBarItem(
+                    route = SEARCH_HOME_SECTION_ROUTE,
+                    imageVector = Icons.Outlined.Search,
+                    imageVectorSelected = Icons.Filled.Search,
+                    label = stringResource(id = R.string.search),
+                )
+
                 if (api.users.me == null) {
                     NavigationBarItem(
                         selected = false,
@@ -114,6 +125,7 @@ fun HomePage(navController: NavController, api: APIClient, modifier: Modifier = 
             popExitTransition = { ExitTransition.None },
         ) {
             forumHomeSection(navController = navController, api = api)
+            searchHomeSection(navController = navController, api = api)
             profileHomeSection(navController = navController, api = api)
         }
     }

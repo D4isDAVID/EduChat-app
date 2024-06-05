@@ -4,8 +4,6 @@ object Routes {
 
     fun categories(id: String? = null) = appendOptional("/categories", id)
 
-    fun categoryPosts(id: String) = "/categories/$id/posts"
-
     fun posts(id: String? = null) = appendOptional("/posts", id)
 
     fun postReplies(postId: String, id: String? = null) =

@@ -44,7 +44,7 @@ import io.github.d4isdavid.educhat.api.client.APIClient
 import io.github.d4isdavid.educhat.api.objects.CategoryObject
 import io.github.d4isdavid.educhat.api.objects.PostObject
 import io.github.d4isdavid.educhat.api.params.CategoriesFetchParams
-import io.github.d4isdavid.educhat.api.params.CategoryPostsFetchParams
+import io.github.d4isdavid.educhat.api.params.PostsFetchParams
 import io.github.d4isdavid.educhat.api.utils.createMockClient
 import io.github.d4isdavid.educhat.api.utils.mockCategory
 import io.github.d4isdavid.educhat.api.utils.mockPost
@@ -209,7 +209,7 @@ fun CategoryPage(
                 fetching = false
             }.onError { (status, error) -> onError(error.getMessage(context, status)) }
 
-            api.categories.getPosts(categoryId, CategoryPostsFetchParams()).onSuccess {
+            api.posts.get(PostsFetchParams(categoryId = categoryId)).onSuccess {
                 posts.clear()
                 posts.addAll(it)
                 fetchingPosts = false
