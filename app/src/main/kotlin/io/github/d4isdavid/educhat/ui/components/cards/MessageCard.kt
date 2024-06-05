@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -31,6 +32,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -45,6 +47,9 @@ import io.github.d4isdavid.educhat.api.utils.mockMessage
 import io.github.d4isdavid.educhat.ui.components.lists.UserBadges
 import io.github.d4isdavid.educhat.ui.navigation.forum.userPageRoute
 import io.github.d4isdavid.educhat.ui.theme.EduChatTheme
+import io.github.d4isdavid.educhat.utils.toRelativeString
+import java.time.Duration
+import java.time.Instant
 
 @Composable
 fun MessageCard(
@@ -64,6 +69,8 @@ fun MessageCard(
     ),
     elevation: CardElevation = CardDefaults.elevatedCardElevation(),
 ) {
+    val context = LocalContext.current
+
     val author = api.users.cache.get(message.authorId)!!
 
     ElevatedCard(
@@ -159,49 +166,64 @@ fun MessageCard(
             Text(text = message.content, modifier = Modifier.padding(vertical = 8.dp))
 
             Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                IconButton(
-                    onClick = {
-                        if (message.votes.me == true) {
-                            api.votes.deleteSelf(message.id)
-                            return@IconButton
-                        }
-
-                        api.votes.upsertSelf(message.id, MessageVoteUpsertObject(true))
-                    },
-                    enabled = api.users.me != null,
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Icon(
-                        imageVector = if (message.votes.me == true)
-                            Icons.Filled.ThumbUp
-                        else
-                            Icons.Outlined.ThumbUp,
-                        contentDescription = stringResource(id = R.string.upvote),
-                    )
+                    IconButton(
+                        onClick = {
+                            if (message.votes.me == true) {
+                                api.votes.deleteSelf(message.id)
+                                return@IconButton
+                            }
+
+                            api.votes.upsertSelf(message.id, MessageVoteUpsertObject(true))
+                        },
+                        enabled = api.users.me != null,
+                    ) {
+                        Icon(
+                            imageVector = if (message.votes.me == true)
+                                Icons.Filled.ThumbUp
+                            else
+                                Icons.Outlined.ThumbUp,
+                            contentDescription = stringResource(id = R.string.upvote),
+                        )
+                    }
+
+                    Text(text = message.votes.count.toString())
+
+                    IconButton(
+                        onClick = {
+                            if (message.votes.me == false) {
+                                api.votes.deleteSelf(message.id)
+                                return@IconButton
+                            }
+
+                            api.votes.upsertSelf(message.id, MessageVoteUpsertObject(false))
+                        },
+                        enabled = api.users.me != null,
+                    ) {
+                        Icon(
+                            imageVector = if (message.votes.me == false)
+                                Icons.Filled.ThumbDown
+                            else
+                                Icons.Outlined.ThumbDown,
+                            contentDescription = stringResource(id = R.string.downvote),
+                        )
+                    }
                 }
 
-                Text(text = message.votes.count.toString())
-
-                IconButton(
-                    onClick = {
-                        if (message.votes.me == false) {
-                            api.votes.deleteSelf(message.id)
-                            return@IconButton
-                        }
-
-                        api.votes.upsertSelf(message.id, MessageVoteUpsertObject(false))
-                    },
-                    enabled = api.users.me != null,
-                ) {
-                    Icon(
-                        imageVector = if (message.votes.me == false)
-                            Icons.Filled.ThumbDown
-                        else
-                            Icons.Outlined.ThumbDown,
-                        contentDescription = stringResource(id = R.string.downvote),
-                    )
-                }
+                Text(
+                    text = stringResource(
+                        id = R.string.created,
+                        Duration.between(message.createdAt, Instant.now())
+                            .toRelativeString(resources = context.resources),
+                    ),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
             }
         }
     }
