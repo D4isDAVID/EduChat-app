@@ -1,15 +1,16 @@
 package io.github.d4isdavid.educhat.ui.pages.forum
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
@@ -36,10 +37,13 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import io.github.d4isdavid.educhat.R
 import io.github.d4isdavid.educhat.api.client.APIClient
+import io.github.d4isdavid.educhat.api.input.AdminUserEditObject
 import io.github.d4isdavid.educhat.api.objects.UserObject
 import io.github.d4isdavid.educhat.api.utils.createMockClient
 import io.github.d4isdavid.educhat.api.utils.mockUser
 import io.github.d4isdavid.educhat.ui.components.buttons.BackIconButton
+import io.github.d4isdavid.educhat.ui.components.icons.AdminSettingsIcon
+import io.github.d4isdavid.educhat.ui.components.lists.UserBadges
 import io.github.d4isdavid.educhat.ui.theme.EduChatTheme
 import io.github.d4isdavid.educhat.utils.errorToSnackbar
 import io.github.d4isdavid.educhat.utils.toRelativeString
@@ -53,7 +57,6 @@ fun UserPage(
     api: APIClient,
     modifier: Modifier = Modifier,
     userId: Int? = null,
-    withBackButton: Boolean = true,
 ) {
     val context = LocalContext.current
     val inspectionMode = LocalInspectionMode.current
@@ -73,7 +76,7 @@ fun UserPage(
             TopAppBar(
                 title = { Text(text = user?.name ?: stringResource(id = R.string.loading)) },
                 navigationIcon = {
-                    if (!withBackButton) {
+                    if (userId == null) {
                         return@TopAppBar
                     }
 
@@ -109,7 +112,7 @@ fun UserPage(
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(text = user!!.name, style = MaterialTheme.typography.titleMedium)
             }
-            Spacer(modifier = Modifier.height(8.dp))
+            UserBadges(user = user!!)
             Text(
                 text = stringResource(
                     id = R.string.joined,
@@ -118,6 +121,65 @@ fun UserPage(
                 ),
                 style = MaterialTheme.typography.bodyMedium,
             )
+
+            if (api.users.me?.admin == true) {
+                Column(
+                    modifier = Modifier
+                        .padding(vertical = 8.dp)
+                        .fillMaxWidth(),
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .padding(bottom = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        AdminSettingsIcon(modifier = Modifier.padding(end = 4.dp))
+                        Text(
+                            text = stringResource(id = R.string.admin_settings),
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                    }
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        Button(
+                            onClick = {
+                                api.users.edit(
+                                    user!!.id,
+                                    AdminUserEditObject(admin = !user!!.admin)
+                                ).onError { (status, error) ->
+                                    onError(error.getMessage(context, status))
+                                }
+                            },
+                        ) {
+                            Text(
+                                text = if (user!!.admin)
+                                    stringResource(id = R.string.revoke_admin)
+                                else
+                                    stringResource(id = R.string.grant_admin),
+                            )
+                        }
+
+                        Button(
+                            onClick = {
+                                api.users.edit(
+                                    user!!.id,
+                                    AdminUserEditObject(helper = !user!!.helper)
+                                ).onError { (status, error) ->
+                                    onError(error.getMessage(context, status))
+                                }
+                            },
+                        ) {
+                            Text(
+                                text = if (user!!.helper)
+                                    stringResource(id = R.string.revoke_helper)
+                                else
+                                    stringResource(id = R.string.grant_helper),
+                            )
+                        }
+                    }
+                }
+            }
         }
     }
 

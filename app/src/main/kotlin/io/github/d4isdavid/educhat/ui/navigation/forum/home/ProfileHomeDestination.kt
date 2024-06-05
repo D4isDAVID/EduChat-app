@@ -13,7 +13,6 @@ fun NavGraphBuilder.profileHomeSection(navController: NavController, api: APICli
         UserPage(
             navController = navController,
             api = api,
-            withBackButton = false,
         )
     }
 }
