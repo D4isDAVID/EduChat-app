@@ -45,7 +45,7 @@ import io.github.d4isdavid.educhat.ui.navigation.LOGIN_SECTION_ROUTE
 import io.github.d4isdavid.educhat.ui.theme.EduChatTheme
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginPage(navController: NavController, api: APIClient, modifier: Modifier = Modifier) {
     val context = LocalContext.current
