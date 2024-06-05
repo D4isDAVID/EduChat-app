@@ -89,6 +89,9 @@
     <string name="loading">Loading</string>
     <string name="replies">Replies</string>
 
+    <string name="helper">Helper</string>
+    <string name="helper_description">This user has been voted by the community as helpful.</string>
+
     <string name="http_status_ok">200 OK</string>
     <string name="http_status_created">201 Created</string>
     <string name="http_status_no_content">204 No Content</string>

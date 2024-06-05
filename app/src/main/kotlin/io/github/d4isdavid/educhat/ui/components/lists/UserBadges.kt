@@ -12,6 +12,7 @@ import io.github.d4isdavid.educhat.api.objects.UserObject
 import io.github.d4isdavid.educhat.api.utils.createMockClient
 import io.github.d4isdavid.educhat.api.utils.mockUser
 import io.github.d4isdavid.educhat.ui.components.chips.AdminBadge
+import io.github.d4isdavid.educhat.ui.components.chips.HelperBadge
 import io.github.d4isdavid.educhat.ui.components.chips.StudentBadge
 import io.github.d4isdavid.educhat.ui.components.chips.TeacherBadge
 import io.github.d4isdavid.educhat.ui.theme.EduChatTheme
@@ -29,6 +30,11 @@ fun UserBadges(
         if (user.admin) {
             item {
                 AdminBadge()
+            }
+        }
+        if (user.helper) {
+            item {
+                HelperBadge()
             }
         }
         if (user.student) {
