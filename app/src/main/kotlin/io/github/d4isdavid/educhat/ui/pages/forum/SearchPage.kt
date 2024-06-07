@@ -64,9 +64,11 @@ fun SearchPage(navController: NavController, api: APIClient, modifier: Modifier 
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
     ) { paddingValues ->
         if (fetching) {
-            LinearProgressIndicator(modifier = Modifier
-                .fillMaxWidth()
-                .padding(paddingValues))
+            LinearProgressIndicator(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(paddingValues)
+            )
         }
 
         Column(

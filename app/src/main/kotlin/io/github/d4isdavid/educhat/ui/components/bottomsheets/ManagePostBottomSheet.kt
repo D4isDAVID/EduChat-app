@@ -204,10 +204,14 @@ fun ManagePostBottomSheet(
                                 APIError.BAD_MESSAGE_CONTENT_LENGTH ->
                                     contentError = errMessage
 
-                                else -> onError(errMessage)
+                                else -> {
+                                    onError(errMessage)
+                                    hideSheet()
+                                }
                             }
 
-                            hideSheet()
+                            fetching = false
+
                         }
 
                         if (api.users.me?.admin == true) {

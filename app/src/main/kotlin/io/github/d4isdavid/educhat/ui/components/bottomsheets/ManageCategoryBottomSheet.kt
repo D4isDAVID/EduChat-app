@@ -144,8 +144,6 @@ fun ManageCategoryBottomSheet(
                             api.categories.create(CategoryCreateObject(name, description, parentId))
                                 .onSuccess { hideSheet() }
                                 .onError { (status, error) ->
-                                    hideSheet()
-
                                     val message = error.getMessage(context, status)
 
                                     when (error) {
@@ -155,7 +153,10 @@ fun ManageCategoryBottomSheet(
                                         APIError.BAD_CATEGORY_DESCRIPTION_LENGTH ->
                                             descriptionError = message
 
-                                        else -> onError(message)
+                                        else -> {
+                                            hideSheet()
+                                            onError(message)
+                                        }
                                     }
 
                                     fetching = false
