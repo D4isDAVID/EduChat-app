@@ -107,6 +107,11 @@
     <string name="grant_admin_are_you_sure">Are you sure you want to grant admin to this user?</string>
     <string name="revoke_admin_are_you_sure">Are you sure you want to revoke admin from this user?</string>
 
+    <string name="settings">Settings</string>
+    <string name="account">Account</string>
+    <string name="logout">Logout</string>
+    <string name="edit_username">Edit Username</string>
+
     <string name="http_status_ok">200 OK</string>
     <string name="http_status_created">201 Created</string>
     <string name="http_status_no_content">204 No Content</string>

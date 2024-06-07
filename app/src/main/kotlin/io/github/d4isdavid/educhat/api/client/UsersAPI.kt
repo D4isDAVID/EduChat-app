@@ -20,6 +20,8 @@ class UsersAPI(private val client: APIClient) {
     val cache = Cache()
     var me: UserObject? = null
         private set
+    var credentials: Pair<String, String>? = null
+        private set
 
     fun create(input: UserCreateObject) = rest.post(
         Routes.users(),
@@ -27,7 +29,8 @@ class UsersAPI(private val client: APIClient) {
             writeJsonObject(input.toJSON())
         },
     ) {
-        rest.headers["Authorization"] = "Basic ${encodeCredentials(input.email, input.password)}"
+        credentials = Pair(input.email, input.password)
+        rest.headers["Authorization"] = "Basic ${encodeCredentials(credentials!!)}"
         me = cache.put(handleJsonObject()!!)
         me!!
     }
@@ -68,12 +71,14 @@ class UsersAPI(private val client: APIClient) {
     }
 
     fun logIn(email: String, password: String): RestResultListener<UserObject> {
-        val auth = "Basic ${encodeCredentials(email, password)}"
+        val credentials = Pair(email, password)
+        val auth = "Basic ${encodeCredentials(credentials)}"
 
         return rest.get(
             Routes.users("@me"),
             headers = mapOf("Authorization" to auth),
         ) {
+            this@UsersAPI.credentials = credentials
             rest.headers["Authorization"] = auth
             me = cache.put(handleJsonObject()!!)
             me!!
@@ -81,6 +86,7 @@ class UsersAPI(private val client: APIClient) {
     }
 
     fun logOut() {
+        credentials = null
         rest.headers.remove("Authorization")
         me = null
     }

@@ -21,6 +21,7 @@ import io.github.d4isdavid.educhat.ui.components.dialogs.PermissionRequestDialog
 import io.github.d4isdavid.educhat.ui.navigation.LOGIN_SECTION_ROUTE
 import io.github.d4isdavid.educhat.ui.navigation.forumSection
 import io.github.d4isdavid.educhat.ui.navigation.loginSection
+import io.github.d4isdavid.educhat.ui.navigation.settingsSection
 import io.github.d4isdavid.educhat.ui.theme.EduChatTheme
 import io.github.d4isdavid.educhat.utils.askForPermission
 
@@ -72,6 +73,7 @@ class MainActivity : ComponentActivity() {
                     NavHost(navController = navController, startDestination = LOGIN_SECTION_ROUTE) {
                         loginSection(navController = navController, api = api)
                         forumSection(navController = navController, api = api)
+                        settingsSection(navController = navController, api = api)
                     }
                 }
             }

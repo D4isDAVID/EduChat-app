@@ -43,10 +43,13 @@ import io.github.d4isdavid.educhat.api.input.AdminUserEditObject
 import io.github.d4isdavid.educhat.api.objects.UserObject
 import io.github.d4isdavid.educhat.api.utils.createMockClient
 import io.github.d4isdavid.educhat.api.utils.mockUser
+import io.github.d4isdavid.educhat.ui.components.bottomsheets.EditUsernameBottomSheet
 import io.github.d4isdavid.educhat.ui.components.buttons.BackIconButton
 import io.github.d4isdavid.educhat.ui.components.icons.AdminSettingsIcon
 import io.github.d4isdavid.educhat.ui.components.icons.HelperIcon
+import io.github.d4isdavid.educhat.ui.components.icons.SettingsIcon
 import io.github.d4isdavid.educhat.ui.components.lists.UserBadges
+import io.github.d4isdavid.educhat.ui.navigation.SETTINGS_SECTION_ROUTE
 import io.github.d4isdavid.educhat.ui.theme.EduChatTheme
 import io.github.d4isdavid.educhat.utils.errorToSnackbar
 import io.github.d4isdavid.educhat.utils.toRelativeString
@@ -69,6 +72,7 @@ fun UserPage(
     val onError = errorToSnackbar(scope, snackbarHostState)
 
     var adminMenu by remember { mutableStateOf(false) }
+    var editingUsername by remember { mutableStateOf(false) }
     var helperStatus: Boolean? by remember { mutableStateOf(null) }
     var adminStatus: Boolean? by remember { mutableStateOf(null) }
 
@@ -97,6 +101,12 @@ fun UserPage(
                     if (api.users.me?.admin == true) {
                         IconButton(onClick = { adminMenu = true }) {
                             AdminSettingsIcon()
+                        }
+                    }
+
+                    if (userId == null) {
+                        IconButton(onClick = { navController.navigate(SETTINGS_SECTION_ROUTE) }) {
+                            SettingsIcon()
                         }
                     }
                 },
@@ -166,6 +176,16 @@ fun UserPage(
             title = { Text(text = stringResource(id = R.string.admin_settings)) },
             text = {
                 Column {
+                    Button(
+                        onClick = {
+                            adminMenu = false
+                            editingUsername = true
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Text(text = stringResource(id = R.string.edit_username))
+                    }
+
                     if (user!!.helper) {
                         TextButton(
                             onClick = {
@@ -322,6 +342,18 @@ fun UserPage(
                     )
                 )
             }
+        )
+    }
+
+    if (editingUsername) {
+        EditUsernameBottomSheet(
+            api = api,
+            onDismissRequest = {
+                adminMenu = true
+                editingUsername = false
+            },
+            onError = onError,
+            user = user,
         )
     }
 }
