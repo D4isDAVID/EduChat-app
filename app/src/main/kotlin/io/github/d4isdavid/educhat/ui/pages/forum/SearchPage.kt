@@ -40,7 +40,6 @@ import io.github.d4isdavid.educhat.ui.components.icons.SearchIcon
 import io.github.d4isdavid.educhat.ui.components.lists.PostListItem
 import io.github.d4isdavid.educhat.ui.theme.EduChatTheme
 import io.github.d4isdavid.educhat.utils.errorToSnackbar
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -65,7 +64,9 @@ fun SearchPage(navController: NavController, api: APIClient, modifier: Modifier 
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
     ) { paddingValues ->
         if (fetching) {
-            LinearProgressIndicator(modifier = Modifier.fillMaxWidth().padding(paddingValues))
+            LinearProgressIndicator(modifier = Modifier
+                .fillMaxWidth()
+                .padding(paddingValues))
         }
 
         Column(
