@@ -97,7 +97,7 @@ fun CategoryPage(
         if (categoryId != null) {
             fetching = false
             fetchingPosts = false
-            category = api.categories.cache.get(categoryId!!)
+            category = api.categories.cache.get(categoryId)
             posts.add(api.posts.cache.get(1)!!)
             posts.add(api.posts.cache.get(2)!!)
             posts.add(api.posts.cache.get(3)!!)
