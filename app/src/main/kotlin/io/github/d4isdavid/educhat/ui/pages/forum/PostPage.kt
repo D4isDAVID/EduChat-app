@@ -180,15 +180,19 @@ fun PostPage(
                 )
             }
 
-            items(replies, key = { it.id }) { message ->
+            items(replies, key = { it.id }) { m ->
                 MessageCard(
                     navController = navController,
                     api = api,
-                    message = message,
+                    message = m,
                     onError = onError,
-                    answer = post!!.answerId == message.id,
+                    answer = post!!.answerId == m.id,
                     trailingIcon = {
-                        if (api.users.me?.id != message.authorId) {
+                        if (
+                            api.users.me?.id != m.authorId
+                            && api.users.me?.admin == false
+                            && (!post!!.question || api.users.me?.id != message!!.authorId)
+                        ) {
                             return@MessageCard
                         }
 
@@ -205,30 +209,34 @@ fun PostPage(
                                 expanded = expanded,
                                 onDismissRequest = { expanded = false },
                             ) {
-                                DropdownMenuItem(
-                                    text = { Text(text = stringResource(id = R.string.edit)) },
-                                    onClick = {
-                                        expanded = false
-                                        editingReply = message
-                                    },
-                                )
+                                if (api.users.me?.id == m.authorId || api.users.me?.admin == true) {
+                                    DropdownMenuItem(
+                                        text = { Text(text = stringResource(id = R.string.edit)) },
+                                        onClick = {
+                                            expanded = false
+                                            editingReply = m
+                                        },
+                                    )
+                                }
 
-                                if (post!!.answerId == message.id) {
-                                    DropdownMenuItem(
-                                        text = { Text(text = stringResource(id = R.string.deselect_answer)) },
-                                        onClick = {
-                                            expanded = false
-                                            deselecting = true
-                                        },
-                                    )
-                                } else if (post!!.question) {
-                                    DropdownMenuItem(
-                                        text = { Text(text = stringResource(id = R.string.select_answer)) },
-                                        onClick = {
-                                            expanded = false
-                                            selecting = message
-                                        },
-                                    )
+                                if (api.users.me?.id == message!!.authorId || api.users.me?.admin == true) {
+                                    if (post!!.answerId == m.id) {
+                                        DropdownMenuItem(
+                                            text = { Text(text = stringResource(id = R.string.deselect_answer)) },
+                                            onClick = {
+                                                expanded = false
+                                                deselecting = true
+                                            },
+                                        )
+                                    } else if (post!!.question) {
+                                        DropdownMenuItem(
+                                            text = { Text(text = stringResource(id = R.string.select_answer)) },
+                                            onClick = {
+                                                expanded = false
+                                                selecting = m
+                                            },
+                                        )
+                                    }
                                 }
                             }
                         }
