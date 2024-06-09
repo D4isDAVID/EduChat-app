@@ -38,6 +38,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.datastore.preferences.core.edit
 import io.github.d4isdavid.educhat.R
 import io.github.d4isdavid.educhat.api.client.APIClient
 import io.github.d4isdavid.educhat.api.enums.APIError
@@ -48,6 +49,8 @@ import io.github.d4isdavid.educhat.ui.components.icons.PasswordIcon
 import io.github.d4isdavid.educhat.ui.components.labeled.LabeledIconButton
 import io.github.d4isdavid.educhat.ui.components.textfields.OutlinedPasswordField
 import io.github.d4isdavid.educhat.ui.theme.EduChatTheme
+import io.github.d4isdavid.educhat.utils.CREDENTIALS_PASSWORD
+import io.github.d4isdavid.educhat.utils.credentials
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -117,8 +120,13 @@ fun EditPasswordBottomSheet(
 
                         api.users.editSelf(SelfUserEditObject(password = password))
                             .onSuccess {
-                                api.users.logIn(api.users.credentials!!.first, password)
-                                hideSheet()
+                                scope.launch {
+                                    context.credentials.edit { settings ->
+                                        settings[CREDENTIALS_PASSWORD] = password
+                                    }
+                                    api.users.logIn(api.users.credentials!!.first, password)
+                                    hideSheet()
+                                }
                             }
                             .onError { (status, error) ->
                                 val message = error.getMessage(context, status)

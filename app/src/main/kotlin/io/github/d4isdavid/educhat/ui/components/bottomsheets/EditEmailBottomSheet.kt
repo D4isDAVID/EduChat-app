@@ -40,6 +40,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.datastore.preferences.core.edit
 import io.github.d4isdavid.educhat.R
 import io.github.d4isdavid.educhat.api.client.APIClient
 import io.github.d4isdavid.educhat.api.enums.APIError
@@ -49,6 +50,8 @@ import io.github.d4isdavid.educhat.api.utils.mockUser
 import io.github.d4isdavid.educhat.ui.components.icons.EmailIcon
 import io.github.d4isdavid.educhat.ui.components.labeled.LabeledIconButton
 import io.github.d4isdavid.educhat.ui.theme.EduChatTheme
+import io.github.d4isdavid.educhat.utils.CREDENTIALS_EMAIL
+import io.github.d4isdavid.educhat.utils.credentials
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -126,8 +129,13 @@ fun EditEmailBottomSheet(
 
                         api.users.editSelf(SelfUserEditObject(email = email))
                             .onSuccess {
-                                api.users.logIn(email, api.users.credentials!!.second)
-                                hideSheet()
+                                scope.launch {
+                                    context.credentials.edit { settings ->
+                                        settings[CREDENTIALS_EMAIL] = email
+                                    }
+                                    api.users.logIn(email, api.users.credentials!!.second)
+                                    hideSheet()
+                                }
                             }
                             .onError { (status, error) ->
                                 fetching = false
