@@ -51,7 +51,7 @@ import io.github.d4isdavid.educhat.ui.components.icons.EmailIcon
 import io.github.d4isdavid.educhat.ui.components.labeled.LabeledIconButton
 import io.github.d4isdavid.educhat.ui.theme.EduChatTheme
 import io.github.d4isdavid.educhat.utils.CREDENTIALS_EMAIL
-import io.github.d4isdavid.educhat.utils.credentials
+import io.github.d4isdavid.educhat.utils.dataStore
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -130,7 +130,7 @@ fun EditEmailBottomSheet(
                         api.users.editSelf(SelfUserEditObject(email = email))
                             .onSuccess {
                                 scope.launch {
-                                    context.credentials.edit { settings ->
+                                    context.dataStore.edit { settings ->
                                         settings[CREDENTIALS_EMAIL] = email
                                     }
                                     api.users.logIn(email, api.users.credentials!!.second)

@@ -27,12 +27,14 @@ import io.github.d4isdavid.educhat.api.utils.createMockClient
 import io.github.d4isdavid.educhat.ui.components.icons.CloseIcon
 import io.github.d4isdavid.educhat.ui.components.icons.ForwardIcon
 import io.github.d4isdavid.educhat.ui.components.icons.LogoutIcon
+import io.github.d4isdavid.educhat.ui.components.icons.ThemeIcon
 import io.github.d4isdavid.educhat.ui.components.icons.UserIcon
 import io.github.d4isdavid.educhat.ui.navigation.FORUM_SECTION_ROUTE
 import io.github.d4isdavid.educhat.ui.navigation.LOGIN_SECTION_ROUTE
 import io.github.d4isdavid.educhat.ui.navigation.settings.ACCOUNT_PAGE_ROUTE
+import io.github.d4isdavid.educhat.ui.navigation.settings.THEME_PAGE_ROUTE
 import io.github.d4isdavid.educhat.ui.theme.EduChatTheme
-import io.github.d4isdavid.educhat.utils.credentials
+import io.github.d4isdavid.educhat.utils.dataStore
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -68,12 +70,19 @@ fun SettingsPage(navController: NavController, api: APIClient, modifier: Modifie
             )
 
             ListItem(
+                headlineContent = { Text(text = stringResource(id = R.string.theme)) },
+                modifier = Modifier.clickable { navController.navigate(THEME_PAGE_ROUTE) },
+                leadingContent = { ThemeIcon() },
+                trailingContent = { ForwardIcon() },
+            )
+
+            ListItem(
                 headlineContent = {
                     Text(text = stringResource(id = R.string.logout))
                 },
                 modifier = Modifier.clickable {
                     scope.launch {
-                        context.credentials.edit { settings -> settings.clear() }
+                        context.dataStore.edit { settings -> settings.clear() }
                         api.users.logOut()
                         navController.navigate(LOGIN_SECTION_ROUTE) {
                             popUpTo(FORUM_SECTION_ROUTE) {

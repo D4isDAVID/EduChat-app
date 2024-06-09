@@ -50,7 +50,7 @@ import io.github.d4isdavid.educhat.ui.navigation.LOGIN_SECTION_ROUTE
 import io.github.d4isdavid.educhat.ui.theme.EduChatTheme
 import io.github.d4isdavid.educhat.utils.CREDENTIALS_EMAIL
 import io.github.d4isdavid.educhat.utils.CREDENTIALS_PASSWORD
-import io.github.d4isdavid.educhat.utils.credentials
+import io.github.d4isdavid.educhat.utils.dataStore
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -175,7 +175,7 @@ fun RegisterPage(navController: NavController, api: APIClient, modifier: Modifie
                     api.users.create(UserCreateObject(username, email, password, student, teacher))
                         .onSuccess {
                             scope.launch {
-                                context.credentials.edit { settings ->
+                                context.dataStore.edit { settings ->
                                     settings[CREDENTIALS_EMAIL] = email
                                     settings[CREDENTIALS_PASSWORD] = password
                                 }

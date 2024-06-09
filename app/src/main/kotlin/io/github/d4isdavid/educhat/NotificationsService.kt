@@ -9,7 +9,7 @@ import io.github.d4isdavid.educhat.http.rest.RestClient
 import io.github.d4isdavid.educhat.notifications.postAppNotification
 import io.github.d4isdavid.educhat.utils.CREDENTIALS_EMAIL
 import io.github.d4isdavid.educhat.utils.CREDENTIALS_PASSWORD
-import io.github.d4isdavid.educhat.utils.credentials
+import io.github.d4isdavid.educhat.utils.dataStore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.map
@@ -58,7 +58,7 @@ class NotificationsService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         thread {
             runBlocking {
-                credentials.data.map {
+                dataStore.data.map {
                     Pair(it[CREDENTIALS_EMAIL], it[CREDENTIALS_PASSWORD])
                 }.collect { (email, password) ->
                     if (email == null || password == null) {

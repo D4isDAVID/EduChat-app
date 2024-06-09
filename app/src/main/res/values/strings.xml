@@ -132,6 +132,15 @@
 
     <string name="app_notification_channel_name">App Notifications</string>
 
+    <string name="theme">Theme</string>
+    <string name="mode">Mode</string>
+    <string name="system_default">System Default</string>
+    <string name="light_mode">Light Mode</string>
+    <string name="dark_mode">Dark Mode</string>
+    <string name="apply_theme">Apply Theme</string>
+    <string name="apply_theme_description">Applying the theme requires a restart. Restart now?</string>
+    <string name="restart">Restart</string>
+
     <string name="http_status_ok">200 OK</string>
     <string name="http_status_created">201 Created</string>
     <string name="http_status_no_content">204 No Content</string>

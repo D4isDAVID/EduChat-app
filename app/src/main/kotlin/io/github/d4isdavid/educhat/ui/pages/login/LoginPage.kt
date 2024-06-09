@@ -47,7 +47,7 @@ import io.github.d4isdavid.educhat.ui.navigation.LOGIN_SECTION_ROUTE
 import io.github.d4isdavid.educhat.ui.theme.EduChatTheme
 import io.github.d4isdavid.educhat.utils.CREDENTIALS_EMAIL
 import io.github.d4isdavid.educhat.utils.CREDENTIALS_PASSWORD
-import io.github.d4isdavid.educhat.utils.credentials
+import io.github.d4isdavid.educhat.utils.dataStore
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -134,7 +134,7 @@ fun LoginPage(navController: NavController, api: APIClient, modifier: Modifier =
                     api.users.logIn(email, password)
                         .onSuccess {
                             scope.launch {
-                                context.credentials.edit { settings ->
+                                context.dataStore.edit { settings ->
                                     settings[CREDENTIALS_EMAIL] = email
                                     settings[CREDENTIALS_PASSWORD] = password
                                 }

@@ -50,7 +50,7 @@ import io.github.d4isdavid.educhat.ui.components.labeled.LabeledIconButton
 import io.github.d4isdavid.educhat.ui.components.textfields.OutlinedPasswordField
 import io.github.d4isdavid.educhat.ui.theme.EduChatTheme
 import io.github.d4isdavid.educhat.utils.CREDENTIALS_PASSWORD
-import io.github.d4isdavid.educhat.utils.credentials
+import io.github.d4isdavid.educhat.utils.dataStore
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -121,7 +121,7 @@ fun EditPasswordBottomSheet(
                         api.users.editSelf(SelfUserEditObject(password = password))
                             .onSuccess {
                                 scope.launch {
-                                    context.credentials.edit { settings ->
+                                    context.dataStore.edit { settings ->
                                         settings[CREDENTIALS_PASSWORD] = password
                                     }
                                     api.users.logIn(api.users.credentials!!.first, password)

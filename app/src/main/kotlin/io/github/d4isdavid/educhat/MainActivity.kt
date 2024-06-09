@@ -5,6 +5,7 @@ import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
@@ -32,8 +33,12 @@ import io.github.d4isdavid.educhat.ui.navigation.settingsSection
 import io.github.d4isdavid.educhat.ui.theme.EduChatTheme
 import io.github.d4isdavid.educhat.utils.CREDENTIALS_EMAIL
 import io.github.d4isdavid.educhat.utils.CREDENTIALS_PASSWORD
+import io.github.d4isdavid.educhat.utils.SETTINGS_THEME_MODE
+import io.github.d4isdavid.educhat.utils.ThemeMode
 import io.github.d4isdavid.educhat.utils.askForPermission
-import io.github.d4isdavid.educhat.utils.credentials
+import io.github.d4isdavid.educhat.utils.dataStore
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
@@ -54,8 +59,19 @@ class MainActivity : ComponentActivity() {
             null
         }
 
+        val rest = RestClient(BuildConfig.API_BASE_URL, CoroutineScope(Job()))
+        val api = APIClient(rest)
+
         setContent {
-            EduChatTheme {
+            val systemDark = isSystemInDarkTheme()
+            var darkTheme by remember { mutableStateOf(systemDark) }
+
+            val scope = rememberCoroutineScope()
+            val navController = rememberNavController()
+
+            var fetching by remember { mutableStateOf(true) }
+
+            EduChatTheme(darkTheme = darkTheme) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                     if (showNotificationsDialog
                         && ActivityCompat.shouldShowRequestPermissionRationale(
@@ -73,14 +89,6 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                 }
-
-                val scope = rememberCoroutineScope()
-                val navController = rememberNavController()
-
-                val rest = RestClient(BuildConfig.API_BASE_URL, scope)
-                val api = APIClient(rest)
-
-                var fetching by remember { mutableStateOf(true) }
 
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -107,23 +115,34 @@ class MainActivity : ComponentActivity() {
                         settingsSection(navController = navController, api = api)
                     }
                 }
+            }
 
-                LaunchedEffect(key1 = null) {
-                    credentials.data.map {
-                        Pair(it[CREDENTIALS_EMAIL], it[CREDENTIALS_PASSWORD])
-                    }.collect { (email, password) ->
-                        if (email == null || password == null) {
-                            credentials.edit { settings -> settings.clear() }
+            LaunchedEffect(key1 = "login") {
+                dataStore.data.map {
+                    Pair(it[CREDENTIALS_EMAIL], it[CREDENTIALS_PASSWORD])
+                }.collect { (email, password) ->
+                    if (email == null || password == null) {
+                        dataStore.edit { settings -> settings.clear() }
+                        fetching = false
+                        return@collect
+                    }
+
+                    api.users.logIn(email, password)
+                        .onSuccess { fetching = false }
+                        .onError {
+                            scope.launch { dataStore.edit { settings -> settings.clear() } }
                             fetching = false
-                            return@collect
                         }
+                }
+            }
 
-                        api.users.logIn(email, password)
-                            .onSuccess { fetching = false }
-                            .onError {
-                                scope.launch { credentials.edit { settings -> settings.clear() } }
-                                fetching = false
-                            }
+            LaunchedEffect(key1 = null) {
+                dataStore.data.map { it[SETTINGS_THEME_MODE] }.collect { themeNum ->
+                    val theme = ThemeMode.from(themeNum ?: ThemeMode.SystemDefault.num)
+                    darkTheme = when (theme) {
+                        ThemeMode.SystemDefault -> systemDark
+                        ThemeMode.Light -> false
+                        ThemeMode.Dark -> true
                     }
                 }
             }
