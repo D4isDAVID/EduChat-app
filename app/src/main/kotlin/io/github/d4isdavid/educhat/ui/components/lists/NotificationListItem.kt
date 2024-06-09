@@ -1,5 +1,6 @@
 package io.github.d4isdavid.educhat.ui.components.lists
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.Text
@@ -12,6 +13,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import io.github.d4isdavid.educhat.api.client.APIClient
 import io.github.d4isdavid.educhat.api.enums.NotificationType
+import io.github.d4isdavid.educhat.api.input.NotificationEditObject
 import io.github.d4isdavid.educhat.api.objects.NotificationObject
 import io.github.d4isdavid.educhat.api.utils.createMockClient
 import io.github.d4isdavid.educhat.api.utils.mockNotification
@@ -20,6 +22,8 @@ import io.github.d4isdavid.educhat.ui.components.icons.OutlinedAdminIcon
 import io.github.d4isdavid.educhat.ui.components.icons.OutlinedHelperIcon
 import io.github.d4isdavid.educhat.ui.components.icons.PostReplyIcon
 import io.github.d4isdavid.educhat.ui.components.icons.ReadIcon
+import io.github.d4isdavid.educhat.ui.navigation.forum.postPageRoute
+import io.github.d4isdavid.educhat.ui.navigation.forum.userPageRoute
 import io.github.d4isdavid.educhat.ui.theme.EduChatTheme
 
 @Composable
@@ -33,7 +37,6 @@ fun NotificationListItem(
 
     val user = notification.userId?.let { api.users.cache.get(it) }
     val post = notification.postId?.let { api.posts.cache.get(it) }
-    val message = notification.messageId?.let { api.messages.cache.get(it) }
 
     ListItem(
         headlineContent = {
@@ -41,7 +44,22 @@ fun NotificationListItem(
                 Text(text = notification.type.getMessage(context))
             }
         },
-        modifier = modifier,
+        modifier = modifier
+            .clickable {
+                when (notification.type) {
+                    NotificationType.NewPostReply,
+                    NotificationType.NewMessageVote ->
+                        navController.navigate(postPageRoute(post!!.messageId.toString()))
+
+                    NotificationType.HelperGranted,
+                    NotificationType.HelperRevoked,
+                    NotificationType.AdminGranted,
+                    NotificationType.AdminRevoked ->
+                        navController.navigate(userPageRoute(api.users.me!!.id.toString()))
+                }
+
+                api.notifications.edit(notification.id, NotificationEditObject(read = true))
+            },
         supportingContent = {
             Text(text = notification.type.getDescription(context, user!!.name))
         },
