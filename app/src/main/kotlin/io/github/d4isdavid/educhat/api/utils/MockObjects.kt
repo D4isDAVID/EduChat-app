@@ -2,8 +2,10 @@ package io.github.d4isdavid.educhat.api.utils
 
 import io.github.d4isdavid.educhat.BuildConfig
 import io.github.d4isdavid.educhat.api.client.APIClient
+import io.github.d4isdavid.educhat.api.enums.NotificationType
 import io.github.d4isdavid.educhat.api.objects.CategoryObject
 import io.github.d4isdavid.educhat.api.objects.MessageObject
+import io.github.d4isdavid.educhat.api.objects.NotificationObject
 import io.github.d4isdavid.educhat.api.objects.PostObject
 import io.github.d4isdavid.educhat.api.objects.UserObject
 import io.github.d4isdavid.educhat.http.rest.RestClient
@@ -38,24 +40,9 @@ fun APIClient.mockMessage(
     pinned: Boolean = true,
     hidden: Boolean = false,
     parentId: Int? = null,
-    authorId: Int = 1,
-    authorName: String = "MockUser",
-    authorCreatedAt: Instant = Instant.now(),
-    authorAdmin: Boolean = true,
-    authorHelper: Boolean = true,
-    authorStudent: Boolean = true,
-    authorTeacher: Boolean = true,
+    author: JSONObject = mockUser(),
     votes: JSONObject = createMockVoteCount(),
 ): JSONObject {
-    val author = mockUser(
-        authorId,
-        authorName,
-        authorCreatedAt,
-        authorAdmin,
-        authorHelper,
-        authorStudent,
-        authorTeacher
-    )
     val message = JSONObject()
         .put("id", id)
         .put("content", content)
@@ -77,44 +64,13 @@ fun APIClient.mockMessage(
 }
 
 fun APIClient.mockPost(
-    messageId: Int = 1,
-    messageContent: String = "Hello, world!",
-    messageCreatedAt: Instant = Instant.now(),
-    messageEditedAt: Instant? = null,
-    messagePinned: Boolean = true,
-    messageHidden: Boolean = false,
-    messageParentId: Int? = null,
-    authorId: Int = 1,
-    authorName: String = "MockUser",
-    authorCreatedAt: Instant = Instant.now(),
-    authorAdmin: Boolean = true,
-    authorHelper: Boolean = true,
-    authorStudent: Boolean = true,
-    authorTeacher: Boolean = true,
-    messageVotes: JSONObject = createMockVoteCount(),
+    message: JSONObject = mockMessage(),
     title: String = "Mock Post",
     locked: Boolean = true,
     question: Boolean = false,
     answerId: Int? = null,
     categoryId: Int = 1,
 ): JSONObject {
-    val message = mockMessage(
-        messageId,
-        messageContent,
-        messageCreatedAt,
-        messageEditedAt,
-        messagePinned,
-        messageHidden,
-        messageParentId,
-        authorId,
-        authorName,
-        authorCreatedAt,
-        authorAdmin,
-        authorHelper,
-        authorStudent,
-        authorTeacher,
-        messageVotes,
-    )
     val post = JSONObject()
         .put("message", message)
         .put("title", title)
@@ -151,7 +107,6 @@ fun APIClient.mockUser(
         .put("helper", helper)
         .put("student", student)
         .put("teacher", teacher)
-    UserObject.getKey(user)
     users.cache.put(user, UserObject::getKey, ::UserObject)
     return user
 }
@@ -164,6 +119,37 @@ fun createMockVoteCount(
         .put("count", count)
         .put("me", me ?: JSONObject.NULL)
     return reaction
+}
+
+fun APIClient.mockNotification(
+    id: Int = 1,
+    type: NotificationType = NotificationType.NewPostReply,
+    createdAt: Instant = Instant.now(),
+    read: Boolean = false,
+    user: JSONObject = mockUser(),
+    post: JSONObject = mockPost(),
+    message: JSONObject = mockMessage(id = 2),
+): JSONObject {
+    val notification = JSONObject()
+        .put("id", id)
+        .put("type", type.num)
+        .put("createdAt", createdAt.toString())
+        .put("read", read)
+        .put("user", user)
+        .put("post", post)
+        .put("message", message)
+    notifications.cache.put(
+        notification,
+        NotificationObject::getKey,
+        ::NotificationObject,
+        UserObject::getKey,
+        ::UserObject,
+        PostObject::getKey,
+        ::PostObject,
+        MessageObject::getKey,
+        ::MessageObject,
+    )
+    return notification
 }
 
 fun createMockClient(scope: CoroutineScope, func: APIClient.() -> Unit): APIClient {

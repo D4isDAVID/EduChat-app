@@ -4,6 +4,8 @@ object Routes {
 
     fun categories(id: String? = null) = appendOptional("/categories", id)
 
+    fun notifications(id: String? = null) = appendOptional("/notifications/@me", id)
+
     fun posts(id: String? = null) = appendOptional("/posts", id)
 
     fun postReplies(postId: String, id: String? = null) =

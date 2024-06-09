@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -56,6 +55,7 @@ fun MessageCard(
     navController: NavController,
     api: APIClient,
     message: MessageObject,
+    onError: (String) -> Unit,
     modifier: Modifier = Modifier,
     answer: Boolean = false,
     trailingIcon: (@Composable () -> Unit)? = null,
@@ -181,6 +181,9 @@ fun MessageCard(
                             }
 
                             api.votes.upsertSelf(message.id, MessageVoteUpsertObject(true))
+                                .onError { (status, error) ->
+                                    onError(error.getMessage(context, status))
+                                }
                         },
                         enabled = api.users.me != null,
                     ) {
@@ -203,6 +206,9 @@ fun MessageCard(
                             }
 
                             api.votes.upsertSelf(message.id, MessageVoteUpsertObject(false))
+                                .onError { (status, error) ->
+                                    onError(error.getMessage(context, status))
+                                }
                         },
                         enabled = api.users.me != null,
                     ) {
@@ -241,6 +247,7 @@ private fun Preview() {
             navController = rememberNavController(),
             api = api,
             message = api.messages.cache.get(1)!!,
+            onError = {},
         )
     }
 }
@@ -257,6 +264,7 @@ private fun AnswerPreview() {
             navController = rememberNavController(),
             api = api,
             message = api.messages.cache.get(1)!!,
+            onError = {},
             answer = true,
         )
     }

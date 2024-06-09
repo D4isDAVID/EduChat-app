@@ -45,7 +45,7 @@ import io.github.d4isdavid.educhat.api.utils.createMockClient
 import io.github.d4isdavid.educhat.api.utils.mockUser
 import io.github.d4isdavid.educhat.ui.components.bottomsheets.EditUsernameBottomSheet
 import io.github.d4isdavid.educhat.ui.components.buttons.BackIconButton
-import io.github.d4isdavid.educhat.ui.components.icons.AdminSettingsIcon
+import io.github.d4isdavid.educhat.ui.components.icons.AdminIcon
 import io.github.d4isdavid.educhat.ui.components.icons.HelperIcon
 import io.github.d4isdavid.educhat.ui.components.icons.SettingsIcon
 import io.github.d4isdavid.educhat.ui.components.lists.UserBadges
@@ -100,7 +100,7 @@ fun UserPage(
 
                     if (api.users.me?.admin == true) {
                         IconButton(onClick = { adminMenu = true }) {
-                            AdminSettingsIcon()
+                            AdminIcon()
                         }
                     }
 
@@ -172,7 +172,7 @@ fun UserPage(
                     Text(text = stringResource(id = R.string.close))
                 }
             },
-            icon = { AdminSettingsIcon() },
+            icon = { AdminIcon() },
             title = { Text(text = stringResource(id = R.string.admin_settings)) },
             text = {
                 Column {
@@ -220,7 +220,7 @@ fun UserPage(
                             },
                             modifier = Modifier.fillMaxWidth(),
                         ) {
-                            AdminSettingsIcon()
+                            AdminIcon()
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(text = stringResource(id = R.string.revoke_admin))
                         }
@@ -232,7 +232,7 @@ fun UserPage(
                             },
                             modifier = Modifier.fillMaxWidth(),
                         ) {
-                            AdminSettingsIcon()
+                            AdminIcon()
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(text = stringResource(id = R.string.grant_admin))
                         }
@@ -324,7 +324,7 @@ fun UserPage(
                     Text(text = stringResource(id = R.string.no))
                 }
             },
-            icon = { AdminSettingsIcon() },
+            icon = { AdminIcon() },
             title = {
                 Text(
                     text = stringResource(

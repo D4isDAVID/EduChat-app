@@ -112,6 +112,24 @@
     <string name="logout">Logout</string>
     <string name="edit_username">Edit Username</string>
 
+    <string name="mark_all_as_read">Mark all as read</string>
+    <string name="marked_as_read">Marked as read</string>
+    <string name="new_post_reply">New Post Reply</string>
+    <string name="new_post_reply_description">%1$s replied to your post</string>
+    <string name="new_message_vote">New Message Vote</string>
+    <string name="new_message_vote_description">%1$s voted on your message</string>
+    <string name="helper_granted">Helper Granted</string>
+    <string name="helper_granted_description">%1$s granted you helper</string>
+    <string name="helper_revoked">Helper Revoked</string>
+    <string name="helper_revoked_description">%1$s revoked your helper</string>
+    <string name="admin_granted">Admin Granted</string>
+    <string name="admin_granted_description">%1$s granted you admin</string>
+    <string name="admin_revoked">Admin Revoked</string>
+    <string name="admin_revoked_description">%1$s revoked your admin</string>
+    <string name="post_reply">Post Reply</string>
+    <string name="message_vote">Message Vote</string>
+    <string name="read">Read</string>
+
     <string name="http_status_ok">200 OK</string>
     <string name="http_status_created">201 Created</string>
     <string name="http_status_no_content">204 No Content</string>

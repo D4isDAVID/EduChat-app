@@ -1,7 +1,7 @@
 package io.github.d4isdavid.educhat.ui.components.icons
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AdminPanelSettings
+import androidx.compose.material.icons.outlined.StarOutline
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
@@ -13,13 +13,13 @@ import io.github.d4isdavid.educhat.R
 import io.github.d4isdavid.educhat.ui.theme.EduChatTheme
 
 @Composable
-fun AdminSettingsIcon(
+fun OutlinedHelperIcon(
     modifier: Modifier = Modifier,
     tint: Color = LocalContentColor.current
 ) {
     Icon(
-        imageVector = Icons.Filled.AdminPanelSettings,
-        contentDescription = stringResource(id = R.string.admin_description),
+        imageVector = Icons.Outlined.StarOutline,
+        contentDescription = stringResource(id = R.string.helper),
         modifier = modifier,
         tint = tint,
     )
@@ -29,6 +29,6 @@ fun AdminSettingsIcon(
 @Preview(showBackground = true)
 private fun Preview() {
     EduChatTheme(dynamicColor = false) {
-        AdminSettingsIcon()
+        HelperIcon()
     }
 }

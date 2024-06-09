@@ -47,6 +47,7 @@ import io.github.d4isdavid.educhat.api.params.CategoriesFetchParams
 import io.github.d4isdavid.educhat.api.params.PostsFetchParams
 import io.github.d4isdavid.educhat.api.utils.createMockClient
 import io.github.d4isdavid.educhat.api.utils.mockCategory
+import io.github.d4isdavid.educhat.api.utils.mockMessage
 import io.github.d4isdavid.educhat.api.utils.mockPost
 import io.github.d4isdavid.educhat.ui.components.bottomsheets.ManageCategoryBottomSheet
 import io.github.d4isdavid.educhat.ui.components.bottomsheets.ManagePostBottomSheet
@@ -93,7 +94,7 @@ fun CategoryPage(
         categories.add(api.categories.cache.get(2)!!)
         categories.add(api.categories.cache.get(3)!!)
 
-        if (fetching) {
+        if (categoryId != null) {
             fetching = false
             fetchingPosts = false
             category = api.categories.cache.get(categoryId!!)
@@ -203,8 +204,8 @@ fun CategoryPage(
             fetchingCategories = false
         }.onError { (status, error) -> onError(error.getMessage(context, status)) }
 
-        if (fetching) {
-            api.categories.get(categoryId!!).onSuccess {
+        if (categoryId != null) {
+            api.categories.get(categoryId).onSuccess {
                 category = it
                 fetching = false
             }.onError { (status, error) -> onError(error.getMessage(context, status)) }
@@ -255,9 +256,9 @@ private fun Preview() {
             mockCategory(id = 2, name = "Two", parentId = 4)
             mockCategory(id = 3, name = "Three", parentId = 4)
             mockCategory(id = 4, name = "Parent")
-            mockPost(messageId = 1, title = "One", categoryId = 4)
-            mockPost(messageId = 2, title = "Two", categoryId = 4)
-            mockPost(messageId = 3, title = "Three", categoryId = 4)
+            mockPost(message = mockMessage(id = 1), title = "One", categoryId = 4)
+            mockPost(message = mockMessage(id = 2), title = "Two", categoryId = 4)
+            mockPost(message = mockMessage(id = 3), title = "Three", categoryId = 4)
         }
         CategoryPage(
             navController = rememberNavController(),
@@ -275,9 +276,6 @@ private fun HomePreview() {
             mockCategory(name = "One")
             mockCategory(id = 2, name = "Two")
             mockCategory(id = 3, name = "Three")
-            mockPost(messageId = 1, title = "One")
-            mockPost(messageId = 2, title = "Two")
-            mockPost(messageId = 3, title = "Three")
         }
 
         CategoryPage(

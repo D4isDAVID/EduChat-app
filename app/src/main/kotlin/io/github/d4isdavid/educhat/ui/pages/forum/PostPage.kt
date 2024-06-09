@@ -168,6 +168,7 @@ fun PostPage(
                     navController = navController,
                     api = api,
                     message = message!!,
+                    onError = onError,
                 )
             }
 
@@ -184,6 +185,7 @@ fun PostPage(
                     navController = navController,
                     api = api,
                     message = message,
+                    onError = onError,
                     answer = post!!.answerId == message.id,
                     trailingIcon = {
                         if (api.users.me?.id != message.authorId) {
