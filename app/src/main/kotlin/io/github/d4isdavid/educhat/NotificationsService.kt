@@ -33,12 +33,10 @@ class NotificationsService : Service() {
                 while (true) {
                     Thread.sleep(SLEEP_TIME)
                     try {
-                        println("NOWWWW")
                         api.notifications.get(
                             NotificationsFetchParams(onlyNew = true, onlyUnread = true)
                         )
                             .onSuccess {
-                                println("YO")
                                 it.forEach { n ->
                                     postAppNotification(
                                         this,
@@ -52,7 +50,6 @@ class NotificationsService : Service() {
                     }
                 }
             } catch (e: InterruptedException) {
-                println("rip :( x2")
                 Thread.currentThread().interrupt()
             }
         }
@@ -85,7 +82,6 @@ class NotificationsService : Service() {
         if (!listenerThread.isInterrupted) {
             listenerThread.interrupt()
         }
-        println("rip :(")
         super.onDestroy()
     }
 
