@@ -130,6 +130,8 @@
     <string name="message_vote">Message Vote</string>
     <string name="read">Read</string>
 
+    <string name="app_notification_channel_name">App Notifications</string>
+
     <string name="http_status_ok">200 OK</string>
     <string name="http_status_created">201 Created</string>
     <string name="http_status_no_content">204 No Content</string>

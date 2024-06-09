@@ -1,5 +1,6 @@
 package io.github.d4isdavid.educhat.ui.pages.forum
 
+import android.content.Intent
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.RowScope
@@ -28,6 +29,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -35,6 +37,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import io.github.d4isdavid.educhat.NotificationsService
 import io.github.d4isdavid.educhat.R
 import io.github.d4isdavid.educhat.api.client.APIClient
 import io.github.d4isdavid.educhat.api.params.NotificationsFetchParams
@@ -55,6 +58,7 @@ import io.github.d4isdavid.educhat.ui.theme.EduChatTheme
 
 @Composable
 fun HomePage(navController: NavController, api: APIClient, modifier: Modifier = Modifier) {
+    val context = LocalContext.current
     val inspectionMode = LocalInspectionMode.current
 
     val bottomNavController = rememberNavController()
@@ -63,6 +67,10 @@ fun HomePage(navController: NavController, api: APIClient, modifier: Modifier = 
     var notifications by remember { mutableIntStateOf(0) }
 
     fun fetchNotifications() {
+        if (api.users.me == null) {
+            return
+        }
+
         api.notifications.get(NotificationsFetchParams(onlyUnread = true))
             .onSuccess { notifications = it.size }
     }
@@ -174,8 +182,11 @@ fun HomePage(navController: NavController, api: APIClient, modifier: Modifier = 
         }
     }
 
-    if (!inspectionMode && api.users.me != null) {
+    if (!inspectionMode) {
         fetchNotifications()
+
+        val intent = Intent(context, NotificationsService::class.java)
+        context.startService(intent)
     }
 }
 
