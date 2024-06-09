@@ -8,6 +8,7 @@ val localProperty: (String) -> String by rootProject.extra
 val androidxCoreVersion: String by project
 val androidxActivityVersion: String by project
 val androidxNavigationVersion: String by project
+val androidxDataStoreVersion: String by project
 val composeBomVersion: String by project
 val composeCompilerVersion: String by project
 
@@ -66,6 +67,7 @@ dependencies {
     implementation("androidx.core:core-ktx:$androidxCoreVersion")
     implementation("androidx.activity:activity-compose:$androidxActivityVersion")
     implementation("androidx.navigation:navigation-compose:$androidxNavigationVersion")
+    implementation("androidx.datastore:datastore-preferences:$androidxDataStoreVersion")
 
     implementation(platform("androidx.compose:compose-bom:$composeBomVersion"))
     implementation("androidx.compose.ui:ui")

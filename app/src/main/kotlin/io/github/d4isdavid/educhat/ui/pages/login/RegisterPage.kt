@@ -30,6 +30,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.datastore.preferences.core.edit
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import io.github.d4isdavid.educhat.R
@@ -47,6 +48,9 @@ import io.github.d4isdavid.educhat.ui.components.textfields.OutlinedPasswordFiel
 import io.github.d4isdavid.educhat.ui.navigation.FORUM_SECTION_ROUTE
 import io.github.d4isdavid.educhat.ui.navigation.LOGIN_SECTION_ROUTE
 import io.github.d4isdavid.educhat.ui.theme.EduChatTheme
+import io.github.d4isdavid.educhat.utils.CREDENTIALS_EMAIL
+import io.github.d4isdavid.educhat.utils.CREDENTIALS_PASSWORD
+import io.github.d4isdavid.educhat.utils.credentials
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -170,9 +174,16 @@ fun RegisterPage(navController: NavController, api: APIClient, modifier: Modifie
 
                     api.users.create(UserCreateObject(username, email, password, student, teacher))
                         .onSuccess {
-                            navController.navigate(FORUM_SECTION_ROUTE) {
-                                popUpTo(LOGIN_SECTION_ROUTE) {
-                                    inclusive = true
+                            scope.launch {
+                                context.credentials.edit { settings ->
+                                    settings[CREDENTIALS_EMAIL] = email
+                                    settings[CREDENTIALS_PASSWORD] = password
+                                }
+
+                                navController.navigate(FORUM_SECTION_ROUTE) {
+                                    popUpTo(LOGIN_SECTION_ROUTE) {
+                                        inclusive = true
+                                    }
                                 }
                             }
                         }

@@ -5,25 +5,37 @@ import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.core.app.ActivityCompat
+import androidx.datastore.preferences.core.edit
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import io.github.d4isdavid.educhat.api.client.APIClient
 import io.github.d4isdavid.educhat.http.rest.RestClient
 import io.github.d4isdavid.educhat.ui.components.dialogs.PermissionRequestDialog
+import io.github.d4isdavid.educhat.ui.navigation.FORUM_SECTION_ROUTE
 import io.github.d4isdavid.educhat.ui.navigation.LOGIN_SECTION_ROUTE
 import io.github.d4isdavid.educhat.ui.navigation.forumSection
 import io.github.d4isdavid.educhat.ui.navigation.loginSection
 import io.github.d4isdavid.educhat.ui.navigation.settingsSection
 import io.github.d4isdavid.educhat.ui.theme.EduChatTheme
+import io.github.d4isdavid.educhat.utils.CREDENTIALS_EMAIL
+import io.github.d4isdavid.educhat.utils.CREDENTIALS_PASSWORD
 import io.github.d4isdavid.educhat.utils.askForPermission
+import io.github.d4isdavid.educhat.utils.credentials
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
 
@@ -62,18 +74,56 @@ class MainActivity : ComponentActivity() {
                     }
                 }
 
+                val scope = rememberCoroutineScope()
                 val navController = rememberNavController()
 
-                val rest = RestClient(BuildConfig.API_BASE_URL, rememberCoroutineScope())
+                val rest = RestClient(BuildConfig.API_BASE_URL, scope)
                 val api = APIClient(rest)
+
+                var fetching by remember { mutableStateOf(true) }
 
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                 ) {
-                    NavHost(navController = navController, startDestination = LOGIN_SECTION_ROUTE) {
+                    if (fetching) {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            CircularProgressIndicator()
+                        }
+                        return@Surface
+                    }
+
+                    NavHost(
+                        navController = navController,
+                        startDestination = if (api.users.me == null)
+                            LOGIN_SECTION_ROUTE
+                        else
+                            FORUM_SECTION_ROUTE,
+                    ) {
                         loginSection(navController = navController, api = api)
                         forumSection(navController = navController, api = api)
                         settingsSection(navController = navController, api = api)
+                    }
+                }
+
+                LaunchedEffect(key1 = null) {
+                    credentials.data.map {
+                        Pair(it[CREDENTIALS_EMAIL], it[CREDENTIALS_PASSWORD])
+                    }.collect { (email, password) ->
+                        if (email == null || password == null) {
+                            credentials.edit { settings -> settings.clear() }
+                            fetching = false
+                            return@collect
+                        }
+
+                        api.users.logIn(email, password)
+                            .onSuccess { fetching = false }
+                            .onError {
+                                scope.launch { credentials.edit { settings -> settings.clear() } }
+                                fetching = false
+                            }
                     }
                 }
             }

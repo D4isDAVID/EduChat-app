@@ -15,8 +15,10 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.datastore.preferences.core.edit
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import io.github.d4isdavid.educhat.R
@@ -30,10 +32,16 @@ import io.github.d4isdavid.educhat.ui.navigation.FORUM_SECTION_ROUTE
 import io.github.d4isdavid.educhat.ui.navigation.LOGIN_SECTION_ROUTE
 import io.github.d4isdavid.educhat.ui.navigation.settings.ACCOUNT_PAGE_ROUTE
 import io.github.d4isdavid.educhat.ui.theme.EduChatTheme
+import io.github.d4isdavid.educhat.utils.credentials
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsPage(navController: NavController, api: APIClient, modifier: Modifier = Modifier) {
+    val context = LocalContext.current
+
+    val scope = rememberCoroutineScope()
+
     Scaffold(
         modifier = modifier,
         topBar = {
@@ -64,12 +72,15 @@ fun SettingsPage(navController: NavController, api: APIClient, modifier: Modifie
                     Text(text = stringResource(id = R.string.logout))
                 },
                 modifier = Modifier.clickable {
-                    navController.navigate(LOGIN_SECTION_ROUTE) {
-                        popUpTo(FORUM_SECTION_ROUTE) {
-                            inclusive = true
+                    scope.launch {
+                        context.credentials.edit { settings -> settings.clear() }
+                        api.users.logOut()
+                        navController.navigate(LOGIN_SECTION_ROUTE) {
+                            popUpTo(FORUM_SECTION_ROUTE) {
+                                inclusive = true
+                            }
                         }
                     }
-                    api.users.logOut()
                 },
                 leadingContent = { LogoutIcon() },
                 colors = ListItemDefaults.colors(

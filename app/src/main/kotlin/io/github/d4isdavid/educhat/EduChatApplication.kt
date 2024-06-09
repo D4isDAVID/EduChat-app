@@ -4,7 +4,6 @@ import android.app.Application
 import io.github.d4isdavid.educhat.notifications.createErrorNotificationChannel
 import io.github.d4isdavid.educhat.notifications.postErrorNotification
 
-
 class EduChatApplication : Application() {
 
     override fun onCreate() {
