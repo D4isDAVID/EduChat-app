@@ -1,6 +1,7 @@
 package io.github.d4isdavid.educhat.ui.pages.login
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -42,6 +43,8 @@ import io.github.d4isdavid.educhat.ui.components.buttons.BackIconButton
 import io.github.d4isdavid.educhat.ui.components.icons.EmailIcon
 import io.github.d4isdavid.educhat.ui.components.icons.PasswordIcon
 import io.github.d4isdavid.educhat.ui.components.icons.RegisterIcon
+import io.github.d4isdavid.educhat.ui.components.icons.StudentIcon
+import io.github.d4isdavid.educhat.ui.components.icons.TeacherIcon
 import io.github.d4isdavid.educhat.ui.components.icons.UserIcon
 import io.github.d4isdavid.educhat.ui.components.labeled.LabeledCheckbox
 import io.github.d4isdavid.educhat.ui.components.textfields.OutlinedPasswordField
@@ -152,14 +155,26 @@ fun RegisterPage(navController: NavController, api: APIClient, modifier: Modifie
 
                 LabeledCheckbox(
                     checked = student,
-                    label = { Text(text = stringResource(id = R.string.student)) },
+                    label = {
+                        Row {
+                            Text(text = stringResource(id = R.string.student))
+                            Spacer(modifier = Modifier.width(8.dp))
+                            StudentIcon()
+                        }
+                    },
                     onCheckedChange = { student = it },
                     enabled = !fetching,
                 )
 
                 LabeledCheckbox(
                     checked = teacher,
-                    label = { Text(text = stringResource(id = R.string.teacher)) },
+                    label = {
+                        Row {
+                            Text(text = stringResource(id = R.string.teacher))
+                            Spacer(modifier = Modifier.width(8.dp))
+                            TeacherIcon()
+                        }
+                    },
                     onCheckedChange = { teacher = it },
                     enabled = !fetching,
                 )
