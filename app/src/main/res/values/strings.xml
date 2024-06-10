@@ -141,6 +141,13 @@
     <string name="apply_theme_description">Applying the theme requires a restart. Restart now?</string>
     <string name="restart">Restart</string>
 
+    <string name="pin_post">Pin Post</string>
+    <string name="unpin_post">Unpin Post</string>
+    <string name="lock_post">Lock Post</string>
+    <string name="unlock_post">Unlock Post</string>
+    <string name="pin_message">Pin Message</string>
+    <string name="unpin_message">Unpin Message</string>
+
     <string name="http_status_ok">200 OK</string>
     <string name="http_status_created">201 Created</string>
     <string name="http_status_no_content">204 No Content</string>

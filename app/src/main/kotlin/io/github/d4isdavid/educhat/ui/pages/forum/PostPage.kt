@@ -9,10 +9,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -45,6 +47,9 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import io.github.d4isdavid.educhat.R
 import io.github.d4isdavid.educhat.api.client.APIClient
+import io.github.d4isdavid.educhat.api.input.AdminMessageEditObject
+import io.github.d4isdavid.educhat.api.input.AdminPostEditObject
+import io.github.d4isdavid.educhat.api.input.AdminPostReplyEditObject
 import io.github.d4isdavid.educhat.api.input.PostEditObject
 import io.github.d4isdavid.educhat.api.objects.MessageObject
 import io.github.d4isdavid.educhat.api.objects.PostObject
@@ -58,9 +63,12 @@ import io.github.d4isdavid.educhat.ui.components.bottomsheets.ManagePostReplyBot
 import io.github.d4isdavid.educhat.ui.components.buttons.BackIconButton
 import io.github.d4isdavid.educhat.ui.components.buttons.UpFloatingActionButton
 import io.github.d4isdavid.educhat.ui.components.cards.MessageCard
+import io.github.d4isdavid.educhat.ui.components.icons.AdminIcon
 import io.github.d4isdavid.educhat.ui.components.icons.CreateIcon
 import io.github.d4isdavid.educhat.ui.components.icons.EditIcon
+import io.github.d4isdavid.educhat.ui.components.icons.LockedIcon
 import io.github.d4isdavid.educhat.ui.components.icons.MoreIcon
+import io.github.d4isdavid.educhat.ui.components.icons.PinnedIcon
 import io.github.d4isdavid.educhat.ui.components.icons.WarningIcon
 import io.github.d4isdavid.educhat.ui.theme.EduChatTheme
 import io.github.d4isdavid.educhat.utils.errorToSnackbar
@@ -86,6 +94,8 @@ fun PostPage(
     var editingReply: MessageObject? by remember { mutableStateOf(null) }
     var selecting: MessageObject? by remember { mutableStateOf(null) }
     var deselecting by remember { mutableStateOf(false) }
+    var adminMenu by remember { mutableStateOf(false) }
+    var adminMenuReply: MessageObject? by remember { mutableStateOf(null) }
 
     var post: PostObject? by remember { mutableStateOf(null) }
     var message: MessageObject? by remember { mutableStateOf(null) }
@@ -111,6 +121,10 @@ fun PostPage(
                 actions = {
                     if (post == null) {
                         return@TopAppBar
+                    }
+
+                    if (api.users.me?.admin == true) {
+                        IconButton(onClick = { adminMenu = true }) { AdminIcon() }
                     }
 
                     if (api.users.me?.id == author!!.id) {
@@ -209,6 +223,16 @@ fun PostPage(
                                 expanded = expanded,
                                 onDismissRequest = { expanded = false },
                             ) {
+                                if (api.users.me?.admin == true) {
+                                    DropdownMenuItem(
+                                        text = { Text(text = stringResource(id = R.string.admin_settings)) },
+                                        onClick = {
+                                            expanded = false
+                                            adminMenuReply = m
+                                        },
+                                    )
+                                }
+
                                 if (api.users.me?.id == m.authorId || api.users.me?.admin == true) {
                                     DropdownMenuItem(
                                         text = { Text(text = stringResource(id = R.string.edit)) },
@@ -340,6 +364,158 @@ fun PostPage(
             icon = { WarningIcon() },
             title = { Text(text = stringResource(id = R.string.deselect_answer)) },
             text = { Text(text = stringResource(id = R.string.deselect_answer_are_you_sure)) },
+        )
+    }
+
+    if (adminMenu) {
+        AlertDialog(
+            onDismissRequest = { adminMenu = false },
+            confirmButton = {
+                TextButton(onClick = { adminMenu = false }) {
+                    Text(text = stringResource(id = R.string.close))
+                }
+            },
+            icon = { AdminIcon() },
+            title = { Text(text = stringResource(id = R.string.admin_settings)) },
+            text = {
+                Column {
+                    if (message!!.pinned) {
+                        TextButton(
+                            onClick = {
+                                adminMenu = false
+                                api.posts.edit(
+                                    postId,
+                                    AdminPostEditObject(
+                                        message = AdminMessageEditObject(pinned = false),
+                                    ),
+                                )
+                                    .onError { (status, error) ->
+                                        onError(error.getMessage(context, status))
+                                    }
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                        ) {
+                            PinnedIcon()
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(text = stringResource(id = R.string.unpin_post))
+                        }
+                    } else {
+                        Button(
+                            onClick = {
+                                adminMenu = false
+                                api.posts.edit(
+                                    postId,
+                                    AdminPostEditObject(
+                                        message = AdminMessageEditObject(pinned = true),
+                                    ),
+                                )
+                                    .onError { (status, error) ->
+                                        onError(error.getMessage(context, status))
+                                    }
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                        ) {
+                            PinnedIcon()
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(text = stringResource(id = R.string.pin_post))
+                        }
+                    }
+
+                    if (post!!.locked) {
+                        TextButton(
+                            onClick = {
+                                adminMenu = false
+                                api.posts.edit(
+                                    postId,
+                                    AdminPostEditObject(locked = false),
+                                )
+                                    .onError { (status, error) ->
+                                        onError(error.getMessage(context, status))
+                                    }
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                        ) {
+                            LockedIcon()
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(text = stringResource(id = R.string.unlock_post))
+                        }
+                    } else {
+                        Button(
+                            onClick = {
+                                adminMenu = false
+                                api.posts.edit(
+                                    postId,
+                                    AdminPostEditObject(locked = true),
+                                )
+                                    .onError { (status, error) ->
+                                        onError(error.getMessage(context, status))
+                                    }
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                        ) {
+                            LockedIcon()
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(text = stringResource(id = R.string.lock_post))
+                        }
+                    }
+                }
+            },
+        )
+    }
+
+    if (adminMenuReply != null) {
+        AlertDialog(
+            onDismissRequest = { adminMenuReply = null },
+            confirmButton = {
+                TextButton(onClick = { adminMenuReply = null }) {
+                    Text(text = stringResource(id = R.string.close))
+                }
+            },
+            icon = { AdminIcon() },
+            title = { Text(text = stringResource(id = R.string.admin_settings)) },
+            text = {
+                Column {
+                    if (adminMenuReply!!.pinned) {
+                        TextButton(
+                            onClick = {
+                                api.posts.editReply(
+                                    postId,
+                                    adminMenuReply!!.id,
+                                    AdminPostReplyEditObject(pinned = false),
+                                )
+                                    .onError { (status, error) ->
+                                        onError(error.getMessage(context, status))
+                                    }
+                                adminMenuReply = null
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                        ) {
+                            PinnedIcon()
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(text = stringResource(id = R.string.unpin_message))
+                        }
+                    } else {
+                        Button(
+                            onClick = {
+                                api.posts.editReply(
+                                    postId,
+                                    adminMenuReply!!.id,
+                                    AdminPostReplyEditObject(pinned = true),
+                                )
+                                    .onError { (status, error) ->
+                                        onError(error.getMessage(context, status))
+                                    }
+                                adminMenuReply = null
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                        ) {
+                            PinnedIcon()
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(text = stringResource(id = R.string.pin_message))
+                        }
+                    }
+                }
+            },
         )
     }
 }

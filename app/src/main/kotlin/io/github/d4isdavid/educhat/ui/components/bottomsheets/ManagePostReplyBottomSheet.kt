@@ -2,10 +2,12 @@ package io.github.d4isdavid.educhat.ui.components.bottomsheets
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
@@ -38,7 +40,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
@@ -46,19 +47,19 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.github.d4isdavid.educhat.R
 import io.github.d4isdavid.educhat.api.client.APIClient
 import io.github.d4isdavid.educhat.api.enums.APIError
-import io.github.d4isdavid.educhat.api.input.AdminPostReplyEditObject
 import io.github.d4isdavid.educhat.api.input.PostReplyCreateObject
 import io.github.d4isdavid.educhat.api.input.PostReplyEditObject
 import io.github.d4isdavid.educhat.api.objects.MessageObject
 import io.github.d4isdavid.educhat.api.utils.createMockClient
 import io.github.d4isdavid.educhat.api.utils.mockMessage
-import io.github.d4isdavid.educhat.http.request.HttpStatusCode
+import io.github.d4isdavid.educhat.ui.components.icons.ContentIcon
 import io.github.d4isdavid.educhat.ui.components.labeled.LabeledCheckbox
 import io.github.d4isdavid.educhat.ui.components.labeled.LabeledIconButton
 import io.github.d4isdavid.educhat.ui.theme.EduChatTheme
@@ -88,9 +89,6 @@ fun ManagePostReplyBottomSheet(
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    val (focusRequester) = FocusRequester.createRefs()
-
-    var pinned by remember { mutableStateOf(message?.pinned ?: false) }
     var content by remember { mutableStateOf(message?.content ?: "") }
 
     var contentError by remember { mutableStateOf("") }
@@ -176,38 +174,24 @@ fun ManagePostReplyBottomSheet(
                         fetching = true
                         contentError = ""
 
-                        val onEditError: (Pair<HttpStatusCode, APIError>) -> Unit =
-                            { (status, error) ->
-                                val errMessage = error.getMessage(context, status)
+                        api.posts.editReply(
+                            postId,
+                            message.id,
+                            PostReplyEditObject(content = content),
+                        ).onSuccess { hideSheet() }.onError { (status, error) ->
+                            val errMessage = error.getMessage(context, status)
 
-                                when (error) {
-                                    APIError.BAD_MESSAGE_CONTENT_LENGTH ->
-                                        contentError = errMessage
+                            when (error) {
+                                APIError.BAD_MESSAGE_CONTENT_LENGTH ->
+                                    contentError = errMessage
 
-                                    else -> {
-                                        onError(errMessage)
-                                        hideSheet()
-                                    }
+                                else -> {
+                                    onError(errMessage)
+                                    hideSheet()
                                 }
-
-                                fetching = false
                             }
 
-                        if (api.users.me!!.admin) {
-                            api.posts.editReply(
-                                postId,
-                                message.id,
-                                AdminPostReplyEditObject(
-                                    content = content,
-                                    pinned = pinned,
-                                )
-                            ).onSuccess { hideSheet() }.onError(onEditError)
-                        } else {
-                            api.posts.editReply(
-                                postId,
-                                message.id,
-                                PostReplyEditObject(content = content),
-                            ).onSuccess { hideSheet() }.onError(onEditError)
+                            fetching = false
                         }
                     },
                     enabled = content.isNotEmpty() && !fetching,
@@ -231,32 +215,21 @@ fun ManagePostReplyBottomSheet(
                     .fillMaxWidth()
                     .padding(24.dp),
             ) {
-                if (message != null && api.users.me?.admin == true) {
-                    LabeledCheckbox(
-                        checked = pinned,
-                        label = { Text(text = stringResource(id = R.string.pinned)) },
-                        onCheckedChange = { pinned = it },
-                    )
-                }
-
                 OutlinedTextField(
                     value = content,
                     onValueChange = { content = it },
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .focusRequester(focusRequester = focusRequester),
+                    modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Max),
                     enabled = !fetching,
                     label = { Text(text = stringResource(id = R.string.content)) },
+                    leadingIcon = { ContentIcon() },
                     supportingText = if (contentError.isEmpty()) null else ({
                         Text(text = contentError)
                     }),
                     isError = contentError.isNotEmpty(),
                     keyboardOptions = KeyboardOptions(
-                        autoCorrect = false,
+                        capitalization = KeyboardCapitalization.Sentences,
+                        autoCorrect = true,
                         imeAction = ImeAction.Done,
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onNext = { focusRequester.freeFocus() },
                     ),
                 )
             }

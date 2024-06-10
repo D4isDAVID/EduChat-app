@@ -3,11 +3,12 @@ package io.github.d4isdavid.educhat.ui.components.bottomsheets
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Create
@@ -37,7 +38,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
@@ -45,6 +45,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -57,6 +58,11 @@ import io.github.d4isdavid.educhat.api.objects.CategoryObject
 import io.github.d4isdavid.educhat.api.utils.JSONNullable
 import io.github.d4isdavid.educhat.api.utils.createMockClient
 import io.github.d4isdavid.educhat.api.utils.mockCategory
+import io.github.d4isdavid.educhat.ui.components.icons.DescriptionIcon
+import io.github.d4isdavid.educhat.ui.components.icons.LockedIcon
+import io.github.d4isdavid.educhat.ui.components.icons.NameIcon
+import io.github.d4isdavid.educhat.ui.components.icons.PinnedIcon
+import io.github.d4isdavid.educhat.ui.components.icons.TitleIcon
 import io.github.d4isdavid.educhat.ui.components.labeled.LabeledCheckbox
 import io.github.d4isdavid.educhat.ui.components.labeled.LabeledIconButton
 import io.github.d4isdavid.educhat.ui.theme.EduChatTheme
@@ -85,8 +91,6 @@ fun ManageCategoryBottomSheet(
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-
-    val (focusRequester) = FocusRequester.createRefs()
 
     var name by remember { mutableStateOf(category?.name ?: "") }
     var description: String? by remember { mutableStateOf(category?.description) }
@@ -231,16 +235,15 @@ fun ManageCategoryBottomSheet(
                     modifier = Modifier.fillMaxWidth(),
                     enabled = !fetching,
                     label = { Text(text = stringResource(id = R.string.name)) },
+                    leadingIcon = { NameIcon() },
                     supportingText = if (nameError.isEmpty()) null else ({
                         Text(text = nameError)
                     }),
                     isError = nameError.isNotEmpty(),
                     keyboardOptions = KeyboardOptions(
-                        autoCorrect = false,
+                        capitalization = KeyboardCapitalization.Words,
+                        autoCorrect = true,
                         imeAction = ImeAction.Next,
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onNext = { focusRequester.requestFocus() },
                     ),
                     singleLine = true,
                 )
@@ -248,21 +251,18 @@ fun ManageCategoryBottomSheet(
                 OutlinedTextField(
                     value = description ?: "",
                     onValueChange = { description = it.ifEmpty { null } },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .focusRequester(focusRequester = focusRequester),
+                    modifier = Modifier.fillMaxWidth(),
                     enabled = !fetching,
                     label = { Text(text = stringResource(id = R.string.description)) },
+                    leadingIcon = { DescriptionIcon() },
                     supportingText = if (descriptionError.isEmpty()) null else ({
                         Text(text = descriptionError)
                     }),
                     isError = descriptionError.isNotEmpty(),
                     keyboardOptions = KeyboardOptions(
-                        autoCorrect = false,
+                        capitalization = KeyboardCapitalization.Sentences,
+                        autoCorrect = true,
                         imeAction = ImeAction.Done,
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onNext = { focusRequester.freeFocus() },
                     ),
                     singleLine = true,
                 )
@@ -270,16 +270,27 @@ fun ManageCategoryBottomSheet(
                 if (category != null) {
                     LabeledCheckbox(
                         checked = pinned,
-                        label = { Text(text = stringResource(id = R.string.pinned)) },
+                        label = {
+                            Row {
+                                Text(text = stringResource(id = R.string.pinned))
+                                Spacer(modifier = Modifier.width(8.dp))
+                                PinnedIcon()
+                            }
+                        },
                         onCheckedChange = { pinned = it },
                     )
 
                     LabeledCheckbox(
                         checked = locked,
-                        label = { Text(text = stringResource(id = R.string.locked)) },
+                        label = {
+                            Row {
+                                Text(text = stringResource(id = R.string.locked))
+                                Spacer(modifier = Modifier.width(8.dp))
+                                LockedIcon()
+                            }
+                        },
                         onCheckedChange = { locked = it },
                     )
-
                 }
             }
         }
